@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ffc-work-ledger-v1",
+  "title": "Fossil Fighters: Champions reconstruction work ledger",
+  "type": "object",
+  "required": ["schema", "input_fingerprint", "records"],
+  "properties": {
+    "schema": {"const": "ffc-work-ledger-v1"},
+    "input_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key", "image", "address", "attempt_count", "blocker",
+          "next_experiment", "best_source", "automatic"
+        ],
+        "properties": {
+          "key": {"type": "string"},
+          "image": {"type": "string"},
+          "address": {"type": "string"},
+          "attempt_count": {"type": "integer", "minimum": 0},
+          "blocker": {"type": "string"},
+          "next_experiment": {"type": "string"},
+          "best_source": {"type": "string"},
+          "automatic": {
+            "type": "object",
+            "required": ["active", "behavioral_complete", "policy_held", "ownership"],
+            "properties": {
+              "active": {"type": "boolean"},
+              "behavioral_complete": {"type": "boolean"},
+              "policy_held": {"type": "boolean"},
+              "ownership": {"type": "string"},
+              "policy_source": {"type": "string"},
+              "policy_evidence": {"type": "string"},
+              "policy_blocker": {"type": "string"}
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

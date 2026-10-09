@@ -1,0 +1,157 @@
+diff -ruN /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ds-rom-0.8.0/src/rom/arm9.rs ds-rom/src/rom/arm9.rs
+--- src/rom/arm9.rs	2006-07-24 01:21:28.000000000 +0000
++++ src/rom/arm9.rs	2026-10-09 16:59:48.842269484 +0000
+@@ -43,6 +43,13 @@
+     pub autoload_callback: u32,
+     /// Offset to overlay HMAC-SHA1 signature table.
+     pub overlay_signatures: u32,
++    /// Whether the ARM9 program is followed by a footer. Some DSi titles omit it.
++    #[serde(default = "default_has_footer")]
++    pub has_footer: bool,
++}
++
++fn default_has_footer() -> bool {
++    true
+ }
+ 
+ const SECURE_AREA_ID: [u8; 8] = [0xff, 0xde, 0xff, 0xe7, 0xff, 0xde, 0xff, 0xe7];
+@@ -270,7 +277,7 @@
+ 
+         let autoload_infos_start = data.len() as u32 + offsets.base_address;
+         for autoload in autoloads {
+-            data.extend(bytemuck::bytes_of(autoload.info().entry()));
++            data.extend(autoload.info().raw_bytes());
+         }
+         let autoload_infos_end = data.len() as u32 + offsets.base_address;
+ 
+@@ -489,11 +496,29 @@
+         Ok(())
+     }
+ 
+-    fn get_autoload_info_entries(&self, build_info: &BuildInfo) -> Result<&[AutoloadInfoEntry], Arm9AutoloadError> {
++    fn get_autoload_info_entries(&self, build_info: &BuildInfo) -> Result<Vec<AutoloadInfo>, Arm9AutoloadError> {
+         let start = (build_info.autoload_infos_start - self.base_address()) as usize;
+         let end = (build_info.autoload_infos_end - self.base_address()) as usize;
++        let len = end - start;
++        if len % 12 != 0 && len % 16 == 0 {
++            // TWL SDK: { base_address, code_size, extra, bss_size }
++            let words: Vec<u32> = self.data[start..end]
++                .chunks_exact(4)
++                .map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]]))
++                .collect();
++            return Ok(words
++                .chunks_exact(4)
++                .enumerate()
++                .map(|(index, w)| {
++                    let entry = AutoloadInfoEntry { base_address: w[0], code_size: w[1], bss_size: w[3] };
++                    let mut info = AutoloadInfo::new(entry, index as u32);
++                    info.twl_extra = Some(w[2]);
++                    info
++                })
++                .collect());
++        }
+         let autoload_info = AutoloadInfoEntry::borrow_from_slice(&self.data[start..end])?;
+-        Ok(autoload_info)
++        Ok(autoload_info.iter().enumerate().map(|(index, entry)| AutoloadInfo::new(*entry, index as u32)).collect())
+     }
+ 
+     /// Returns the autoload infos of this [`Arm9`].
+@@ -507,12 +532,7 @@
+         if build_info.is_compressed() {
+             CompressedSnafu {}.fail()?;
+         }
+-        Ok(self
+-            .get_autoload_info_entries(build_info)?
+-            .iter()
+-            .enumerate()
+-            .map(|(index, entry)| AutoloadInfo::new(*entry, index as u32))
+-            .collect())
++        self.get_autoload_info_entries(build_info)
+     }
+ 
+     /// Returns the autoloads of this [`Arm9`].
+diff -ruN /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ds-rom-0.8.0/src/rom/raw/autoload_info.rs ds-rom/src/rom/raw/autoload_info.rs
+--- src/rom/raw/autoload_info.rs	2006-07-24 01:21:28.000000000 +0000
++++ src/rom/raw/autoload_info.rs	2026-10-09 16:59:48.841508575 +0000
+@@ -61,6 +61,9 @@
+     pub list_entry: AutoloadInfoEntry,
+     /// The kind of autoload block.
+     pub kind: AutoloadKind,
++    /// Extra word present in TWL SDK autoload entries (16-byte entries, stored before `bss_size`).
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub twl_extra: Option<u32>,
+ }
+ 
+ /// Errors related to [`AutoloadInfo`].
+@@ -129,11 +132,24 @@
+     pub fn new(list_entry: AutoloadInfoEntry, index: u32) -> Self {
+         let kind = match list_entry.base_address {
+             0x1ff8000 => AutoloadKind::Itcm,
+-            0x27e0000 | 0x27c0000 | 0x23c0000 => AutoloadKind::Dtcm,
++            0x27e0000 | 0x27c0000 | 0x23c0000 | 0x2fe0000 => AutoloadKind::Dtcm,
+             _ => AutoloadKind::Unknown(index),
+         };
+ 
+-        Self { list_entry, kind }
++        Self { list_entry, kind, twl_extra: None }
++    }
++
++    /// Serializes this entry in the raw autoload list format (12 bytes, or 16 bytes for TWL entries).
++    pub fn raw_bytes(&self) -> Vec<u8> {
++        let e = &self.list_entry;
++        let mut v = Vec::with_capacity(16);
++        v.extend(e.base_address.to_le_bytes());
++        v.extend(e.code_size.to_le_bytes());
++        if let Some(x) = self.twl_extra {
++            v.extend(x.to_le_bytes());
++        }
++        v.extend(e.bss_size.to_le_bytes());
++        v
+     }
+ 
+     /// Returns the index of this [`AutoloadInfo`].
+diff -ruN /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ds-rom-0.8.0/src/rom/raw/rom.rs ds-rom/src/rom/raw/rom.rs
+--- src/rom/raw/rom.rs	2006-07-24 01:21:28.000000000 +0000
++++ src/rom/raw/rom.rs	2026-10-09 16:55:38.850998168 +0000
+@@ -111,9 +111,13 @@
+         let end = start + header.arm9.size as usize;
+         let data = &self.data[start..end];
+ 
+-        let footer = self.arm9_footer()?;
++        let footer = match self.arm9_footer() {
++            Ok(footer) => Some(*footer),
++            Err(Arm9FooterError::NoNitrocode { .. }) if header.arm9_build_info_offset != 0 => None,
++            Err(e) => return Err(e.into()),
++        };
+         let build_info_offset = if header.arm9_build_info_offset == 0 {
+-            footer.build_info_offset
++            footer.unwrap().build_info_offset
+         } else if header.arm9_build_info_offset > header.arm9.offset {
+             header.arm9_build_info_offset - header.arm9.offset
+         } else {
+@@ -126,7 +130,8 @@
+             entry_function: header.arm9.entry,
+             build_info: build_info_offset,
+             autoload_callback: header.arm9_autoload_callback,
+-            overlay_signatures: footer.overlay_signatures_offset,
++            overlay_signatures: footer.map_or(0, |f| f.overlay_signatures_offset),
++            has_footer: footer.is_some(),
+         })?)
+     }
+ 
+diff -ruN /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ds-rom-0.8.0/src/rom/rom.rs ds-rom/src/rom/rom.rs
+--- src/rom/rom.rs	2006-07-24 01:21:28.000000000 +0000
++++ src/rom/rom.rs	2026-10-09 16:55:38.851123268 +0000
+@@ -858,8 +858,10 @@
+         context.arm9_autoload_callback = Some(self.arm9.autoload_callback());
+         context.arm9_build_info_offset = Some(self.arm9.build_info_offset());
+         cursor.write_all(self.arm9.full_data())?;
+-        let footer = Arm9Footer::new(self.arm9.build_info_offset(), self.arm9.overlay_signatures_offset());
+-        cursor.write_all(bytemuck::bytes_of(&footer))?;
++        if self.arm9.offsets().has_footer {
++            let footer = Arm9Footer::new(self.arm9.build_info_offset(), self.arm9.overlay_signatures_offset());
++            cursor.write_all(bytemuck::bytes_of(&footer))?;
++        }
+ 
+         let max_file_id = self.files.max_file_id();
+         let mut file_allocs = vec![FileAlloc::default(); max_file_id as usize + 1];

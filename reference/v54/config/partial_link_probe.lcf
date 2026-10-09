@@ -1,0 +1,18 @@
+MEMORY {
+    arm9_text (RX) : ORIGIN = 0x02035C18, LENGTH = 0x0007F6E8
+    arm9_data (RW) : ORIGIN = 0x020B5300, LENGTH = 0x00010000
+}
+
+SECTIONS {
+    .text : {
+        * (.text)
+    } > arm9_text
+    .data : {
+        * (.rodata)
+        * (.sdata)
+        * (.data)
+    } > arm9_data
+    .bss : {
+        * (.bss)
+    } >> arm9_data
+}

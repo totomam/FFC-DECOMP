@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "fixture_base": "0x1000",
+  "limits": {
+    "max_operations": 256,
+    "max_calls": 32,
+    "max_branch_depth": 16,
+    "max_memory_bytes": 4096
+  },
+  "raw_execution": {
+    "max_instructions": 4096,
+    "max_calls": 32,
+    "max_time_ms": 100,
+    "max_mapped_bytes": 131072,
+    "stack_address": "0x02F00000",
+    "stack_size": "0x4000",
+    "return_sentinel": "0x02E00000",
+    "deny_sdk_catalog": true,
+    "sdk_catalog": "data/sdk_leaf_functions.csv",
+    "denied_address_ranges": [
+      {"start": "0x00000000", "end": "0x00008000", "label": "BIOS/system area"},
+      {"start": "0x04000000", "end": "0x05000000", "label": "hardware MMIO"}
+    ]
+  },
+  "raw_functions": {
+    "synthetic_thumb_return_one": {
+      "address": "0x03000000",
+      "state": "thumb",
+      "bytes": "01207047",
+      "provenance": "synthetic backend smoke fixture; not target-game evidence"
+    }
+  },
+  "raw_cases": [
+    {
+      "name": "synthetic_thumb_return_one",
+      "function": "synthetic_thumb_return_one",
+      "args": []
+    }
+  ],
+  "reviewed_programs": {
+    "predicate_bitfield_demo": {
+      "operations": [
+        {"op": "return", "value": "bitfield(r0, 4, 2) == 3"}
+      ],
+      "provenance": {"purpose": "exercise restricted symbolic bitfield/predicate support; not a game claim"}
+    },
+    "mocked_call_demo": {
+      "operations": [
+        {"op": "call", "target": "callee", "args": ["r0", "r1"], "dst": "callee_result"},
+        {"op": "return", "value": "callee_result"}
+      ],
+      "provenance": {"purpose": "exercise deterministic mocked-callee traces; not a game claim"}
+    }
+  },
+  "reviewed_cases": [
+    {"name": "predicate_bitfield_true", "program": "predicate_bitfield_demo", "args": [48], "expected": {"return": 1}},
+    {"name": "predicate_bitfield_false", "program": "predicate_bitfield_demo", "args": [16], "expected": {"return": 0}},
+    {"name": "mocked_call_trace", "program": "mocked_call_demo", "args": [7, 9], "mocks": {"callee": {"return": 23}},
+      "expected": {"return": 23, "calls": [{"target": "callee", "args": [7, 9], "return": 23}]}}
+  ]
+}

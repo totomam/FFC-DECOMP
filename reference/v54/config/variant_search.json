@@ -1,0 +1,66 @@
+{
+  "schema": "ffc-variant-search-config-v1",
+  "compiler": {
+    "required_build": 1018,
+    "sha256": "fb50f5082ba4a2176e370f5c584dde1e066b7a5a12a795a8ebdb368e18773013"
+  },
+  "budgets": {
+    "max_generated_variants": 64,
+    "max_compiler_invocations": 48,
+    "max_search_depth": 2,
+    "beam_width": 12,
+    "wall_seconds": 30,
+    "max_source_bytes": 262144
+  },
+  "stop_rules": {
+    "stop_on_exact": true,
+    "stop_on_unsupported_relocation": true,
+    "minimum_baseline_percent_for_automatic_compile": 60.0,
+    "minimum_matching_byte_gain": 1
+  },
+  "allowed_transforms": [
+    "zero_comparison",
+    "nonzero_condition",
+    "increment_form",
+    "assignment_form",
+    "explicit_cast_parentheses",
+    "index_pointer_form",
+    "loop_index_pointer_form",
+    "return_conditional_form",
+    "temporary_direct_return",
+    "commutative_operand_order",
+    "initializer_form",
+    "local_declaration_order"
+  ],
+  "mismatch_grammars": {
+    "prologue_epilogue_or_callee_save": ["return_conditional_form", "temporary_direct_return", "increment_form", "initializer_form", "local_declaration_order"],
+    "register_allocation_only": ["commutative_operand_order", "assignment_form", "explicit_cast_parentheses", "index_pointer_form", "loop_index_pointer_form", "temporary_direct_return", "return_conditional_form", "initializer_form", "local_declaration_order"],
+    "branch_shape_or_polarity": ["zero_comparison", "nonzero_condition", "return_conditional_form"],
+    "literal_pool_or_base_folding": ["explicit_cast_parentheses", "index_pointer_form"],
+    "argument_spill_or_abi_typing": ["initializer_form", "local_declaration_order", "temporary_direct_return"],
+    "instruction_selection_or_promotion": ["increment_form", "assignment_form", "explicit_cast_parentheses", "zero_comparison", "nonzero_condition", "index_pointer_form"],
+    "relocation_or_call_state": [],
+    "source_unit_flag_policy": [],
+    "suspected_wrong_behavior": []
+  },
+  "near_sweep": {
+    "minimum_percent": 60.0,
+    "eligible_classes": [
+      "prologue_epilogue_or_callee_save",
+      "register_allocation_only",
+      "branch_shape_or_polarity",
+      "literal_pool_or_base_folding",
+      "instruction_selection_or_promotion"
+    ],
+    "max_functions": 12,
+    "global_wall_seconds": 120,
+    "per_function_wall_seconds": 15,
+    "per_function_max_variants": 32
+  },
+  "disabled_unsafe_transforms": [
+    "introduce_untyped_pointer_cursor",
+    "move_narrowing_cast_across_arithmetic",
+    "reorder_effectful_expressions",
+    "temporary_return_when_declared_type_differs"
+  ]
+}

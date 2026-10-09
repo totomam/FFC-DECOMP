@@ -1,0 +1,60 @@
+{
+  "status": "compiler_family_and_flag_profile_empirically_supported_exact_build_unresolved",
+  "leading_candidate": {
+    "product": "CodeWarrior for DSi 1.1",
+    "compiler": "mwccarm 4.0 build 1018",
+    "basis": [
+      "official CodeWarrior for DSi 1.1 base media contains mwccarm 4.0 build 1018",
+      "builds 1018 through 1036 tie on the expanded 283-function corpus",
+      "all five builds emit 206 fully byte-exact functions after direct literal and call-relocation verification",
+      "the expanded corpus confirms both interworking and nointerworking source-unit policies"
+    ],
+    "flags": [
+      "-O4,p",
+      "-enum", "int",
+      "-lang", "c99",
+      "-Cpp_exceptions", "off",
+      "-gccext,on",
+      "-proc", "arm946e",
+      "-gccinc",
+      "-ipa", "file",
+      "-interworking",
+      "-inline", "on,noauto",
+      "-char", "signed",
+      "-i", "include"
+    ],
+    "source_flag_overrides": {
+      "src/arm9/nonleaf.c": {
+        "replace": "-interworking",
+        "with": "-nointerworking",
+        "basis": "the direct-call wrappers in this reconstructed unit reproduce exactly only with direct Thumb call relocations"
+      }
+    }
+  },
+  "tested_compilers": [
+    {"build": 1018, "sha256": "fb50f5082ba4a2176e370f5c584dde1e066b7a5a12a795a8ebdb368e18773013", "source": "CodeWarrior for DSi 1.1 base (2008-12-09)"},
+    {"build": 1024, "sha256": "bcc7d0579ccbb8635ede2d61861bd4599ada44aa4478ebc9d03e6affe2eefe41", "source": "CodeWarrior for DSi 1.1 Patch 1 (2009-05-25)"},
+    {"build": 1027, "sha256": "d913ce6989b9536e70f1ae60b14f26f11a0b32d80f389d18ac1065e6c89908e9", "source": "CodeWarrior for DSi 1.2 Patch 1 (2009-10-27)"},
+    {"build": 1028, "sha256": "b0409415cccd1f3a7525989bedf0e493820a0ec2002e4ed5c8abfdad51fadf7f", "source": "CodeWarrior for DSi 1.2 Patch 2 (2010-01-21)"},
+    {"build": 1036, "sha256": "968c7e88bd049ddd4941861b12d599d993f1040921b6fa1b0a39f4ed049a16bf", "source": "CodeWarrior for DSi 1.3 Patch 1 (2010-06-15)"}
+  ],
+  "current_sweep": {
+    "scope": "builds 1018 1024 1027 1028 and 1036 expanded 283-function corpus",
+    "catalog_functions": 283,
+    "target_instruction_bytes": 5396,
+    "fully_exact_functions": 206,
+    "fully_exact_target_bytes": 3354,
+    "instruction_exact_functions": 206,
+    "relocation_gated_instruction_exact_functions": 0,
+    "aggregate_matching_bytes": 4023,
+    "result": "all five builds tie; 106 of 122 reconstructed direct-call functions match exactly and sixteen remain behavior-only"
+  },
+  "partial_link_probe": {
+    "linker": "Metrowerks Linker for Embedded ARM 2.0 build 96",
+    "sha256": "3bd2e1a4dc7f68291eee08fef8bd8f46998b1b0940cba5d720ac88feac5e8de2",
+    "lcfs": ["config/partial_link_probe.lcf", "config/partial_link_slice.lcf"],
+    "result": "ffc_arm9_02035c18 is exact at 0x02035C18 and four packed-field functions plus literal pools reproduce the complete 76-byte target span at 0x02035C3C; full executable layout remains unresolved"
+  },
+  "required_local_files": ["mwccarm.exe", "license.dat"],
+  "note": "The proprietary compiler is never distributed by this repository. Exact build selection remains unconfirmed because all five tested builds emit identical results for the present corpus."
+}

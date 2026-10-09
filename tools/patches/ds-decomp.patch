@@ -1,0 +1,188 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 0b01c06..0dfeb24 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -752,8 +752,6 @@ dependencies = [
+ [[package]]
+ name = "ds-rom"
+ version = "0.8.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1198474d0a87563e36273f87278d1fddf595e88f8c4c5fe4c51ca28e264409e1"
+ dependencies = [
+  "bitfield-struct",
+  "bitreader",
+diff --git a/Cargo.toml b/Cargo.toml
+index e1c3ee9..bdea0f4 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -8,3 +8,6 @@ lto = true
+ [profile.release-fast]
+ inherits = "release"
+ lto = false
++
++[patch.crates-io]
++ds-rom = { path = "../ds-rom" }
+diff --git a/cli/src/cmd/rom/config.rs b/cli/src/cmd/rom/config.rs
+index 296c517..ce51163 100644
+--- a/cli/src/cmd/rom/config.rs
++++ b/cli/src/cmd/rom/config.rs
+@@ -378,6 +378,7 @@ impl ConfigRom {
+                 overlay_signatures: overlay_signatures_symbol
+                     .map(|s| (s.address() - arm9_section.address()) as u32)
+                     .unwrap_or(0),
++                has_footer: rom.arm9().offsets().has_footer,
+             },
+             encrypted: rom.arm9().originally_encrypted(),
+             compressed: rom.arm9().originally_compressed(),
+diff --git a/lib/src/analysis/ctor.rs b/lib/src/analysis/ctor.rs
+index 302ea7d..ade9d3e 100644
+--- a/lib/src/analysis/ctor.rs
++++ b/lib/src/analysis/ctor.rs
+@@ -38,17 +38,17 @@ impl CtorRange {
+         function: &Function,
+         module_code: &[u8],
+         base_address: u32,
+-    ) -> Option<u32> {
+-        let mut last_called_function = None;
++    ) -> Vec<u32> {
++        let mut called_functions = vec![];
+         for ins in function.parser(module_code, base_address) {
+             match &ins {
+                 Ins::Bl { target, .. } | Ins::Blx { target: BlxTarget::Direct(target), .. } => {
+-                    last_called_function = Some(target.addr);
++                    called_functions.push(target.addr);
+                 }
+                 _ => {}
+             }
+         }
+-        last_called_function
++        called_functions
+     }
+ 
+     pub fn find_in_arm9(
+@@ -82,8 +82,36 @@ impl CtorRange {
+             Err(e) => return Err(e.into()),
+         };
+ 
+-        let run_inits_addr = Self::find_last_function_call(&entry_func, entry_code, entry_addr)
+-            .ok_or_else(|| NoEntryFunctionCallsSnafu.build())?;
++        let called = Self::find_last_function_call(&entry_func, entry_code, entry_addr);
++        if called.is_empty() {
++            return NoEntryFunctionCallsSnafu.fail();
++        }
++        // The static initializer runner is normally the last call in the entry function, but TWL
++        // titles may call more functions after it. Try candidates from last to first.
++        let mut last_err = None;
++        for &run_inits_addr in called.iter().rev() {
++            match Self::try_run_inits(arm9, &code, unknown_autoloads, run_inits_addr) {
++                Ok(Some(range)) => return Ok(range),
++                Ok(None) => continue,
++                Err(e) => {
++                    if last_err.is_none() {
++                        last_err = Some(e);
++                    }
++                }
++            }
++        }
++        match last_err {
++            Some(e) => Err(e),
++            None => NoInitPoolConstantsSnafu.fail(),
++        }
++    }
++
++    fn try_run_inits(
++        arm9: &Arm9,
++        code: &[u8],
++        unknown_autoloads: &[&Autoload],
++        run_inits_addr: u32,
++    ) -> Result<Option<Self>, CtorRangeError> {
+ 
+         let run_inits_offset = (run_inits_addr - arm9.base_address()) as usize;
+         let (run_inits_module_start, run_inits_module_end, run_inits_code) =
+@@ -141,7 +169,12 @@ impl CtorRange {
+             .pool_constants()
+             .first_key_value()
+             .ok_or_else(|| NoInitPoolConstantsSnafu.build())?;
+-        let ctor_start_data = &run_inits_code[(p_ctor_start - run_inits_addr) as usize..];
++        let Some(ctor_start_data) = run_inits_code.get((p_ctor_start - run_inits_addr) as usize..) else {
++            return Ok(None);
++        };
++        if ctor_start_data.len() < 4 {
++            return Ok(None);
++        }
+         let ctor_start = u32::from_le_bytes([
+             ctor_start_data[0],
+             ctor_start_data[1],
+@@ -149,16 +182,26 @@ impl CtorRange {
+             ctor_start_data[3],
+         ]);
+ 
+-        let num_ctors = code[(ctor_start - arm9.base_address()) as usize..]
++        let base = arm9.base_address();
++        if ctor_start < base || (ctor_start - base) as usize >= code.len() {
++            return Ok(None);
++        }
++        let end_address = base + code.len() as u32;
++        let entries: Vec<u32> = code[(ctor_start - base) as usize..]
+             .as_chunks::<4>()
+             .0
+             .iter()
+             .map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]]))
+-            .position(|ctor| ctor == 0)
+-            .unwrap();
++            .collect();
++        let Some(num_ctors) = entries.iter().position(|&ctor| ctor == 0) else {
++            return Ok(None);
++        };
++        if entries[..num_ctors].iter().any(|&ctor| ctor < base || ctor >= end_address) {
++            return Ok(None);
++        }
+ 
+         let ctor_end = ctor_start + num_ctors as u32 * 4 + 4;
+ 
+-        Ok(Self { start: ctor_start, end: ctor_end })
++        Ok(Some(Self { start: ctor_start, end: ctor_end }))
+     }
+ }
+diff --git a/lib/src/config/module.rs b/lib/src/config/module.rs
+index 73ea986..f926101 100644
+--- a/lib/src/config/module.rs
++++ b/lib/src/config/module.rs
+@@ -1443,14 +1443,32 @@ impl Module {
+             );
+ 
+             // Add relocation and destination symbol
+-            let (_, section) =
+-                self.sections.get_by_contained_address(relocation.to_address).ok_or_else(|| {
+-                    InvalidDsProtRelocSnafu {
++            let Some((_, section)) = self.sections.get_by_contained_address(relocation.to_address)
++            else {
++                if self.kind == ModuleKind::Arm9 {
++                    return InvalidDsProtRelocSnafu {
+                         from: relocation.from_address,
+                         to: relocation.to_address,
+                     }
+-                    .build()
+-                })?;
++                    .fail();
++                }
++                // Overlay DS Protect code referencing the main module (e.g. TWL titles)
++                log::info!(
++                    "DS Protect relocation from {:#010x} to {:#010x} leaves module {}, assuming main",
++                    relocation.from_address,
++                    relocation.to_address,
++                    self.kind
++                );
++                self.relocations.add(Relocation::new(RelocationOptions {
++                    from: relocation.from_address,
++                    to: relocation.to_address,
++                    addend: relocation.addend as i64,
++                    kind: RelocationKind::Load,
++                    module: RelocationModule::Main,
++                    comments: Comments::new(),
++                }))?;
++                continue;
++            };
+             let symbol_name = format!("{}{:08x}", self.default_data_prefix, relocation.to_address);
+             match section.kind() {
+                 SectionKind::Code => {}

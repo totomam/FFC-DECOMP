@@ -1,0 +1,55 @@
+{
+  "schema": "ffc-acceleration-backlog-v1",
+  "generated_for": "v54",
+  "ordering": "expected_saved_active_minutes_or_additional_exact_bytes_per_hour",
+  "items": [
+    {
+      "priority": 1,
+      "id": "isolated-production-units",
+      "status": "planned",
+      "estimated_impact": "save 0.1-0.5 active seconds per candidate compile and permit verified cache reuse across unrelated candidate edits",
+      "prerequisites": ["catalog source-unit override support", "host syntax discovery of isolated source units"],
+      "validation_experiment": "compile the same two candidates in a shared unit and separate units, alter only one, then compare compiler calls, cache hits, and byte results"
+    },
+    {
+      "priority": 2,
+      "id": "family-batched-catalog-refresh",
+      "status": "implemented_partially",
+      "estimated_impact": "save about 1.6 seconds for each avoided per-member disposition refresh",
+      "prerequisites": ["review all family members before catalog mutation"],
+      "validation_experiment": "add a two-member family in one catalog batch and compare one disposition-refresh with two sequential refreshes"
+    },
+    {
+      "priority": 3,
+      "id": "high-resolution-phase-telemetry",
+      "status": "planned",
+      "estimated_impact": "measurement quality; exposes the largest manual phase without guessing",
+      "prerequisites": ["extend throughput event schema without invalidating v53 events"],
+      "validation_experiment": "record phase_start and phase_end for one complete tranche and verify phase sums equal paired active time"
+    },
+    {
+      "priority": 4,
+      "id": "named-argument-home-slot-recognizer",
+      "status": "observed_hypothesis",
+      "estimated_impact": "additional first-compile exact bytes for variadic wrappers",
+      "prerequisites": ["two more independently exact examples"],
+      "validation_experiment": "apply volatile named-argument home reads to the next variadic candidate and compare against a direct-argument control"
+    },
+    {
+      "priority": 5,
+      "id": "virtual-call-evaluation-order-beam",
+      "status": "planned",
+      "estimated_impact": "convert near matches such as 0x020692A4 without manual source shuffling",
+      "prerequisites": ["bounded transforms for receiver materialization and vtable-load order"],
+      "validation_experiment": "enumerate at most eight safe receiver/evaluation forms for 0x020692A4 and require semantic and host-syntax equivalence"
+    },
+    {
+      "priority": 6,
+      "id": "nested-field-structure-hypothesis",
+      "status": "blocked",
+      "estimated_impact": "may convert 0x020617F4 and related constructors",
+      "prerequisites": ["independent layout evidence for the +0x18 nested subobject"],
+      "validation_experiment": "compare typed nested-structure forms only after two consumers support the same boundary"
+    }
+  ]
+}
