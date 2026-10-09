@@ -2,9 +2,22 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-211 functions are matching C (all of V54's exact set + 5), 19,199 todo in `queue.csv`.
+2,995 functions are matching C (V54 set + pilot wave + clone pass), 16,355 todo in `queue.csv`.
 
-## Done this session
+## Done (session 3)
+- Pilot wave (8 funcs): 6 Haiku + 1 Sonnet + 1 manual = 8/8 integrated; ~94k subagent tokens total.
+- **Link flag `-nodead`** (was `-dead`): unreferenced matched objects were dead-stripped → whole-ROM shift.
+- `tools/clone.py`: groups functions by asm *shape* (immediates/pool/symbol operands → `@`); for a todo func
+  with a matched same-shape donor, rewrites the donor C (symbol renames + int literal map), verifies with
+  `tools/try`, integrates. First run: **2,775 functions** cloned, all integrated in one build. `run` takes ~10 min.
+  Shape cache: `work/shapes.json` (delete if symbols.txt changes).
+- Waves now pass only names: `mkwave.py ... --names [--dedup]`; workers run `tools/prompt <func> <tier>`.
+  `--dedup` = one rep per todo shape, biggest groups first (40 reps covered 2,682 funcs).
+- `tools/workflows/match_wave.js` (Workflow scriptPath; args = name list) → `tools/wave_done.py <task .output>`
+  integrates + updates queue (unintegrable matches kept in `pending/`). Then `tools/clone.py run`.
+- Prompt tip added: passthrough args / stack 5th arg (the pilot's only Haiku+Sonnet failure).
+
+## Done (session 2)
 - dsd patches: main `.rodata` between `.exceptix` and `.init` (TWL layout; was shifting every overlay by 0x8880);
   gap delink files may share names in `dsd lcf`. Config re-inited (additive diff only); DSProt_BSS_ovNNN kept.
 - `tools/configure.py` (ninja; from ph). Default target = `check_modules`. `check_symbols` fails on ov017/ov018
@@ -18,11 +31,9 @@
   nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
 ## Next steps (in order)
-1. Pilot wave: `python3 tools/mkwave.py haiku 8 --min-diff 10 > work/wave1.json`, pass as Workflow `args`;
-   per item agent(prompt, {agentType:'fn-matcher', model:'haiku', schema:{matched,best_pct,file,note}}),
-   unmatched → Sonnet (model 'sonnet', cap 15, prompt + "Haiku's best: <file>"). Then
-   `tools/integrate f1 file1 f2 file2 ...` and update queue.csv (status done / fail_haiku / fail_sonnet,
-   attempts, best_pct, note). Measure match rate, then scale waves (sharded by module).
+1. Loop: `python3 tools/mkwave.py haiku 40 --dedup --names > work/waveN.json` → Workflow
+   `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
+   → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
 2. 89 V54 behavioural non-matches: queue notes point at `work/v54/<func>.c` (regenerate with `port_v54.py check`).
 3. Integrate limits: refuses functions with .data/.rodata (string literals, statics), non-4-aligned starts (14),
    non-zero padding. Next: multi-function TUs + data sections.
