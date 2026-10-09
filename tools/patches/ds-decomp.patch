@@ -23,10 +23,27 @@ index e1c3ee9..bdea0f4 100644
 +[patch.crates-io]
 +ds-rom = { path = "../ds-rom" }
 diff --git a/cli/src/cmd/rom/config.rs b/cli/src/cmd/rom/config.rs
-index 296c517..ce51163 100644
+index 296c517..792e262 100644
 --- a/cli/src/cmd/rom/config.rs
 +++ b/cli/src/cmd/rom/config.rs
-@@ -378,6 +378,7 @@ impl ConfigRom {
+@@ -9,7 +9,7 @@ use ds_decomp::config::{
+     config::Config,
+     delinks::Delinks,
+     module::{
+-        AUTOLOAD_CALLBACK_SYMBOL_NAME, BUILD_INFO_SYMBOL_NAME, DSPROT_BSS_SYMBOL_NAME, ModuleKind,
++        AUTOLOAD_CALLBACK_SYMBOL_NAME, BUILD_INFO_SYMBOL_NAME, ModuleKind, dsprot_bss_symbol_name,
+         OVERLAY_SIGNATURES_SYMBOL_NAME,
+     },
+     section::{Section, Sections},
+@@ -226,6 +226,7 @@ impl ConfigRom {
+                 rom_overlay.dsprot_state().as_option(),
+                 object_cache,
+                 symbol_map,
++                ModuleKind::Overlay(overlay.id),
+             )?;
+ 
+             overlay_configs.push(OverlayConfig { info, signed: overlay.signed, file_name, dsprot });
+@@ -378,6 +379,7 @@ impl ConfigRom {
                  overlay_signatures: overlay_signatures_symbol
                      .map(|s| (s.address() - arm9_section.address()) as u32)
                      .unwrap_or(0),
@@ -34,6 +51,28 @@ index 296c517..ce51163 100644
              },
              encrypted: rom.arm9().originally_encrypted(),
              compressed: rom.arm9().originally_compressed(),
+@@ -390,6 +392,7 @@ impl ConfigRom {
+                 rom.arm9().dsprot_state().as_option(),
+                 object_cache,
+                 symbol_map,
++                ModuleKind::Arm9,
+             )?,
+         };
+ 
+@@ -457,11 +460,12 @@ fn create_dsprot_state(
+     dsprot_info: Option<&DsProtDecryptResult>,
+     object_cache: &ObjectCache,
+     symbol_map: &SymbolMap,
++    module_kind: ModuleKind,
+ ) -> Result<DsProtState> {
+     let Some(dsprot_info) = dsprot_info else {
+         return Ok(DsProtState::None);
+     };
+-    let bss_variable = symbol_map.by_name(DSPROT_BSS_SYMBOL_NAME)?.map(|(_, sym)| sym.addr);
++    let bss_variable = symbol_map.by_name(&dsprot_bss_symbol_name(module_kind))?.map(|(_, sym)| sym.addr);
+     let encrypted_ranges = symbol_map
+         .functions()
+         .map(|(func, sym)| {
 diff --git a/lib/src/analysis/ctor.rs b/lib/src/analysis/ctor.rs
 index 302ea7d..ade9d3e 100644
 --- a/lib/src/analysis/ctor.rs
@@ -145,10 +184,25 @@ index 302ea7d..ade9d3e 100644
      }
  }
 diff --git a/lib/src/config/module.rs b/lib/src/config/module.rs
-index 73ea986..f926101 100644
+index 73ea986..5ebcf52 100644
 --- a/lib/src/config/module.rs
 +++ b/lib/src/config/module.rs
-@@ -1443,14 +1443,32 @@ impl Module {
+@@ -1409,11 +1409,12 @@ impl Module {
+         options: &AnalysisOptions,
+     ) -> Result<(), ModuleError> {
+         if let Some(bss_variable) = dsprot_result.bss_variable {
++            let bss_name = dsprot_bss_symbol_name(self.kind);
+             if symbol_map.by_address(bss_variable)?.is_some() {
+-                symbol_map.rename_by_address(bss_variable, DSPROT_BSS_SYMBOL_NAME)?;
++                symbol_map.rename_by_address(bss_variable, &bss_name)?;
+             } else {
+                 symbol_map.add(Symbol {
+-                    name: DSPROT_BSS_SYMBOL_NAME.to_string(),
++                    name: bss_name,
+                     kind: SymbolKind::Bss(SymBss { size: None }),
+                     addr: bss_variable,
+                     ambiguous: false,
+@@ -1443,14 +1444,32 @@ impl Module {
              );
  
              // Add relocation and destination symbol
@@ -186,3 +240,19 @@ index 73ea986..f926101 100644
              let symbol_name = format!("{}{:08x}", self.default_data_prefix, relocation.to_address);
              match section.kind() {
                  SectionKind::Code => {}
+@@ -1581,6 +1600,15 @@ pub struct AnalysisOptions {
+ 
+ pub const DSPROT_BSS_SYMBOL_NAME: &str = "DSProt_BSS";
+ 
++/// Name of the DS Protect BSS variable for a module. Overlays get a suffix, since several
++/// overlays may each carry their own DS Protect copy and the symbols are global.
++pub fn dsprot_bss_symbol_name(kind: ModuleKind) -> String {
++    match kind {
++        ModuleKind::Overlay(id) => format!("{DSPROT_BSS_SYMBOL_NAME}_ov{id:03}"),
++        _ => DSPROT_BSS_SYMBOL_NAME.to_string(),
++    }
++}
++
+ fn create_overriden_function_sizes(dsprot_result: &DsProtDecryptResult) -> BTreeMap<u32, u32> {
+     dsprot_result
+         .functions

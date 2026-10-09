@@ -10,12 +10,14 @@ cd "$SRC"
 # ds-rom 0.8.0 (from crates.io) + TWL patches; ds-decomp at pinned rev + patches
 [ -d ds-decomp ] || git clone -q https://github.com/AetiasHax/ds-decomp
 git -C ds-decomp checkout -q "$(cat "$ROOT/tools/patches/ds-decomp.rev")"
-git -C ds-decomp apply "$ROOT/tools/patches/ds-decomp.patch" 2>/dev/null || echo "ds-decomp patch already applied?"
 if [ ! -d ds-rom ]; then
+  # fetch with the unpatched Cargo.toml (the patch points ds-rom at ../ds-rom)
+  git -C ds-decomp checkout -q -- .
   (cd ds-decomp && cargo fetch -q)
   cp -r ~/.cargo/registry/src/*/ds-rom-0.8.0 ds-rom
   (cd ds-rom && patch -p0 < "$ROOT/tools/patches/ds-rom-0.8.0.patch")
 fi
+git -C ds-decomp apply "$ROOT/tools/patches/ds-decomp.patch" 2>/dev/null || echo "ds-decomp patch already applied?"
 (cd ds-decomp && cargo build --release -q)
 cp ds-decomp/target/release/dsd "$ROOT/tools/bin/"
 
