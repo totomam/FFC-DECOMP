@@ -39,7 +39,7 @@ CC_FLAGS = " ".join([
     "-nolink",
     "-msgstyle gcc",
 ])
-LD_FLAGS = "-proc arm946e -dead -nostdlib -interworking -map closure,unused -msgstyle gcc"
+LD_FLAGS = "-proc arm946e -nodead -nostdlib -interworking -map closure,unused -msgstyle gcc"
 ARM9_LD_FLAGS = "-m Entry"
 
 root = Path(".")
