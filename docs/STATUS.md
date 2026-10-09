@@ -1,27 +1,45 @@
 # Status / Handoff
 
 ## Phase
-0 — setup. `dsd init` + `delink` succeed. DSProt_BSS link error fixed in dsd; link not yet re-run.
+0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
+211 functions are matching C (all of V54's exact set + 5), 19,199 todo in `queue.csv`.
+
+## Done this session
+- dsd patches: main `.rodata` between `.exceptix` and `.init` (TWL layout; was shifting every overlay by 0x8880);
+  gap delink files may share names in `dsd lcf`. Config re-inited (additive diff only); DSProt_BSS_ovNNN kept.
+- `tools/configure.py` (ninja; from ph). Default target = `check_modules`. `check_symbols` fails on ov017/ov018
+  data symbols (overlapping ITCM-region overlays) — not a byte mismatch, not yet fixed.
+- `tools/ffclib.py` shared lib; `tools/try <func> <file.c>` (MATCH / capped diff, relocation-aware: BL/BLX/ABS32
+  resolved from symbols.txt); `tools/asm <func>` (annotated target asm); `tools/integrate` (precheck → TU
+  `src/<module>/<func>.c` + `complete` entry in delinks.txt → ninja → bisect/revert on failure; serial, locked);
+  `tools/triage.py` → `queue.csv`; `tools/port_v54.py` (headers → include/ffc, per-function candidates in work/v54);
+  `tools/mkwave.py <tier> <n>` → JSON items (func, prompt) for a Workflow wave, marks them `queued`.
+- Compiler default 1.2p2 (build 1028; V54: all builds tie). Flags in `ffclib.CC_FLAGS` (configure imports
+  nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
 ## Next steps (in order)
-1. ~~Fix link error `Multiply-defined: "DSProt_BSS"`~~ — done: overlay copies are now
-   `DSProt_BSS_ovNNN` (ds-decomp patch + `config/usa` symbols renamed). Untested against the
-   ROM yet (uploads were missing in that session); re-run `delink` + `lcf` before linking.
-2. Link: `LM_LICENSE_FILE=$PWD/tools/mwccarm/license.dat tools/bin/wibo tools/mwccarm/1.2p2/mwldarm.exe -proc arm946e -dead -nostdlib -interworking -map closure,unused -m Entry @build/usa/objects.txt build/usa/arm9.lcf -o build/usa/arm9.o`
-3. `dsd rom config --elf build/usa/arm9.o --config ...` then `dsd check modules --config-path config/usa/arm9/config.yaml --fail`.
-   Expect further TWL issues; fix in the dsd patches.
-4. Write `configure.py` + ninja build (adapt `AetiasHax/ph` tools/configure.py, CC0).
-5. `tools/try`, `tools/integrate`, `queue.csv` triage → port V54 C → matching waves (docs/WORKFLOW.md).
+1. Pilot wave: `python3 tools/mkwave.py haiku 8 --min-diff 10 > work/wave1.json`, pass as Workflow `args`;
+   per item agent(prompt, {agentType:'fn-matcher', model:'haiku', schema:{matched,best_pct,file,note}}),
+   unmatched → Sonnet (model 'sonnet', cap 15, prompt + "Haiku's best: <file>"). Then
+   `tools/integrate f1 file1 f2 file2 ...` and update queue.csv (status done / fail_haiku / fail_sonnet,
+   attempts, best_pct, note). Measure match rate, then scale waves (sharded by module).
+2. 89 V54 behavioural non-matches: queue notes point at `work/v54/<func>.c` (regenerate with `port_v54.py check`).
+3. Integrate limits: refuses functions with .data/.rodata (string literals, statics), non-4-aligned starts (14),
+   non-zero padding. Next: multi-function TUs + data sections.
+4. Phase 1 SDK signature labelling (`dsd sig`), naming pass later.
+5. `configure.py` should import flags from `ffclib` to avoid drift; the integrated V54 files carry whole V54
+   preambles (dedupe into headers later).
 
 ## Fresh-session bootstrap
 No uploads needed. ROM parts + CodeWarrior zips live in the **private** repo `totomam/ffc-assets`
 (attach it with add_repo, push access not needed). Then:
 ```sh
 tools/setup.sh                     # builds patched dsd, wibo, 7zz
-tools/fetch_assets.sh              # clones ffc-assets → .assets/, verifies hashes, unpacks rom/baserom_usa.nds
+tools/fetch_assets.sh              # clones ffc-assets → .assets/ (or symlink an existing clone there)
+
 tools/setup.sh .assets/cw          # stages mwccarm/mwldarm + license into tools/mwccarm/
 tools/bin/dsd rom extract --rom rom/baserom_usa.nds --output-path extract/usa
-tools/bin/dsd delink --config-path config/usa/arm9/config.yaml && tools/bin/dsd lcf -c config/usa/arm9/config.yaml
+python3 tools/configure.py && ninja   # delink + lcf + compile + link + check modules
 ```
 `config/usa` is committed (from `dsd init --allow-unknown-function-calls`); don't re-run init unless needed.
 
