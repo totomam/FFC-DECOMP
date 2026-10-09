@@ -1,0 +1,1 @@
+..\..\..\tmp\claude-0\-home-user-FFC-DECOMP\4f26171c-d1c3-5dde-adb2-d1ccbef00147\scratchpad\cc\t.o: ..\..\..\tmp\claude-0\-home-user-FFC-DECOMP\4f26171c-d1c3-5dde-adb2-d1ccbef00147\scratchpad\cc\t.c 
