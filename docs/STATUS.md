@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**5,770 functions matching C (~30%)**, 13,415 todo, 304 blocked, 13 fail_sonnet in `queue.csv`. Build: 22/22 modules OK.
+**5,189 functions matching C (~27%)**, 13,906 todo, 304 blocked, 11 fail_sonnet in `queue.csv`. Build: 22/22 modules OK.
 
 ## Done (session 3)
 - Pilot wave (8 funcs): 6 Haiku + 1 Sonnet + 1 manual = 8/8 integrated; ~94k subagent tokens total.
