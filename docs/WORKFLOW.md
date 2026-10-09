@@ -2,50 +2,59 @@
 
 ## Principle
 The build is the only judge. A function is "done" only when the full ROM rebuild
-is byte-identical (SHA-1) and objdiff reports 100% for it. Worker claims don't count.
+is byte-identical (SHA-1) and its objdiff score is 100%. Worker claims don't count;
+scripts verify everything.
 
 ## Pipeline
 - `dsd` splits ARM9/ARM7/overlays into per-TU asm → ROM rebuilds matching from day one.
 - Functions move asm → C one at a time; unmatched functions stay asm, so the build never breaks.
-- Inner loop: `mwccarm` (via `wibo`) → objdiff vs. target → iterate.
+- Inner loop: `mwccarm` (via `wibo`, ~50 ms/compile) → byte diff vs. target → iterate.
 
 ## Roles
-| Role | Model | Does |
+| Role | Model | Scope per task |
 | --- | --- | --- |
-| Orchestrator | Opus | Build system, TU splits, shared headers/structs, queue, review, merges, handoffs. Doesn't do routine matching. |
-| Matcher | Sonnet 5.5 | Medium/large functions, one TU per task; infers local structs. |
-| Grunt | Haiku 5.5 | Tiny leaf functions (≤ ~20 instrs), porting V54 matches, SDK signature labelling, renames, scans. |
+| Orchestrator | Opus | Build system, TU splits, shared headers/structs, queue, workflow scripts, merges, handoffs. No routine matching. |
+| Matcher | Sonnet 5.5 | Medium/large function, or a hard Haiku failure. One function per task. |
+| Grunt | Haiku 5.5 | One small function (≤ ~40 instrs) per task, V54 ports, SDK signature labelling. |
+
+## Haiku 100k context limit (hard requirement)
+Enforced by task design, not trust:
+- **One function per agent.** Target asm, callee prototypes and relevant struct
+  excerpts are pasted into the prompt — no browsing the repo.
+- **Compact tools only.** `tools/try <func> <file.c>` prints `MATCH` or a diff capped
+  at 40 lines. Workers must not `cat` asm files, headers, or build logs.
+- **Hard attempt cap:** 6 compiles, then return best attempt + best %.
+- Budget: prompt ≤ 8k tokens + 6 × ~3k per attempt ≈ 30–40k peak. Well under 100k.
+- Functions too big for this budget go straight to Sonnet.
 
 ## Escalation
-Haiku (budget: 3 compile iterations/function) → Sonnet (budget: ~15) → Opus.
-Every failure records best match % + a one-line reason in the queue.
+Haiku (6 attempts) → Sonnet (15 attempts, sees Haiku's best attempt) → Opus/manual queue.
+Every failure records best match % + one-line reason in the queue.
 
-## Work units & conflicts
-- Unit of work = one translation unit (TU). One worker per TU, own git worktree.
-- Shared headers (`include/`): workers may only *append* new declarations;
-  struct changes go back to the orchestrator as proposals.
-- Orchestrator merges worktrees, runs full build, rejects anything that breaks SHA-1.
+## Isolation & merging
+- Workers never edit the repo. Each writes only to `work/<func>/` (scratch, gitignored).
+- `tools/integrate` (deterministic script) moves verified matches into the TU's C file,
+  removes the asm, rebuilds, and checks SHA-1. Any failure → revert that function.
+- No git worktrees needed → no conflicts, cheap fan-out.
+
+## Fan-out
+- Workflow tool, `pipeline()` over the queue: triage → Haiku → (fail) Sonnet → integrate.
+- Concurrency per workflow is capped by container CPUs; measured cap recorded in `docs/STATUS.md`.
+- To go wider: additional cloud sessions, each owning a disjoint set of TUs/overlays,
+  pushing to its own branch; orchestrator merges.
 
 ## Queue
-Single `queue.csv`: `func, tu, size, difficulty, status, owner, best_pct, note`.
-Difficulty triage is scripted (size, calls, branches), not LLM-judged.
-
-## Worker contract
-- Input: fixed prompt template + `CLAUDE.md` conventions + TU name + function list.
-- Output: short structured report only — matched list, failed list with best %, header proposals.
-  No diffs or asm dumps back to the orchestrator (protects its context).
+`queue.csv`: `func, tu, size, difficulty, status, tier, attempts, best_pct, note`.
+Difficulty triage is scripted (instr count, calls, branches, loops), not LLM-judged.
 
 ## Phases
-0. Setup (Opus): verify ROM, `dsd` init, matching asm rebuild, objdiff config, `tools/check` script.
-1. Identify NitroSDK/TwlSDK/NitroSystem library code (Haiku, signature matching) — match or leave as lib.
-2. Port V54's 206 matched + 77 behavioural functions (Haiku; failures → Sonnet).
-3. Scripted triage of all functions by difficulty.
-4. Matching waves: Haiku on small, Sonnet on medium/large, parallel by TU.
+0. Setup (Opus): verify ROM, `dsd` init, matching asm rebuild, `tools/try`, `tools/integrate`.
+1. Identify NitroSDK/TwlSDK/NitroSystem library code (signature matching).
+2. Port V54's 206 matched + 77 behavioural functions.
+3. Scripted triage of every function.
+4. Matching waves, smallest first (builds struct knowledge for larger ones).
 5. Naming/documentation pass (Sonnet).
 
-## Concurrency
-~4–8 parallel workers. Larger fan-out uses the Workflow tool — requires explicit user opt-in.
-
 ## Handoff
-Orchestrator keeps `docs/STATUS.md` current (progress %, active TUs, blockers, next steps).
+Orchestrator keeps `docs/STATUS.md` current (progress %, active waves, blockers, next steps).
 At ~200k context: stop, update STATUS.md, commit, push, write handoff.
