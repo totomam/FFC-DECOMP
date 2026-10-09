@@ -143,7 +143,7 @@ def main():
         n.newline()
 
         n.build("build.ninja", "configure",
-                implicit=[str(Path(__file__).resolve()), DSD, *dsd_configs, *map(str, source_files())])
+                implicit=[str(Path(__file__).resolve()), DSD, *dsd_configs])
         n.newline()
 
         baserom = root / "rom" / f"baserom_{game}.nds"

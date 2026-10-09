@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""tools/integrate <func> <file.c> [<func> <file.c> ...]
+   tools/integrate --list pairs.csv          (columns: func,file)
+Moves verified matches into src/<module>/<func>.c, adds a `complete` TU to delinks.txt,
+rebuilds with ninja and requires `dsd check modules` to pass. Failing batches are bisected;
+anything that breaks the build is reverted. Run serially (takes a lock)."""
+import csv
+import fcntl
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import ffclib  # noqa: E402
+
+ROOT = ffclib.ROOT
+LOG = ROOT / "work" / "integrate.log"
+
+
+def log(msg):
+    print(msg)
+    LOG.parent.mkdir(exist_ok=True)
+    with LOG.open("a") as f:
+        f.write(msg + "\n")
+
+
+def delinks_path(mod):
+    return dict(ffclib.module_dirs())[mod] / "delinks.txt"
+
+
+def precheck(func, src: Path):
+    sym = ffclib.symbols().get(func)
+    if sym is None or sym.kind != "function":
+        return None, "unknown function"
+    dst = ROOT / "src" / sym.module / f"{func}.c"
+    if dst.exists() or f"src/{sym.module}/{func}.c:" in delinks_path(sym.module).read_text():
+        return None, "already integrated"
+    if sym.addr % 4:
+        return None, "start not 4-aligned (needs a multi-function TU)"
+    if not pad_ok(sym):
+        return None, "non-zero padding after function"
+    obj, msg = ffclib.compile_c(src, ROOT / "work" / func / "obj")
+    if obj is None:
+        return None, "compile error"
+    got, bad = ffclib.resolve_func(obj, func, sym.addr)
+    if got is None or bad or got != ffclib.target_bytes(sym):
+        return None, "does not match (run tools/try)"
+    e = ffclib.Elf(obj)
+    for s in e.sh:
+        if s["name"] in (".data", ".rodata", ".bss", ".sbss", ".sdata", ".init", ".ctor") and s["size"]:
+            return None, f"object has {s['name']} (data TUs not supported yet)"
+    defined = [s["name"] for s in e.syms if s["shndx"] not in (0, 0xFFF1, 0xFFF2)
+               and s["bind"] == 1 and s["type"] == 2]
+    if defined != [func]:
+        return None, f"object must define only {func} (defines {defined})"
+    return sym, dst
+
+
+def tu_end(sym):
+    """Objects are 4-aligned, so the TU absorbs the zero padding up to the next 4-byte boundary."""
+    return (sym.addr + sym.size + 3) & ~3
+
+
+def pad_ok(sym):
+    end = sym.addr + sym.size
+    start = ffclib.module_ranges()[sym.module][0]
+    pad = ffclib._bin(sym.module)[end - start:tu_end(sym) - start]
+    return not any(pad)
+
+
+def apply(items):
+    """items: [(func, src, sym, dst)] -> write files + delinks entries; returns undo info."""
+    undo = {}
+    for func, src, sym, dst in items:
+        dl = delinks_path(sym.module)
+        undo.setdefault(dl, dl.read_text())
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dst)
+        text = dl.read_text().rstrip("\n") + "\n"
+        text += (f"\nsrc/{sym.module}/{func}.c:\n    complete\n"
+                 f"    .text       start:{sym.addr:#010x} end:{tu_end(sym):#010x}\n")
+        dl.write_text(text)
+    return undo
+
+
+def revert(items, undo):
+    for dl, text in undo.items():
+        dl.write_text(text)
+    for _, _, _, dst in items:
+        dst.unlink(missing_ok=True)
+
+
+def build_ok():
+    p = subprocess.run(["ninja"], cwd=ROOT, capture_output=True, text=True)
+    out = p.stdout + p.stderr
+    ok = p.returncode == 0 and "checksum failed" not in out
+    if not ok:
+        fails = re.findall(r"Check (.*): checksum failed", out) or [
+            l for l in out.splitlines() if "ERROR" in l or "FAILED" in l][:3]
+        log(f"  build failed: {fails}")
+    return ok
+
+
+def try_batch(items):
+    if not items:
+        return []
+    undo = apply(items)
+    if build_ok():
+        return items
+    revert(items, undo)
+    if len(items) == 1:
+        log(f"REVERT {items[0][0]}: breaks build")
+        return []
+    mid = len(items) // 2
+    return try_batch(items[:mid]) + try_batch(items[mid:])
+
+
+def main():
+    argv = sys.argv[1:]
+    pairs = []
+    if argv[:1] == ["--list"]:
+        pairs = [(r["func"], r["file"]) for r in csv.DictReader(open(argv[1]))]
+    else:
+        pairs = list(zip(argv[::2], argv[1::2]))
+    if not pairs:
+        sys.exit(__doc__)
+    lock = open(ROOT / "work" / ".integrate.lock", "w")
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    if not build_ok():
+        sys.exit("baseline build is not clean; fix it first")
+    items = []
+    for func, src in pairs:
+        sym, dst = precheck(func, Path(src))
+        if sym is None:
+            log(f"SKIP {func}: {dst}")
+        else:
+            items.append((func, Path(src), sym, dst))
+    done = try_batch(items)
+    for func, *_ in done:
+        log(f"OK {func}")
+    print(f"integrated {len(done)}/{len(pairs)}")
+
+
+if __name__ == "__main__":
+    main()
