@@ -64,7 +64,25 @@ def v54_extra(note):
     return ""
 
 
+def sibling_extra(func):
+    """C of an already-matched function with the identical instruction shape (clone.py could not adapt it)."""
+    import clone
+    sh = clone.shapes()
+    if func not in sh:
+        return ""
+    for r in csv.DictReader(QUEUE.open()):
+        f = r["func"]
+        if r["status"] == "done" and f != func and f in sh and sh[f][0] == sh[func][0]:
+            p = clone.donor_src(f, r["note"])
+            if p:
+                return (f"`{f}` has the identical instruction shape (only constants, offsets or symbols differ) and "
+                        f"matched with this C; adapt it (struct field offsets, constants, names):\n```\n"
+                        f"{p.read_text().strip()}\n```\n")
+    return ""
+
+
 def build(func, tier, extra=""):
+    extra = sibling_extra(func) + extra
     sym = ffclib.symbols()[func]
     asm = "\n".join(ffclib.func_asm(sym))
     refs = []
@@ -101,7 +119,17 @@ def main():
     if a.dedup:
         import clone
         sh = clone.shapes()
-        busy = {sh[r["func"]][0] for r in rows if r["func"] in sh and r["status"] not in ("todo",)}
+        tried = set(json.loads(clone.TRIED.read_text())) if clone.TRIED.exists() else set()
+        busy = {sh[r["func"]][0] for r in rows if r["func"] in sh and r["status"] not in ("todo", "done")}
+        done = {}
+        for r in rows:
+            if r["func"] in sh and r["status"] == "done":
+                done.setdefault(sh[r["func"]][0], []).append(r["func"])
+        for r in rows:  # a done sibling blocks the shape until clone.py tried (and failed) every pair
+            k = sh.get(r["func"], [None])[0]
+            if r["status"] == "todo" and k in done and k not in busy and any(
+                    f"{r['func']}|{d}{x}" not in tried for d in done[k] for x in ("", "|d")):
+                busy.add(k)
         groups = {}
         for r in rows:
             if r["func"] in sh and r["status"] == "todo":

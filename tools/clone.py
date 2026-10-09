@@ -76,8 +76,9 @@ def as_int(t):
 INT_RE = re.compile(r"\b(0[xX][0-9a-fA-F]+|\d+)([uUlL]*)\b")
 
 
-def rewrite(src, donor, target, da, ta):
-    """Rewrite donor C into target C. Returns None if the atom mapping is inconsistent."""
+def rewrite(src, donor, target, da, ta, derived=False):
+    """Rewrite donor C into target C. Returns None if the atom mapping is inconsistent.
+    derived: also map literals that are an expression of two donor atoms (tried second)."""
     names, nums = {donor: target}, {}
     for a, b in zip(da, ta):
         ia, ib = as_int(a), as_int(b)
@@ -92,6 +93,17 @@ def rewrite(src, donor, target, da, ta):
                 nums.setdefault(int(ma[1], 16), int(mb[1], 16))
         elif a != b:
             return None
+    # literals the donor C writes in derived form (0x43 << 2 -> 0x10c): same expression on target atoms
+    di = [(as_int(a), as_int(b)) for a, b in zip(da, ta) if as_int(a) is not None and as_int(b) is not None]
+    for m in (INT_RE.finditer(src) if derived else ()):
+        if m.start() and (src[m.start() - 1].isalnum() or src[m.start() - 1] == "_"):
+            continue
+        v = int(m[1], 0) if not (len(m[1]) > 1 and m[1][0] == "0" and m[1][1] not in "xX") else int(m[1], 8)
+        if v in nums or v < 2:
+            continue
+        d = derive(v, di)
+        if d is not None:
+            nums[v] = d
     nums = {k: v for k, v in nums.items() if k != v}
     names = {k: v for k, v in names.items() if k != v}
     # also map negatives / small immediates through as-is; ambiguous small numbers are caught by verify
@@ -116,6 +128,21 @@ def rewrite(src, donor, target, da, ta):
         out.append(src[last:])
         src = "".join(out)
     return src
+
+
+OPS = (lambda a, b: a << b if 0 <= b < 32 else None, lambda a, b: a * b, lambda a, b: a + b,
+       lambda a, b: a - b, lambda a, b: a | b)
+
+
+def derive(v, pairs):
+    """v from donor atoms (a op b) -> the same op on the matching target atoms, or None."""
+    for op in OPS:
+        for (a1, b1) in pairs:
+            for (a2, b2) in pairs:
+                if op(a1, a2) == v:
+                    r = op(b1, b2)
+                    return r if r is not None and r >= 0 else None
+    return None
 
 
 def verify(func, path):
@@ -147,22 +174,25 @@ def run(dry):
         f = r["func"]
         if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh or "unaligned" in r["note"]:
             continue
-        cands = [(d, p) for d, p in donors.get(sh[f][0], []) if f"{f}|{d}" not in tried]
+        cands = [(d, p, dv) for d, p in donors.get(sh[f][0], []) for dv in (False, True)
+                 if f"{f}|{d}" + ("|d" if dv else "") not in tried]
         if cands:
             jobs.append((f, cands))
 
     def attempt(job):
         f, cands = job
         bad = []
-        for d, dpath in cands:
-            new = rewrite(dpath.read_text(), d, f, sh[d][1], sh[f][1])
-            if new is not None:
+        for d, dpath, dv in cands:
+            key = f"{f}|{d}" + ("|d" if dv else "")
+            new = rewrite(dpath.read_text(), d, f, sh[d][1], sh[f][1], dv)
+            plain = rewrite(dpath.read_text(), d, f, sh[d][1], sh[f][1]) if dv else None
+            if new is not None and (not dv or new != plain):
                 out = ROOT / "work" / f / "clone.c"
                 out.parent.mkdir(parents=True, exist_ok=True)
                 out.write_text(new)
                 if verify(f, out):
                     return f, d, out, bad
-            bad.append(f"{f}|{d}")
+            bad.append(key)
         return f, None, None, bad
     made, pairs = {}, []
     with ThreadPoolExecutor(max(1, (os.cpu_count() or 2))) as ex:
