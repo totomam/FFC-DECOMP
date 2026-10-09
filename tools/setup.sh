@@ -4,6 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="${TOOLSRC:-$ROOT/.toolsrc}"
+CW="${1:+$(cd "$1" && pwd)}"
 mkdir -p "$SRC" "$ROOT/tools/bin"
 cd "$SRC"
 
@@ -38,8 +39,8 @@ if [ ! -x "$ROOT/tools/bin/7zz" ]; then
 fi
 
 # CodeWarrior: unzip each cw_dsi-*.zip into tools/mwccarm/<ver>/
-if [ $# -ge 1 ]; then
-  for z in "$1"/*cw_dsi-*.zip; do
+if [ -n "$CW" ]; then
+  for z in "$CW"/*cw_dsi-*.zip; do
     v=$(basename "$z" | sed -E 's/.*cw_dsi-([0-9])_([0-9])-patch([0-9]).*/\1.\2p\3/')
     t=$(mktemp -d); unzip -qo "$z" -d "$t"
     mkdir -p "$ROOT/tools/mwccarm/$v"
