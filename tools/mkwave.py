@@ -88,12 +88,31 @@ def main():
     ap.add_argument("--status", default="todo")
     ap.add_argument("--dry", action="store_true")
     ap.add_argument("--names", action="store_true", help="emit only func names (agents run tools/prompt)")
+    ap.add_argument("--dedup", action="store_true",
+                    help="one function per asm shape (tools/clone.py propagates matches), biggest groups first")
     a = ap.parse_args()
     rows = list(csv.DictReader(QUEUE.open()))
     pick = [r for r in rows if r["status"] == a.status and r["tier"] == a.tier
             and (not a.module or r["tu"] == a.module) and int(r["difficulty"]) >= a.min_diff
             and "unaligned" not in r["note"]]
     pick.sort(key=lambda r: int(r["difficulty"]))
+    if a.dedup:
+        import clone
+        sh = clone.shapes()
+        busy = {sh[r["func"]][0] for r in rows if r["func"] in sh and r["status"] not in ("todo",)}
+        groups = {}
+        for r in rows:
+            if r["func"] in sh and r["status"] == "todo":
+                groups.setdefault(sh[r["func"]][0], []).append(r["func"])
+        reps, seen = [], set()
+        for r in pick:
+            k = sh.get(r["func"], [r["func"]])[0]
+            if k in busy or k in seen:
+                continue
+            seen.add(k)
+            reps.append((len(groups.get(k, [])), r))
+        reps.sort(key=lambda x: -x[0])  # stable: ties keep difficulty order
+        pick = [r for _, r in reps]
     pick = pick[:a.count]
     items = []
     for r in pick:
