@@ -209,6 +209,7 @@ def run(dry):
                        cwd=ROOT, capture_output=True, text=True)
     ok = set(re.findall(r"^OK (\w+)", p.stdout, re.M))
     print(p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr[-500:])
+    rows = list(csv.DictReader(QUEUE.open()))  # re-read: mkwave may have marked rows queued meanwhile
     for r in rows:
         if r["func"] in ok:
             r["status"], r["best_pct"], r["note"] = "done", "100", f"cloned from {made[r['func']]}"
