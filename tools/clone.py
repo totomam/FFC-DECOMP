@@ -12,10 +12,12 @@ the same compare as tools/try, then integrated in one batch.
 """
 import csv
 import json
+import os
 import re
 import subprocess
 import sys
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -24,6 +26,7 @@ import ffclib  # noqa: E402
 ROOT = ffclib.ROOT
 QUEUE = ROOT / "queue.csv"
 CACHE = ROOT / "work" / "shapes.json"
+TRIED = ROOT / "work" / "clone_tried.json"  # (func|donor) pairs that failed; skipped next run
 ATOM_RE = re.compile(r"(=\S+|\.word \S+|#-?(?:0x[0-9a-f]+|\d+)|\b(?:bl|blx|b) (?!L[0-9a-f]{4}\b)\S+|; \S+$)")
 
 
@@ -135,22 +138,37 @@ def run(dry):
             d = donor_src(r["func"], r["note"])
             if d:
                 donors[sh[r["func"]][0]].append((r["func"], d))
-    made, pairs = {}, []
+    tried = set(json.loads(TRIED.read_text())) if TRIED.exists() else set()
+    jobs = []
     for r in rows:
         f = r["func"]
         if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh or "unaligned" in r["note"]:
             continue
-        for d, dpath in donors.get(sh[f][0], []):
+        cands = [(d, p) for d, p in donors.get(sh[f][0], []) if f"{f}|{d}" not in tried]
+        if cands:
+            jobs.append((f, cands))
+
+    def attempt(job):
+        f, cands = job
+        bad = []
+        for d, dpath in cands:
             new = rewrite(dpath.read_text(), d, f, sh[d][1], sh[f][1])
-            if new is None:
-                continue
-            out = ROOT / "work" / f / "clone.c"
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(new)
-            if verify(f, out):
+            if new is not None:
+                out = ROOT / "work" / f / "clone.c"
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text(new)
+                if verify(f, out):
+                    return f, d, out, bad
+            bad.append(f"{f}|{d}")
+        return f, None, None, bad
+    made, pairs = {}, []
+    with ThreadPoolExecutor(max(1, (os.cpu_count() or 2))) as ex:
+        for f, d, out, bad in ex.map(attempt, jobs):
+            tried.update(bad)
+            if d:
                 made[f] = d
                 pairs.append((f, out))
-                break
+    TRIED.write_text(json.dumps(sorted(tried)))
     print(f"cloned {len(made)} functions")
     if dry or not pairs:
         return
