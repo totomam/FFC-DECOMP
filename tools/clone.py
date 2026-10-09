@@ -87,6 +87,9 @@ def rewrite(src, donor, target, da, ta):
         elif ia is None and ib is None:
             if names.setdefault(a, b) != b:
                 return None
+            ma, mb = re.search(r"_([0-9a-f]{8})$", a), re.search(r"_([0-9a-f]{8})$", b)
+            if ma and mb:  # donors sometimes use the raw address instead of the symbol
+                nums.setdefault(int(ma[1], 16), int(mb[1], 16))
         elif a != b:
             return None
     nums = {k: v for k, v in nums.items() if k != v}
