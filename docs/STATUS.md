@@ -1,14 +1,12 @@
 # Status / Handoff
 
 ## Phase
-0 — setup. `dsd init` + `delink` succeed. **First link fails** (see Next step 1).
+0 — setup. `dsd init` + `delink` succeed. DSProt_BSS link error fixed in dsd; link not yet re-run.
 
 ## Next steps (in order)
-1. **Fix link error:** `Multiply-defined: "DSProt_BSS"` — ov015 (`0x021d79ec`) and ov016
-   (`0x021469c0`) each get a global `DSProt_BSS` symbol. Patch ds-decomp
-   `lib/src/config/module.rs` `add_dsprot_bss_and_relocations` to give overlay copies a
-   unique name (e.g. `DSProt_BSS_ov015`), and check `cli/src/cmd/rom/config.rs:465`, which
-   looks the symbol up by name. Regenerate `tools/patches/ds-decomp.patch`.
+1. ~~Fix link error `Multiply-defined: "DSProt_BSS"`~~ — done: overlay copies are now
+   `DSProt_BSS_ovNNN` (ds-decomp patch + `config/usa` symbols renamed). Untested against the
+   ROM yet (uploads were missing in that session); re-run `delink` + `lcf` before linking.
 2. Link: `LM_LICENSE_FILE=$PWD/tools/mwccarm/license.dat tools/bin/wibo tools/mwccarm/1.2p2/mwldarm.exe -proc arm946e -dead -nostdlib -interworking -map closure,unused -m Entry @build/usa/objects.txt build/usa/arm9.lcf -o build/usa/arm9.o`
 3. `dsd rom config --elf build/usa/arm9.o --config ...` then `dsd check modules --config-path config/usa/arm9/config.yaml --fail`.
    Expect further TWL issues; fix in the dsd patches.
