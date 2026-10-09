@@ -23,6 +23,10 @@ def main():
     for r in res:
         best = r.get("sonnet") or r.get("haiku")
         if r.get("tier") in ("haiku", "sonnet") and best:
+            if re.search(r"\basm\b|__asm", (ROOT / best["file"]).read_text()):
+                r["tier"] = "fail"  # inline asm is not a decompilation
+                best["note"] = "asm-only match rejected; " + best["note"]
+                continue
             matched[r["func"]] = best["file"]
     status = {}
     if matched:

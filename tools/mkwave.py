@@ -47,7 +47,7 @@ Rules:
 - Write your C to `work/{func}/a.c` (you may use b.c, c.c ...). Only touch `work/{func}/`.
 - Check with: `tools/try {func} work/{func}/a.c` — prints MATCH or a diff (target vs yours).
 - Hard cap: {cap} runs of tools/try. Stop at the first MATCH.
-- File layout: `#include "ffc/types.h"` (uint8_t..uint32_t, int8_t..int32_t), then `extern` prototypes for every referenced symbol (guess types from usage), then the function `{func}` (non-static, exactly that name). Define nothing else non-static; no string literals or static data.
+- File layout: `#include "ffc/types.h"` (uint8_t..uint32_t, int8_t..int32_t), then `extern` prototypes for every referenced symbol (guess types from usage), then the function `{func}` (non-static, exactly that name). Define nothing else non-static; no string literals or static data. No `asm` blocks/functions or `#pragma` — pure C only (an asm match counts as a failure).
 - Compiled as C99 Thumb by default{armnote}. Do not read other repo files, asm dumps, or headers.
 - Tips: mwcc often reuses loads, prefers `if (x) return;` early exits; register/ordering diffs usually mean statement order or types (signed/unsigned, u8/u16) differ. Use struct pointer offsets via casts or a local struct typedef.
 - Calls: r0-r3 not written before a `bl` means the caller's own params pass straight through (declare them!); `str rX, [sp]`/`[sp, #4]` before a `bl` is the callee's 5th/6th argument, not a local. `adds r3, r0, #0` before a call = param a moved to callee arg 4.
