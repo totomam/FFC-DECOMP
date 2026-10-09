@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tools/wave_done.py <result.json> — consume a match_wave.js result:
+"""tools/wave_done.py <result.json | workflow task .output> — consume a match_wave.js result:
 integrate matched functions (tools/integrate), then update queue.csv
 (status done / fail_haiku / fail_sonnet / skip_integrate -> source kept in pending/, attempts, best_pct, note). Prints a summary."""
 import csv
@@ -17,7 +17,8 @@ QUEUE = ROOT / "queue.csv"
 
 
 def main():
-    res = [r for r in json.load(open(sys.argv[1])) if r]
+    data = json.load(open(sys.argv[1]))
+    res = [r for r in (data["result"] if isinstance(data, dict) else data) if r]
     matched = {}
     for r in res:
         best = r.get("sonnet") or r.get("haiku")
