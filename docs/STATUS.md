@@ -16,11 +16,12 @@
 5. `tools/try`, `tools/integrate`, `queue.csv` triage → port V54 C → matching waves (docs/WORKFLOW.md).
 
 ## Fresh-session bootstrap
-New sessions get a new container. Re-upload the **CodeWarrior zips** and the **split ROM 7z**, then:
+No uploads needed. ROM parts + CodeWarrior zips live in the **private** repo `totomam/ffc-assets`
+(attach it with add_repo, push access not needed). Then:
 ```sh
-tools/setup.sh /root/.claude/uploads/<id>        # builds patched dsd, wibo, 7zz; stages mwccarm
-cat <uploads>/*NDSi_Enhanced.7z.t0.0{01..19} > /tmp/ffc.7z   # parts sorted by number, not upload name
-tools/bin/7zz x -o/tmp/x /tmp/ffc.7z && mkdir -p rom && mv /tmp/x/*.nds rom/baserom_usa.nds
+tools/setup.sh                     # builds patched dsd, wibo, 7zz
+tools/fetch_assets.sh              # clones ffc-assets → .assets/, verifies hashes, unpacks rom/baserom_usa.nds
+tools/setup.sh .assets/cw          # stages mwccarm/mwldarm + license into tools/mwccarm/
 tools/bin/dsd rom extract --rom rom/baserom_usa.nds --output-path extract/usa
 tools/bin/dsd delink --config-path config/usa/arm9/config.yaml && tools/bin/dsd lcf -c config/usa/arm9/config.yaml
 ```
