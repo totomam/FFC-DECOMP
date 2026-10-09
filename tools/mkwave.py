@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """tools/mkwave.py <tier> <count> [--module M] [--min-diff N] -> prints JSON items for a Workflow wave.
-Each item: {func, tier, prompt}. Picks todo functions by ascending difficulty and marks them `queued`."""
+Each item: {func, tier, prompt}; with --names just func names (workers fetch prompts via tools/prompt). Picks todo functions by ascending difficulty and marks them `queued`."""
 import argparse
 import csv
 import json
@@ -13,14 +13,6 @@ import ffclib  # noqa: E402
 
 ROOT = ffclib.ROOT
 QUEUE = ROOT / "queue.csv"
-ap = argparse.ArgumentParser()
-ap.add_argument("tier")
-ap.add_argument("count", type=int)
-ap.add_argument("--module")
-ap.add_argument("--min-diff", type=int, default=0)
-ap.add_argument("--status", default="todo")
-ap.add_argument("--dry", action="store_true")
-a = ap.parse_args()
 
 
 def prototypes():
@@ -33,7 +25,14 @@ def prototypes():
     return out
 
 
-PROTOS = prototypes()
+_PROTOS = None
+
+
+def protos():
+    global _PROTOS
+    if _PROTOS is None:
+        _PROTOS = prototypes()
+    return _PROTOS
 
 TEMPLATE = """Match one C function to the target bytes (Fossil Fighters: Champions, mwccarm -O4,p, {mode}).
 
@@ -55,6 +54,13 @@ Rules:
 Return: matched (bool), best_pct (number from tools/try, 100 if MATCH), file (path of best attempt), note (one line: what blocks a match, or empty)."""
 
 
+def v54_extra(note):
+    m = re.search(r"(work/v54/\S+\.c)", note or "")
+    if m and (ROOT / m[1]).exists():
+        return f"A previous behavioural (non-matching) attempt exists at {m[1]}; you may start from it.\n"
+    return ""
+
+
 def build(func, tier, extra=""):
     sym = ffclib.symbols()[func]
     asm = "\n".join(ffclib.func_asm(sym))
@@ -63,7 +69,7 @@ def build(func, tier, extra=""):
         if name in [r.split(" ")[0] for r in refs]:
             continue
         s = ffclib.symbols().get(name)
-        desc = PROTOS.get(name) or (f"{s.kind}" + (f" ({s.mode})" if s and s.mode else "") if s else "unknown")
+        desc = protos().get(name) or (f"{s.kind}" + (f" ({s.mode})" if s and s.mode else "") if s else "unknown")
         refs.append(f"{name} : {desc}")
     cap = 6 if tier == "haiku" else 15
     armnote = ". This function is ARM: put `/* cflags: -nothumb */` as the very first line" if sym.mode == "arm" else ""
@@ -73,6 +79,15 @@ def build(func, tier, extra=""):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("tier")
+    ap.add_argument("count", type=int)
+    ap.add_argument("--module")
+    ap.add_argument("--min-diff", type=int, default=0)
+    ap.add_argument("--status", default="todo")
+    ap.add_argument("--dry", action="store_true")
+    ap.add_argument("--names", action="store_true", help="emit only func names (agents run tools/prompt)")
+    a = ap.parse_args()
     rows = list(csv.DictReader(QUEUE.open()))
     pick = [r for r in rows if r["status"] == a.status and r["tier"] == a.tier
             and (not a.module or r["tu"] == a.module) and int(r["difficulty"]) >= a.min_diff
@@ -81,11 +96,10 @@ def main():
     pick = pick[:a.count]
     items = []
     for r in pick:
-        extra = ""
-        m = re.search(r"(work/v54/\S+\.c)", r["note"])
-        if m and (ROOT / m[1]).exists():
-            extra = f"A previous behavioural (non-matching) attempt exists at {m[1]}; you may start from it.\n"
-        items.append({"func": r["func"], "tier": a.tier, "prompt": build(r["func"], a.tier, extra)})
+        if a.names:
+            items.append(r["func"])
+        else:
+            items.append({"func": r["func"], "tier": a.tier, "prompt": build(r["func"], a.tier, v54_extra(r["note"]))})
         r["status"] = "queued"
     if not a.dry:
         with QUEUE.open("w", newline="") as f:
