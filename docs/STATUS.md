@@ -112,3 +112,9 @@ python3 tools/configure.py && ninja   # delink + lcf + compile + link + check mo
 ## Prior work (V54)
 - 871 functions mapped; 206 byte-exact, 77 behavioural. C sources + catalog committed in `reference/v54/`
   (`src/`, `include/`, `functions.csv`); to be ported after the build matches.
+
+## Handoff template
+At the context guard: update this file, push, then give the user a **paste-ready prompt** for the next session:
+branch, bootstrap line, the first pending step (e.g. "wave N's clone pass not run yet"), the wave loop commands,
+the keep-in-mind list (brace escaping, pgrep self-match, killed-integrate recovery, asm = swi stubs only,
+C++ via cflags), optional manual items, and "end with a paste-ready handoff prompt".
