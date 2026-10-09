@@ -1,0 +1,1 @@
+unsigned int func_020744cc(const void *object) { return *(const unsigned int *)((const char *)object + 0x14); }
