@@ -50,4 +50,4 @@ tools/bin/dsd delink --config-path config/usa/arm9/config.yaml && tools/bin/dsd 
 
 ## Prior work (V54)
 - 871 functions mapped; 206 byte-exact, 77 behavioural. C sources + catalog committed in `reference/v54/`
-  (`src/`, `include/`, `data/functions.csv`); to be ported after the build matches.
+  (`src/`, `include/`, `functions.csv`); to be ported after the build matches.
