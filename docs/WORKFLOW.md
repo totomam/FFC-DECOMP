@@ -24,7 +24,7 @@ Enforced by task design, not trust:
 - **Compact tools only.** `tools/try <func> <file.c>` prints `MATCH` or a diff capped
   at 40 lines. Workers must not `cat` asm files, headers, or build logs.
 - **Hard attempt cap:** 6 compiles, then return best attempt + best %.
-- Budget: prompt ≤ 8k tokens + 6 × ~3k per attempt ≈ 30–40k peak. Well under 100k.
+- Budget: ~47k baseline (measured) + prompt ≤ 8k + 6 × ~4k attempts ≈ 80k peak. Under 100k.
 - Functions too big for this budget go straight to Sonnet.
 
 ## Escalation
@@ -39,7 +39,7 @@ Every failure records best match % + one-line reason in the queue.
 
 ## Fan-out
 - Workflow tool, `pipeline()` over the queue: triage → Haiku → (fail) Sonnet → integrate.
-- Concurrency per workflow is capped by container CPUs; measured cap recorded in `docs/STATUS.md`.
+- Concurrency is 2 agents per workflow here, but concurrent workflows stack → run several sharded workflows at once (e.g. one per overlay group).
 - To go wider: additional cloud sessions, each owning a disjoint set of TUs/overlays,
   pushing to its own branch; orchestrator merges.
 
