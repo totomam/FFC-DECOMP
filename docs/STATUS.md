@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-2,995 functions are matching C (V54 set + pilot wave + clone pass), 16,355 todo in `queue.csv`.
+**5,770 functions matching C (~30%)**, 13,415 todo, 304 blocked, 13 fail_sonnet in `queue.csv`. Build: 22/22 modules OK.
 
 ## Done (session 3)
 - Pilot wave (8 funcs): 6 Haiku + 1 Sonnet + 1 manual = 8/8 integrated; ~94k subagent tokens total.
@@ -16,6 +16,20 @@
 - `tools/workflows/match_wave.js` (Workflow scriptPath; args = name list) → `tools/wave_done.py <task .output>`
   integrates + updates queue (unintegrable matches kept in `pending/`). Then `tools/clone.py run`.
 - Prompt tip added: passthrough args / stack 5th arg (the pilot's only Haiku+Sonnet failure).
+- Waves: w2 40 reps → 33 (28 Haiku/5 Sonnet, 533k tok); w3 60 reps → 54 (32/22, 795k tok; Sonnet ran without
+  its prompt — a `{}` in the mkwave template broke `tools/prompt`, now fixed: **escape braces in TEMPLATE tips**).
+  Clone passes after w1/w2: +2,775, +527, +1,579. **Wave 3's clone pass NOT run yet** — run it first.
+- `wave_done.py` rejects inline-asm matches (prompt forbids asm). Exception to decide: SWI/BIOS stubs
+  (e.g. `LZ77UnCompReadNormalWrite8bit` = `swi 0x11; bx lr`) can only be asm — probably allow asm for SDK stubs.
+- Blocked: 141 C++ this-adjust thunks (shape of func_0200d460: `push {r2}; ldr r2,=-0x80; ...; pop {pc}`) —
+  compiler-generated, need C++ class TUs; 163 `__sinit_*` (break dsd; need .ctor/.init TU support).
+- Manual (Opus) findings: PMF/8-byte struct args passed by value show as `push {r0-r3}` + `[sp,#0x14]` loads
+  (func_020315ac). func_0200d5ec shape (73 funcs, tier→opus): unfolded `subs r1,r1,r1` + 4-byte frame; plain C,
+  pointer diffs and inline helpers all fold — maybe C++ (`-lang c++` + `extern "C"` via per-file cflags, untested).
+- clone.py: parallel verify (4 cpus), negative cache `work/clone_tried.json`, maps raw addresses of
+  address-named symbols (V54 donors use `0x020ACEE0` literals). `run` can exceed 30 min with bisects: run with
+  `nohup` in background with a long timeout. A killed integrate leaves applied-but-unrecorded TUs: if `ninja`
+  passes, record them as done (see git log "Clone pass after wave 2").
 
 ## Done (session 2)
 - dsd patches: main `.rodata` between `.exceptix` and `.init` (TWL layout; was shifting every overlay by 0x8880);
@@ -31,7 +45,8 @@
   nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
 ## Next steps (in order)
-1. Loop: `python3 tools/mkwave.py haiku 40 --dedup --names > work/waveN.json` → Workflow
+0. `python3 tools/clone.py run` (propagate wave 3), commit.
+1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
 2. 89 V54 behavioural non-matches: queue notes point at `work/v54/<func>.c` (regenerate with `port_v54.py check`).

@@ -51,7 +51,7 @@ Rules:
 - Compiled as C99 Thumb by default{armnote}. Do not read other repo files, asm dumps, or headers.
 - Tips: mwcc often reuses loads, prefers `if (x) return;` early exits; register/ordering diffs usually mean statement order or types (signed/unsigned, u8/u16) differ. Use struct pointer offsets via casts or a local struct typedef.
 - Calls: r0-r3 not written before a `bl` means the caller's own params pass straight through (declare them!); `str rX, [sp]`/`[sp, #4]` before a `bl` is the callee's 5th/6th argument, not a local. `adds r3, r0, #0` before a call = param a moved to callee arg 4.
-- Entry `push {r0, r1, r2, r3}` (or `push {r1, r2}` etc.) then loads from `[sp, #0x14]`-ish = a struct passed BY VALUE in registers (e.g. `typedef struct { uint32_t a, b; } S;` as a parameter), not separate ints. A word stored to [p] right after an allocator call is a vtable pointer (inlined C++ ctor).
+- Entry `push {{r0, r1, r2, r3}}` (or `push {{r1, r2}}` etc.) then loads from `[sp, #0x14]`-ish = a struct passed BY VALUE in registers (e.g. `typedef struct {{ uint32_t a, b; }} S;` as a parameter), not separate ints. A word stored to [p] right after an allocator call is a vtable pointer (inlined C++ ctor).
 {extra}
 Return: matched (bool), best_pct (number from tools/try, 100 if MATCH), file (path of best attempt), note (one line: what blocks a match, or empty)."""
 
