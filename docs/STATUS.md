@@ -18,7 +18,8 @@
 - Waiting on processes: `pgrep -f "clone.py run"` matches the waiting shell itself — use `pgrep -f "^python3 tools/clone"`.
 - Unknown-symbol call: func_02082908 (96.6%) calls 0x021d9ad8 (no symbol) — add a symbol to unblock.
 - Not started: C++ thunks (need class TUs + mangled names), `__sinit_*` (.init/.ctor/.bss TU: 42 in main, 121 in
-  overlays), SWI asm decision (still open).
+  overlays), SWI asm decision: **decided — asm allowed for BIOS swi stubs only** (`wave_done.swi_stub`);
+  7 integrated, 11 blocked (unaligned / padding → need multi-function TUs; `asm void f(void) { swi N\n bx lr }`).
 
 ## Done (session 3)
 - Pilot wave (8 funcs): 6 Haiku + 1 Sonnet + 1 manual = 8/8 integrated; ~94k subagent tokens total.
@@ -35,8 +36,7 @@
 - Waves: w2 40 reps → 33 (28 Haiku/5 Sonnet, 533k tok); w3 60 reps → 54 (32/22, 795k tok; Sonnet ran without
   its prompt — a `{}` in the mkwave template broke `tools/prompt`, now fixed: **escape braces in TEMPLATE tips**).
   Clone passes after w1/w2: +2,775, +527, +1,579. **Wave 3's clone pass NOT run yet** — run it first.
-- `wave_done.py` rejects inline-asm matches (prompt forbids asm). Exception to decide: SWI/BIOS stubs
-  (e.g. `LZ77UnCompReadNormalWrite8bit` = `swi 0x11; bx lr`) can only be asm — probably allow asm for SDK stubs.
+- `wave_done.py` rejects inline-asm matches except BIOS swi stubs (decided session 4).
 - Blocked: 141 C++ this-adjust thunks (shape of func_0200d460: `push {r2}; ldr r2,=-0x80; ...; pop {pc}`) —
   compiler-generated, need C++ class TUs; 163 `__sinit_*` (break dsd; need .ctor/.init TU support).
 - Manual (Opus) findings: PMF/8-byte struct args passed by value show as `push {r0-r3}` + `[sp,#0x14]` loads

@@ -16,6 +16,16 @@ ROOT = ffclib.ROOT
 QUEUE = ROOT / "queue.csv"
 
 
+STUB_RE = re.compile(r"(svc #\w+|bx lr|movs r\d, #\w+|adds r\d, r\d, #0)$")
+
+
+def swi_stub(func):
+    """BIOS call stubs (svc + register shuffles) are the only functions allowed to match via asm."""
+    sym = ffclib.symbols().get(func)
+    lines = [ln.split(": ", 1)[1] for ln in ffclib.func_asm(sym)] if sym else []
+    return any(ln.startswith("svc") for ln in lines) and all(STUB_RE.match(ln) for ln in lines)
+
+
 def main():
     data = json.load(open(sys.argv[1]))
     res = [r for r in (data["result"] if isinstance(data, dict) else data) if r]
@@ -23,7 +33,7 @@ def main():
     for r in res:
         best = r.get("sonnet") or r.get("haiku")
         if r.get("tier") in ("haiku", "sonnet") and best:
-            if re.search(r"\basm\b|__asm", (ROOT / best["file"]).read_text()):
+            if re.search(r"\basm\b|__asm", (ROOT / best["file"]).read_text()) and not swi_stub(r["func"]):
                 r["tier"] = "fail"  # inline asm is not a decompilation
                 best["note"] = "asm-only match rejected; " + best["note"]
                 continue
