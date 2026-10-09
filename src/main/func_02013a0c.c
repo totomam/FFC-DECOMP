@@ -1,0 +1,11 @@
+#include "ffc/types.h"
+
+extern void *func_ov002_021c8f10(void *object);
+extern void func_02056844(void *object);
+
+void *func_02013a0c(void *object)
+{
+    func_ov002_021c8f10((uint8_t *)object + 0x10);
+    func_02056844(object);
+    return object;
+}

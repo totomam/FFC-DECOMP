@@ -1,0 +1,8 @@
+#include "ffc/types.h"
+
+extern void func_02084ca4(void *dst, void *src, uint32_t n);
+
+void func_020120d4(uint8_t *a, uint8_t *b)
+{
+    func_02084ca4(b, a + 12, 4);
+}
