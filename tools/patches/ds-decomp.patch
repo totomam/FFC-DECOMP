@@ -184,10 +184,25 @@ index 302ea7d..ade9d3e 100644
      }
  }
 diff --git a/lib/src/config/module.rs b/lib/src/config/module.rs
-index 73ea986..5ebcf52 100644
+index 73ea986..7788dc6 100644
 --- a/lib/src/config/module.rs
 +++ b/lib/src/config/module.rs
-@@ -1409,11 +1409,12 @@ impl Module {
+@@ -1090,8 +1090,12 @@ impl Module {
+         };
+ 
+         // .rodata
+-        let rodata_start = rodata_start.unwrap_or(text_exceptix_end);
+-        self.add_rodata_section(rodata_start, ctor.start)?;
++        // TWL: .init may sit directly before .ctor, with .rodata between .exceptix and .init
++        let (rodata_start, rodata_end) = match rodata_start {
++            Some(start) if start < ctor.start => (start, ctor.start),
++            _ => (text_exceptix_end, read_only_end),
++        };
++        self.add_rodata_section(rodata_start, rodata_end)?;
+ 
+         // .data and .bss
+         let data_start = ctor.end.next_multiple_of(32);
+@@ -1409,11 +1413,12 @@ impl Module {
          options: &AnalysisOptions,
      ) -> Result<(), ModuleError> {
          if let Some(bss_variable) = dsprot_result.bss_variable {
@@ -202,7 +217,7 @@ index 73ea986..5ebcf52 100644
                      kind: SymbolKind::Bss(SymBss { size: None }),
                      addr: bss_variable,
                      ambiguous: false,
-@@ -1443,14 +1444,32 @@ impl Module {
+@@ -1443,14 +1448,32 @@ impl Module {
              );
  
              // Add relocation and destination symbol
@@ -240,7 +255,7 @@ index 73ea986..5ebcf52 100644
              let symbol_name = format!("{}{:08x}", self.default_data_prefix, relocation.to_address);
              match section.kind() {
                  SectionKind::Code => {}
-@@ -1581,6 +1600,15 @@ pub struct AnalysisOptions {
+@@ -1581,6 +1604,15 @@ pub struct AnalysisOptions {
  
  pub const DSPROT_BSS_SYMBOL_NAME: &str = "DSProt_BSS";
  
