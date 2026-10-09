@@ -52,6 +52,7 @@ Rules:
 - Tips: mwcc often reuses loads, prefers `if (x) return;` early exits; register/ordering diffs usually mean statement order or types (signed/unsigned, u8/u16) differ. Use struct pointer offsets via casts or a local struct typedef.
 - Calls: r0-r3 not written before a `bl` means the caller's own params pass straight through (declare them!); `str rX, [sp]`/`[sp, #4]` before a `bl` is the callee's 5th/6th argument, not a local. `adds r3, r0, #0` before a call = param a moved to callee arg 4.
 - Entry `push {{r0, r1, r2, r3}}` (or `push {{r1, r2}}` etc.) then loads from `[sp, #0x14]`-ish = a struct passed BY VALUE in registers (e.g. `typedef struct {{ uint32_t a, b; }} S;` as a parameter), not separate ints. A word stored to [p] right after an allocator call is a vtable pointer (inlined C++ ctor).
+- `subs rX, rX, rX` (an unfolded x - x; C always folds it to `movs rX, #0`), often with an unexplained 4-byte stack frame: compile as C++ (first line `/* cflags: -lang c++ */`, declare every extern and the function itself `extern "C"`) and route the value through an inline helper taking a class with an empty destructor by const reference: `struct Num {{ int v; Num(int x) : v(x) {{}} ~Num() {{}} }}; inline int diff(const Num &a, int b) {{ return a.v - b; }}` then `int n = p->size; p->size = diff(n, n);`.
 {extra}
 Return: matched (bool), best_pct (number from tools/try, 100 if MATCH), file (path of best attempt), note (one line: what blocks a match, or empty)."""
 

@@ -128,7 +128,7 @@ def main():
         n.rule("disassemble", f"{DSD} dis --config-path $config_path --asm-path $output_path --ual")
         n.rule("mwcc",
                f"{ENV} {WIBO} {CC} $base_flags {CC_INCLUDES} $cc_flags -d {game} -MD -c $in -o $basedir"
-               f" && $python tools/transform_dep.py $basefile.d $basefile.d",
+               f" && $python tools/transform_dep.py $basefile.d $basefile.d$post",
                depfile="$basefile.d", description="mwcc $in")
         n.rule("lcf", f"{DSD} lcf -c $config_path")
         n.rule("mwld", f"{ENV} {WIBO} {LD} {LD_FLAGS} $extra_ld_flags @$objects_file $lcf_file -o $out",
@@ -161,11 +161,14 @@ def main():
                 variables={"config_path": str(arm9_config), "output_path": str(game_build / "asm")})
         n.newline()
 
-        mwcc_implicit = [CC, WIBO, "tools/transform_dep.py"]
+        mwcc_implicit = [CC, WIBO, "tools/transform_dep.py", "tools/strip_weak.py"]
         for src in source_files():
             obj = game_build / src.with_suffix(".o")
             extra = file_cc_flags(src)
+            # C++: drop unreferenced inline copies the original link dead-stripped
+            post = f" && $python tools/strip_weak.py {obj}" if "c++" in extra else ""
             n.build(str(obj), "mwcc", str(src), implicit=mwcc_implicit, variables={
+                "post": post,
                 "base_flags": base_cc_flags(extra),
                 "cc_flags": extra,
                 "basedir": str(obj.parent),
