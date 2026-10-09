@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""tools/asm <func> — annotated target disassembly + referenced symbols (for worker prompts)."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import ffclib  # noqa: E402
+
+func = sys.argv[1]
+sym = ffclib.symbols()[func]
+print(f"; {func}  module={sym.module} addr={sym.addr:#010x} size={sym.size:#x} mode={sym.mode}")
+print("\n".join(ffclib.func_asm(sym)))

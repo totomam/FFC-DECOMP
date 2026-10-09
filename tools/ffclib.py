@@ -247,18 +247,52 @@ def _cs(mode):
     return md
 
 
-def disasm(b: bytes, addr: int, mode: str):
+def pool_offsets(b: bytes, addr: int, mode: str) -> set:
+    """Offsets of literal-pool words referenced by pc-relative loads."""
+    md = _cs(mode)
+    pools, off, step = set(), 0, 2 if mode == "thumb" else 4
+    while off < len(b):
+        if off in pools:
+            off += 4
+            continue
+        ins = next(md.disasm(b[off:off + 4], addr + off), None)
+        if ins is None:
+            off += step
+            continue
+        m = re.match(r"\[pc, #(-?0x[0-9a-f]+|-?\d+)\]", ins.op_str.split(", ", 1)[-1]) if ins.mnemonic.startswith("ldr") else None
+        if m:
+            base = ((addr + off + 4) & ~3) if mode == "thumb" else addr + off + 8
+            t = base + int(m[1], 0) - addr
+            if 0 <= t < len(b):
+                pools.add(t)
+        off += ins.size
+    return pools
+
+
+def disasm(b: bytes, addr: int, mode: str, pools: set | None = None):
     """[(offset, size, text)], falls back to .word/.hword for undecodable bytes."""
     md = _cs(mode)
+    if pools is None:
+        pools = pool_offsets(b, addr, mode)
     out, off, step = [], 0, 2 if mode == "thumb" else 4
     while off < len(b):
+        if off in pools and off + 4 <= len(b):
+            out.append((off, 4, f".word {int.from_bytes(b[off:off+4], 'little'):#010x}"))
+            off += 4
+            continue
         ins = next(md.disasm(b[off:off + 4], addr + off), None)
+        if ins is not None:
+            m = re.search(r"#(0x[0-9a-f]+)$", ins.op_str)
+            if ins.mnemonic.startswith("b") and m and addr <= int(m[1], 16) < addr + len(b):
+                ins_text = f"{ins.mnemonic} L{int(m[1], 16) - addr:04x}"
+            else:
+                ins_text = f"{ins.mnemonic} {ins.op_str}".strip()
         if ins is None:
             n = min(step, len(b) - off)
             out.append((off, n, f".{'hword' if n == 2 else 'word'} {int.from_bytes(b[off:off+n], 'little'):#x}"))
             off += n
         else:
-            out.append((off, ins.size, f"{ins.mnemonic} {ins.op_str}".strip()))
+            out.append((off, ins.size, ins_text))
             off += ins.size
     return out
 
@@ -269,3 +303,78 @@ def match_pct(a: bytes, b: bytes) -> float:
         return 100.0
     same = sum(1 for i in range(min(len(a), len(b))) if a[i] == b[i])
     return 100.0 * same / n
+
+
+@lru_cache(None)
+def addr_names() -> dict:
+    """(module, addr) -> name"""
+    return {(s.module, s.addr): s.name for s in symbols().values()}
+
+
+RELOC_RE = re.compile(r"^from:(0x[0-9a-f]+) kind:(\w+) to:(0x[0-9a-f]+)(?: add:(-?0x[0-9a-f]+))? module:(\S+)")
+
+
+@lru_cache(None)
+def relocs(mod: str) -> dict:
+    """from_addr -> (kind, to_addr, to_module_or_None)"""
+    out = {}
+    d = dict(module_dirs())[mod]
+    for line in (d / "relocs.txt").read_text().splitlines():
+        m = RELOC_RE.match(line)
+        if m:
+            tm = m[5]
+            if tm.startswith("overlay("):
+                tm = "ov%03d" % int(tm[8:-1])
+            elif tm in ("none", "overlays") or tm.startswith("overlays"):
+                tm = None
+            out[int(m[1], 16)] = (m[2], int(m[3], 16), tm)
+    return out
+
+
+def ref_name(mod, kind, to, tmod):
+    names = addr_names()
+    for cand in ([tmod] if tmod else []) + [mod, "main", "itcm", "dtcm"]:
+        n = names.get((cand, to)) or names.get((cand, to & ~1))
+        if n:
+            return n
+    return f"{to:#010x}"
+
+
+def func_asm(sym: Sym) -> list[str]:
+    """Annotated target disassembly lines for prompts."""
+    b = target_bytes(sym)
+    rel = relocs(sym.module)
+    mode = sym.mode or "thumb"
+    out = []
+    pool_val = {}
+    for off in pool_offsets(b, sym.addr, mode):
+        r = rel.get(sym.addr + off)
+        pool_val[off] = ref_name(sym.module, *r) if r else f"{int.from_bytes(b[off:off+4], 'little'):#x}"
+    for off, size, text in disasm(b, sym.addr, mode):
+        m = re.search(r"\[pc, #(0x[0-9a-f]+|\d+)\]", text) if text.startswith("ldr") else None
+        if m:
+            base = ((off + 4) & ~3) if mode == "thumb" else off + 8
+            v = pool_val.get(base + int(m[1], 0))
+            if v:
+                text = re.sub(r"\[pc, #[^\]]+\]", f"={v}", text)
+        a = sym.addr + off
+        r = rel.get(a)
+        if r:
+            nm = ref_name(sym.module, *r)
+            if text.startswith(".word"):
+                text = f".word {nm}"
+            elif " #0x" in text and text.split()[0].startswith("bl"):
+                text = f"{text.split()[0]} {nm}"
+            else:
+                text = f"{text} ; {nm}"
+        out.append(f"{off:04x}: {text}")
+    return out
+
+
+def callees(sym: Sym) -> list[str]:
+    rel = relocs(sym.module)
+    seen = []
+    for a, (kind, to, tmod) in rel.items():
+        if sym.addr <= a < sym.addr + sym.size:
+            seen.append((kind, ref_name(sym.module, kind, to, tmod)))
+    return seen
