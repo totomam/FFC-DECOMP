@@ -25,6 +25,7 @@ cp ds-decomp/target/release/dsd "$ROOT/tools/bin/"
 # wibo (Win32 loader for mwccarm/mwldarm)
 [ -d wibo ] || git clone -q https://github.com/decompals/wibo
 git -C wibo checkout -q "$(cat "$ROOT/tools/patches/wibo.rev")"
+pip install -q capstone pyelftools >/dev/null 2>&1 || true
 pip install -q libclang >/dev/null 2>&1 || true
 (cd wibo && cmake --preset release64 -DWIBO_ENABLE_WINE_DLLS=NO \
    -DLIBCLANG_LIBRARY="$(ls /usr/lib/llvm-*/lib/libclang.so.1 | head -1)" \

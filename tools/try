@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""tools/try <func> <file.c> — compile file.c, compare <func> against the ROM.
+Prints `MATCH` or `NO MATCH <pct>%` plus a diff capped at 40 lines. Exit 0 only on MATCH."""
+import difflib
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import ffclib  # noqa: E402
+
+MAX_LINES = 40
+
+
+def main():
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    func, src = sys.argv[1], Path(sys.argv[2])
+    sym = ffclib.symbols().get(func)
+    if sym is None or sym.kind != "function":
+        sys.exit(f"unknown function {func}")
+    obj, msg = ffclib.compile_c(src, ffclib.ROOT / "work" / func / "obj")
+    if obj is None:
+        print("COMPILE ERROR")
+        print("\n".join(msg.splitlines()[:MAX_LINES]))
+        sys.exit(2)
+    got, bad = ffclib.resolve_func(obj, func, sym.addr)
+    if got is None:
+        print("ERROR", bad[0][2])
+        sys.exit(2)
+    want = ffclib.target_bytes(sym)
+    if got == want and not bad:
+        print("MATCH")
+        return
+    pct = ffclib.match_pct(got, want)
+    print(f"NO MATCH {pct:.1f}%  (size got {len(got):#x}, want {len(want):#x})")
+    for off, _, note in bad[:5]:
+        print(f"  note +{off:#x}: {note}")
+    mode = sym.mode or "thumb"
+    a = [t for _, _, t in ffclib.disasm(want, sym.addr, mode)]
+    b = [t for _, _, t in ffclib.disasm(got, sym.addr, mode)]
+    lines = [l for l in difflib.unified_diff(a, b, "target", "yours", n=1, lineterm="")][2:]
+    for l in lines[:MAX_LINES]:
+        print(l)
+    if len(lines) > MAX_LINES:
+        print(f"... {len(lines) - MAX_LINES} more diff lines")
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

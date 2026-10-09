@@ -22,6 +22,20 @@ index e1c3ee9..bdea0f4 100644
 +
 +[patch.crates-io]
 +ds-rom = { path = "../ds-rom" }
+diff --git a/cli/src/cmd/lcf.rs b/cli/src/cmd/lcf.rs
+index c27c4be..44818f1 100644
+--- a/cli/src/cmd/lcf.rs
++++ b/cli/src/cmd/lcf.rs
+@@ -226,7 +226,8 @@ impl Lcf {
+     ) -> bool {
+         let mut success = true;
+         for file in &delinks.files {
+-            if file.migrated() {
++            if file.migrated() || file.gap() {
++                // Gap files share a name per module; their object paths carry the gap id
+                 // Migrated files will have the same name as the original, that is intentional
+                 continue;
+             }
 diff --git a/cli/src/cmd/rom/config.rs b/cli/src/cmd/rom/config.rs
 index 296c517..792e262 100644
 --- a/cli/src/cmd/rom/config.rs
