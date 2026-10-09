@@ -81,6 +81,11 @@ def symbols() -> dict:
             if m:
                 s = Sym(m[1], m[2], m[3], int(m[4], 16), mod)
                 out.setdefault(s.name, s)
+    # call targets outside every module (runtime-loaded code / ov017-ov018 ambiguity); absolute in the lcf
+    for line in (CONFIG / "abs_symbols.txt").read_text().splitlines():
+        m = SYM_RE.match(line)
+        if m:
+            out.setdefault(m[1], Sym(m[1], m[2], m[3], int(m[4], 16), "abs"))
     return out
 
 
@@ -333,7 +338,7 @@ def relocs(mod: str) -> dict:
 
 def ref_name(mod, kind, to, tmod):
     names = addr_names()
-    for cand in ([tmod] if tmod else []) + [mod, "main", "itcm", "dtcm"]:
+    for cand in ([tmod] if tmod else []) + [mod, "main", "itcm", "dtcm"] + ([] if tmod else ["abs"]):
         n = names.get((cand, to)) or names.get((cand, to & ~1))
         if n:
             return n
