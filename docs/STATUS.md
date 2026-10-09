@@ -2,7 +2,23 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**5,189 functions matching C (~27%)**, 13,906 todo, 304 blocked, 11 fail_sonnet in `queue.csv`. Build: 22/22 modules OK.
+**6,339 functions matching C (~32%)**, 12,751 todo, 304 blocked, 16 fail_sonnet in `queue.csv`. Build: 22/22 modules OK.
+
+## Done (session 4)
+- Wave 3 clone pass: +752. Waves: w4 58/60 (56 Haiku/2 Sonnet, 712k tok, 11 min), w5 56/60 (52 Haiku/4 Sonnet, 849k tok, 15 min).
+  Clone pass after w4: +283. **Wave 5 integrated via wave_done at handoff — clone pass after w5 NOT run yet.**
+- **func_0200d5ec shape solved (C++)**: `/* cflags: -lang c++ */`, `extern "C"`, x - x routed through
+  `inline int diff(const Num &a, int b)` where `Num` has a ctor + empty dtor → unfolded `subs` + 4-byte frame.
+  mwcc emits the dtor out of line (weak, MW bind 13) → new `tools/strip_weak.py` (run by configure for C++ files)
+  zeroes unreferenced weak .text sections (the original link dead-stripped them). 72/73 of the group done.
+  Prompt tip added for `subs rX,rX,rX`.
+- clone.py: second rewrite variant maps *derived* donor literals (`0x43<<2`=0x10c etc.; tried-cache key `f|d|d`).
+- mkwave --dedup: a shape with a done sibling is re-queued once clone.py tried every pair and failed; the prompt
+  then shows the sibling's matched C (`sibling_extra`). Unlocks e.g. 46/38/33-member haiku groups.
+- Waiting on processes: `pgrep -f "clone.py run"` matches the waiting shell itself — use `pgrep -f "^python3 tools/clone"`.
+- Unknown-symbol call: func_02082908 (96.6%) calls 0x021d9ad8 (no symbol) — add a symbol to unblock.
+- Not started: C++ thunks (need class TUs + mangled names), `__sinit_*` (.init/.ctor/.bss TU: 42 in main, 121 in
+  overlays), SWI asm decision (still open).
 
 ## Done (session 3)
 - Pilot wave (8 funcs): 6 Haiku + 1 Sonnet + 1 manual = 8/8 integrated; ~94k subagent tokens total.
@@ -45,7 +61,9 @@
   nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
 ## Next steps (in order)
-0. `python3 tools/clone.py run` (propagate wave 3), commit.
+0. `nohup python3 tools/clone.py run` (propagate wave 5; first run with derived literals retries old pairs — long), commit.
+   Overlap OK: start clone, then mkwave next wave + Workflow; run wave_done only after clone has exited (both
+   rewrite queue.csv).
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
