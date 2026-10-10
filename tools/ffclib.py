@@ -383,3 +383,38 @@ def callees(sym: Sym) -> list[str]:
         if sym.addr <= a < sym.addr + sym.size:
             seen.append((kind, ref_name(sym.module, kind, to, tmod)))
     return seen
+
+
+# queue.csv: every rewrite goes through queue_update() (flock on a side file + temp write + os.replace),
+# so concurrent mkwave / wave_done / clone never lose rows and readers (tools/prompt) never see a torn file.
+QUEUE = ROOT / "queue.csv"
+QUEUE_PATH = Path(os.environ.get("FFC_QUEUE", QUEUE))  # override for dry-run replays
+
+
+def queue_rows() -> list:
+    import csv
+    with QUEUE_PATH.open(newline="") as f:
+        return list(csv.DictReader(f))
+
+
+class queue_update:
+    """with queue_update() as rows: mutate rows in place; written atomically on clean exit."""
+    def __enter__(self):
+        import fcntl
+        self.lock = open(QUEUE_PATH.with_name(".queue.lock"), "w")
+        fcntl.flock(self.lock, fcntl.LOCK_EX)
+        self.rows = queue_rows()
+        return self.rows
+
+    def __exit__(self, exc, *_):
+        import csv
+        try:
+            if exc is None and self.rows:
+                tmp = QUEUE_PATH.with_name(f".{QUEUE_PATH.name}.{os.getpid()}.tmp")
+                with tmp.open("w", newline="") as f:
+                    w = csv.DictWriter(f, fieldnames=list(self.rows[0]))
+                    w.writeheader()
+                    w.writerows(self.rows)
+                os.replace(tmp, QUEUE_PATH)
+        finally:
+            self.lock.close()

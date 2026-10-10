@@ -12,7 +12,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ffclib  # noqa: E402
 
 ROOT = ffclib.ROOT
-QUEUE = ROOT / "queue.csv"
 
 
 def prototypes():
@@ -70,7 +69,7 @@ def sibling_extra(func):
     sh = clone.shapes()
     if func not in sh:
         return ""
-    for r in csv.DictReader(QUEUE.open()):
+    for r in ffclib.queue_rows():
         f = r["func"]
         if r["status"] == "done" and f != func and f in sh and sh[f][0] == sh[func][0]:
             p = clone.donor_src(f, r["note"])
@@ -111,7 +110,15 @@ def main():
     ap.add_argument("--dedup", action="store_true",
                     help="one function per asm shape (tools/clone.py propagates matches), biggest groups first")
     a = ap.parse_args()
-    rows = list(csv.DictReader(QUEUE.open()))
+    if a.dry:
+        json.dump(pick_items(a, ffclib.queue_rows()), sys.stdout)
+        return
+    with ffclib.queue_update() as rows:  # held while picking: concurrent mkwave runs never pick the same rows
+        items = pick_items(a, rows)
+    json.dump(items, sys.stdout)
+
+
+def pick_items(a, rows):
     pick = [r for r in rows if r["status"] == a.status and r["tier"] == a.tier
             and (not a.module or r["tu"] == a.module) and int(r["difficulty"]) >= a.min_diff
             and "unaligned" not in r["note"]]
@@ -151,12 +158,7 @@ def main():
         else:
             items.append({"func": r["func"], "tier": a.tier, "prompt": build(r["func"], a.tier, v54_extra(r["note"]))})
         r["status"] = "queued"
-    if not a.dry:
-        with QUEUE.open("w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=list(rows[0]))
-            w.writeheader()
-            w.writerows(rows)
-    json.dump(items, sys.stdout)
+    return items
 
 
 if __name__ == "__main__":

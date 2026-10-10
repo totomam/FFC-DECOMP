@@ -24,7 +24,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ffclib  # noqa: E402
 
 ROOT = ffclib.ROOT
-QUEUE = ROOT / "queue.csv"
 CACHE = ROOT / "work" / "shapes.json"
 TRIED = ROOT / "work" / "clone_tried.json"  # (func|donor) pairs that failed; skipped next run
 ATOM_RE = re.compile(r"(=\S+|\.word \S+|#-?(?:0x[0-9a-f]+|\d+)|\b(?:bl|blx|b) (?!L[0-9a-f]{4}\b)\S+|; \S+$)")
@@ -161,7 +160,7 @@ def donor_src(func, note):
 
 def run(dry):
     sh = shapes()
-    rows = list(csv.DictReader(QUEUE.open()))
+    rows = ffclib.queue_rows()
     donors = defaultdict(list)
     for r in rows:
         if r["status"] in ("done", "skip_integrate") and r["func"] in sh:
@@ -209,19 +208,15 @@ def run(dry):
                        cwd=ROOT, capture_output=True, text=True)
     ok = set(re.findall(r"^OK (\w+)", p.stdout, re.M))
     print(p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr[-500:])
-    rows = list(csv.DictReader(QUEUE.open()))  # re-read: mkwave may have marked rows queued meanwhile
-    for r in rows:
-        if r["func"] in ok:
-            r["status"], r["best_pct"], r["note"] = "done", "100", f"cloned from {made[r['func']]}"
-    with QUEUE.open("w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0]))
-        w.writeheader()
-        w.writerows(rows)
+    with ffclib.queue_update() as rows:  # fresh read under the lock: mkwave may have marked rows queued meanwhile
+        for r in rows:
+            if r["func"] in ok:
+                r["status"], r["best_pct"], r["note"] = "done", "100", f"cloned from {made[r['func']]}"
 
 
 def stats():
     sh = shapes()
-    rows = list(csv.DictReader(QUEUE.open()))
+    rows = ffclib.queue_rows()
     g = defaultdict(list)
     for r in rows:
         if r["status"] == "todo" and r["func"] in sh:

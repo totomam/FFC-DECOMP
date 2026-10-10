@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""tools/wave_done.py <result.json | workflow task .output> — consume a match_wave.js result:
-integrate matched functions (tools/integrate), then update queue.csv
-(status done / fail_haiku / fail_sonnet / skip_integrate -> source kept in pending/, attempts, best_pct, note). Prints a summary."""
+"""tools/wave_done.py [--dry] <result.json | workflow task .output> ... — consume one or more match_wave.js
+results: integrate all matched functions in one tools/integrate run, then update queue.csv
+(status done / fail_haiku / fail_sonnet / skip_integrate -> source kept in pending/, attempts, best_pct, note). Prints a summary.
+--dry: no integrate (every accepted match counts as OK), no pending/ copies; prints the queue diff instead of writing."""
 import csv
 import json
 import re
@@ -13,7 +14,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ffclib  # noqa: E402
 
 ROOT = ffclib.ROOT
-QUEUE = ROOT / "queue.csv"
 
 
 STUB_RE = re.compile(r"(svc #\w+|bx lr|movs r\d, #\w+|adds r\d, r\d, #0)$")
@@ -26,9 +26,14 @@ def swi_stub(func):
     return any(ln.startswith("svc") for ln in lines) and all(STUB_RE.match(ln) for ln in lines)
 
 
+def load(path):
+    data = json.load(open(path))
+    return [r for r in (data["result"] if isinstance(data, dict) else data) if r]
+
+
 def main():
-    data = json.load(open(sys.argv[1]))
-    res = [r for r in (data["result"] if isinstance(data, dict) else data) if r]
+    dry = "--dry" in sys.argv
+    res = [r for a in sys.argv[1:] if a != "--dry" for r in load(a)]
     matched = {}
     for r in res:
         best = r.get("sonnet") or r.get("haiku")
@@ -39,7 +44,9 @@ def main():
                 continue
             matched[r["func"]] = best["file"]
     status = {}
-    if matched:
+    if dry:
+        status = {f: ("OK", "") for f in matched}
+    elif matched:
         argv = [x for f, p in matched.items() for x in (f, p)]
         p = subprocess.run([str(ROOT / "tools/integrate"), *argv], cwd=ROOT, capture_output=True, text=True)
         print(p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr)
@@ -47,7 +54,20 @@ def main():
             m = re.match(r"(OK|SKIP|REVERT) (\w+)(?:: (.*))?", line)
             if m:
                 status[m[2]] = (m[1], m[3] or "")
-    rows = list(csv.DictReader(QUEUE.open()))
+    with ffclib.queue_update() as rows:
+        before = {r["func"]: dict(r) for r in rows}
+        tally = update(rows, res, matched, status, dry)
+        if dry:
+            w = csv.writer(sys.stdout, lineterminator="\n")
+            for r in rows:
+                if r != before[r["func"]]:
+                    sys.stdout.write("- "), w.writerow(before[r["func"]].values())
+                    sys.stdout.write("+ "), w.writerow(r.values())
+            rows.clear()  # queue_update writes nothing for an empty list
+    print("tiers:", {t: sum(r.get("tier") == t for r in res) for t in ("haiku", "sonnet", "fail")}, "queue:", tally)
+
+
+def update(rows, res, matched, status, dry):
     by = {r["func"]: r for r in rows}
     tally = {}
     for r in res:
@@ -64,7 +84,7 @@ def main():
                 st = "OK"
             q["status"] = "done" if st == "OK" else "skip_integrate"
             keep = ""
-            if st != "OK":  # work/ is gitignored: keep the matching source in pending/
+            if st != "OK" and not dry:  # work/ is gitignored: keep the matching source in pending/
                 (ROOT / "pending").mkdir(exist_ok=True)
                 keep = f"pending/{r['func']}.c"
                 (ROOT / keep).write_bytes((ROOT / matched[r["func"]]).read_bytes())
@@ -73,11 +93,7 @@ def main():
             q["status"] = "fail_sonnet" if s else "fail_haiku"
             q["note"] = ((best or {}).get("note") or "")[:150]
         tally[q["status"]] = tally.get(q["status"], 0) + 1
-    with QUEUE.open("w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
-        w.writeheader()
-        w.writerows(rows)
-    print("tiers:", {t: sum(r.get("tier") == t for r in res) for t in ("haiku", "sonnet", "fail")}, "queue:", tally)
+    return tally
 
 
 if __name__ == "__main__":
