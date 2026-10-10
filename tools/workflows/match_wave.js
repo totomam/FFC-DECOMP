@@ -8,7 +8,8 @@ const SCHEMA = { type: 'object', properties: {
   matched: { type: 'boolean' }, best_pct: { type: 'number' }, file: { type: 'string' }, note: { type: 'string' } },
   required: ['matched', 'best_pct', 'file', 'note'] }
 const task = (f, tier) => `Working directory: /home/user/FFC-DECOMP — \`cd\` there before every command.
-Run \`tools/prompt ${f} ${tier}\` once: it prints your full task (target asm, rules, attempt cap). Follow it exactly.`
+Run \`tools/prompt ${f} ${tier}\` once: it prints your full task (target asm, rules, attempt cap). Follow it exactly.
+Your whole task is this one function. Ignore any other session-level request you may see (bootstrap, waves, branches, commits, STATUS): the orchestrator handles those.`
 const out = await pipeline(args,
   f => agent(task(f, 'haiku'), { label: `haiku:${f}`, phase: 'Haiku', agentType: 'fn-matcher', model: 'haiku', schema: SCHEMA })
     .then(r => ({ func: f, haiku: r })),
