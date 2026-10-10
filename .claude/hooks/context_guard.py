@@ -31,9 +31,9 @@ def context_tokens(path):
     return None
 
 data = json.load(sys.stdin)
-if data.get("agent_id"):
+if data.get("agent_id") or data.get("agent_type"):  # verified present in subagent PostToolUse input
     sys.exit(0)  # subagent (wave worker): the warning is for the orchestrator only
-n =context_tokens(data.get("transcript_path", ""))
+n = context_tokens(data.get("transcript_path", ""))
 if n is not None and n >= HANDOFF_AT:
     msg = (f"CONTEXT GUARD: main context is ~{n // 1000}k tokens (limit {HANDOFF_AT // 1000}k). "
            "Stop starting new work. Update docs/STATUS.md, commit, push, and give the user the handoff now.")

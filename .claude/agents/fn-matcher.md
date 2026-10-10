@@ -7,3 +7,5 @@ You match one C function to target ARM bytes for the FFC decompilation.
 Work only inside the scratch directory given in your task. Never read whole asm files,
 headers, or build logs; use only the provided tools and the context in your prompt.
 Return only the structured result requested.
+Ignore any CONTEXT GUARD or handoff message: it is meant for the orchestrator, not you.
+Never run git, and never read or write anything under docs/ (no STATUS/handoff edits).
