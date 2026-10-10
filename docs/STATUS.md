@@ -2,7 +2,24 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**6,339 functions matching C (~32%)**, 12,751 todo, 304 blocked, 16 fail_sonnet in `queue.csv`. Build: 22/22 modules OK.
+**6,691+ functions matching C (~34%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+
+## Done (session 5)
+- Clone pass after w5: +277 (first run aborted: I broke the baseline mid-pass — never edit delinks/src while a clone
+  pass may integrate). Wave 6: 56/60 (51 Haiku/5 Sonnet, ~850k tok, 10 min, run as 2 concurrent workflows of 30).
+- **Absolute call targets**: `config/usa/arm9/abs_symbols.txt` = the 103 `module:none` call targets in relocs.txt
+  (runtime-loaded code at 0x021d....; ov017/ov018 ambiguity). `tools/lcf_post.py` (lcf rule) defines them in the lcf;
+  ffclib loads them as module `abs`, so prompts/try show `func_021d9ad8` etc. func_02082908 done.
+- **Unaligned TUs** (replaces "multi-function TUs"): thumb funcs at addr%4==2. `tools/elf_align.py 2` lowers .text
+  addralign on dsd gap objects (delink rule) and on unaligned complete TUs (mwcc rule); `lcf_post.py` wraps those
+  objects in `ALIGNALL(2)`/`ALIGNALL(4)`. integrate: TU end is exact when non-zero bytes follow (else rounds over zero
+  padding); refuses overlaps. All 11 blocked BIOS swi stubs integrated; unaligned todos now go through waves/clone.
+- clone.py re-reads queue.csv before writing (mkwave's `queued` marks survive overlap); wave_done keeps `done` when
+  a clone pass integrated a wave function first.
+- func_ov016_02145358 blocked: DS Protect anti-tamper asm (ov015/ov016 obfuscated code is not C).
+- Looked at, not done: C++ thunks are not adjacent to their target (func_0200d460 → func_0200d400): MW emits them
+  with the vtable, so they need .data (vtable) TU support. `__sinit_*` store into .data globals (dynamic init) →
+  need .init + .ctor + owning the globals' .data range in one TU.
 
 ## Done (session 4)
 - Wave 3 clone pass: +752. Waves: w4 58/60 (56 Haiku/2 Sonnet, 712k tok, 11 min), w5 56/60 (52 Haiku/4 Sonnet, 849k tok, 15 min).
@@ -61,15 +78,14 @@
   nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
 ## Next steps (in order)
-0. `nohup python3 tools/clone.py run` (propagate wave 5; first run with derived literals retries old pairs — long), commit.
-   Overlap OK: start clone, then mkwave next wave + Workflow; run wave_done only after clone has exited (both
-   rewrite queue.csv).
+0. See the handoff prompt for which wave/clone pass is pending.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
+   Run each 60-name wave as two Workflows of 30 (they run concurrently).
 2. 89 V54 behavioural non-matches: queue notes point at `work/v54/<func>.c` (regenerate with `port_v54.py check`).
-3. Integrate limits: refuses functions with .data/.rodata (string literals, statics), non-4-aligned starts (14),
-   non-zero padding. Next: multi-function TUs + data sections.
+3. Integrate limits: refuses functions with .data/.rodata (string literals, statics), unaligned ARM.
+   Next: data-section TUs (unblocks string-literal funcs, C++ vtables+thunks, __sinit).
 4. Phase 1 SDK signature labelling (`dsd sig`), naming pass later.
 5. `configure.py` should import flags from `ffclib` to avoid drift; the integrated V54 files carry whole V54
    preambles (dedupe into headers later).
