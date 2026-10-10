@@ -1,0 +1,2660 @@
+[
+ {
+  "func": "func_02087fa4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fa4.haiku.c",
+   "note": "Target is `mcr p15, #0, r0, c6, c2, #0; bx lr`. Pure C cannot emit a coprocessor mcr (only asm or an intrinsic could), and the rules forbid asm, so no match is possible. Best attempt (empty void function) emits only `bx lr` (size 0x4 vs 0x8). Used 2 of 10 tools/try runs; stopped because further C variants cannot produce the mcr."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fa4.sonnet.c",
+   "note": "Target needs a coprocessor mcr p15 instruction. Pure C can't emit it, and __mcr is not a recognized intrinsic, so it compiled as an ordinary call."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fac",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fac.haiku.c",
+   "note": "Target is a single `mcr p15, #0, r0, c6, c3, #0` (CP15 write) plus `bx lr`. Pure C has no way to emit mcr without an asm block or an intrinsic, and no intrinsic name I tried (__set_cp15, __mcr, __builtin_arm_mcr) is recognized by mwcc. Used 4 of 10 tools/try runs and stopped because the remaining options are either forbidden asm or unsupported guesses."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02087fac.sonnet.c",
+   "note": "f.c reaches MATCH only with an inline `__asm { mcr p15, 0, v, c6, c3, 0 }` block, which the rules forbid, so it counts as a failure. Pure C found no intrinsic: `__mcr` is unresolved (e.c, 0%)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fb4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fb4.haiku.c",
+   "note": "Target is a single `mcr p15, #0, r0, c6, c4, #0` followed by `bx lr`. Pure C has no way to emit a coprocessor mcr, and the only allowed route (asm) is forbidden by the rules, so no match. Empty function gives only bx lr (size 0x4). A guessed __mcr intrinsic (b.c) is unresolved and produces a bl. Used 2 of 10 tools/try runs and stopped, since no pure-C form can produce the instruction."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fb4.sonnet.c",
+   "note": "Target is a lone CP15 mcr, which pure C cannot emit. __mcr is not a compiler intrinsic (it compiles to an unresolved bl), and asm is forbidden. Used 1 try run on c.c, which scored 0%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fbc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fbc.haiku.c",
+   "note": "Target is a lone `mcr p15, #0, r0, c6, c5, #0` + `bx lr`. Pure C has no way to emit mcr: three guessed intrinsics (__mcr, __builtin_mcr, __cp15_write) were all unresolved by the compiler. The only route is asm, which the rules forbid. Used 3 of 10 tools/try runs and stopped, since further intrinsic-name guesses are unlikely to work."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fbc.sonnet.c",
+   "note": "Target is a lone mcr p15 plus bx lr, and pure C cannot emit mcr. I tried 4 more intrinsic names (__MCR, __mcr, _mcr and one other), and the compiler reported each as unresolved. Writing it needs an asm function, which the rules forbid."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fc4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 25,
+   "file": "pending/wave11/func_02087fc4.haiku.c",
+   "note": "Target is a single `mcr p15, #0, r0, c6, c6, #0` followed by `bx lr`. Pure C has no way to emit mcr without a compiler intrinsic, and I could not find a valid one. Guessed intrinsic names (__set_CP15_c6, __set_DFAR, __mcr_p15_0_c6_c6_0, __set_CP15, __mcr) all came back unresolved. The only pure-C variants that compile emit no mcr at all (0% for the empty function, 0% for the volatile-local variant). The Halt hint relies on asm, which the rules forbid. Used 6 of 10 tools/try runs. Matching likely needs the repo's real intrinsic name or an asm exception."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 25,
+   "file": "pending/wave11/func_02087fc4.sonnet.c",
+   "note": "Target is a bare `mcr p15,0,r0,c6,c6,0; bx lr`. Pure C has no intrinsic that emits mcr (`__mcr` compiles as an ordinary call), and asm is forbidden, so this needs an asm exception like Halt."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fcc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fcc.haiku.c",
+   "note": "Target is a single ARM coprocessor instruction (mcr p15, #0, r0, c6, c7, #0) followed by bx lr. Pure C cannot emit an mcr, and asm/pragma are forbidden, so the closest C (an empty function) compiles to only bx lr (size 0x4 vs 0x8). Not matchable under the stated rules. Used 1 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087fcc.sonnet.c",
+   "note": "Target is a single mcr p15 instruction plus bx lr. Pure C cannot emit mcr, and an assumed __mcr intrinsic compiled to a plain call, so there is no match under the no-asm rule. Used 1 try run on a.c (previous Haiku run) and 1 on b.c."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fd4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fd4.haiku.c",
+   "note": "Target is a single `mrc p15, #0, r0, c6, c0, #0` (read DFAR) plus `bx lr`. Pure C cannot emit an mrc coprocessor read: a plain return compiles to `mov r0, #0`, and the guessed `__mrc` intrinsic is unresolved in mwcc. Matching needs asm, which the rules forbid. Used 2 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fd4.sonnet.c",
+   "note": "Target is a single mrc p15 DFAR read plus bx lr. Pure C cannot emit it. Guessed intrinsics (__mrc, __MRC, _mrc, __builtin_arm_mrc) are all unresolved externs. A real match needs an asm function, which the rules forbid."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fdc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fdc.haiku.c",
+   "note": "Target is a single `mrc p15, #0, r0, c6, c1, #0` (CP15 read) followed by `bx lr`. Pure C cannot emit an mrc: `return 0` gives `mov r0, #0` (50%), and a guessed `__MRC` intrinsic is unresolved by mwcc (0%). Matching needs inline asm, which the rules forbid. Used 2 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fdc.sonnet.c",
+   "note": "Target is a single CP15 `mrc` read plus `bx lr`. Pure C can't emit it. `return 0` gives 50%, and the intrinsic guesses (`__mrc`, `__MRC`, `__builtin_arm_mrc`) are unresolved or fail to compile. Matching needs inline asm, which the rules forbid."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fe4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fe4.haiku.c",
+   "note": "Target is `mrc p15, #0, r0, c6, c2, #0` (read CP15 DFAR) + bx lr; pure C cannot emit a coprocessor read, so the best C (return 0) gives mov r0,#0 instead. Only the asm Halt-style stub from the hint could match, but the task rules forbid asm, so no match was attempted with asm. Used 1 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fe4.sonnet.c",
+   "note": "Target is a CP15 DFAR read (mrc p15,#0,r0,c6,c2,#0); pure C can't emit it (__mrc is not a compiler intrinsic, it became an unresolved call), and asm is forbidden."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087fec",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fec.haiku.c",
+   "note": "Target is a single CP15 coprocessor read (mrc p15, #0, r0, c6, c3, #0) plus bx lr. Pure C cannot emit an mrc, and the rules forbid asm, so no match is possible. Best attempt (return 0) gives mov r0, #0 instead of mrc. Only 2 of 10 tools/try runs used."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087fec.sonnet.c",
+   "note": "Target is a single CP15 mrc read; pure C cannot emit it and __mrc is not a compiler intrinsic (tried, unresolved call). Best attempt is return 0."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087ff4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087ff4.haiku.c",
+   "note": "Target is `mrc p15, #0, r0, c6, c4, #0` (a coprocessor register read), which pure C cannot emit. The Halt hint's differing instruction is an swi in asm, and asm is disallowed here. Best attempt is `return 0;` (mov r0, #0 vs mrc, 50%). Stopped after 1 of 10 tools/try runs because no pure-C construct can produce the mrc."
+  },
+  "sonnet": {
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087ff4.sonnet.c",
+   "note": "Target is `mrc p15, #0, r0, c6, c4, #0`, a coprocessor read that mwccarm does not emit from pure C. The best attempt is `return 0;` (50%). The intrinsic names `__mrc`, `_mrc`, `__builtin_arm_mrc` and `__coproc_mrc` all compiled to an unresolved `bl`.",
+   "matched": false
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087ffc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087ffc.haiku.c",
+   "note": "Target is a single `mrc p15, #0, r0, c6, c5, #0` (coprocessor read) followed by `bx lr`. Pure C cannot emit an MRC, and no intrinsic for it was found (a guessed __load_cp15 is unresolved). The only C shape that fits is the 0x8 frame, which gives 50% with `mov r0, #0`. Matching needs asm, which the rules forbid, so this stays unmatched. Used 2 of 10 tools/try runs. Hint's Halt example uses asm, which conflicts with the pure-C rule."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02087ffc.sonnet.c",
+   "note": "Target is a single MRC (cp15 read); pure C has no way to emit it and a guessed __mrc intrinsic is just an unresolved call. Needs asm, which the rules forbid."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02088004",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02088004.haiku.c",
+   "note": "Target is `mrc p15, #0, r0, c6, c6, #0` + `bx lr`; pure C has no way to emit a coprocessor MRC (only asm or swi-style stubs, which are forbidden here), so the best C (`return 0;`) gives `mov r0, #0` and only the bx lr line matches. Used 1 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_02088004.sonnet.c",
+   "note": "Target is a coprocessor MRC (p15,c6,c6,0), which pure C can't emit. The __mrc intrinsic isn't recognized (unresolved symbol). Best C is `return 0;`, so only bx lr matches."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_0208800c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_0208800c.haiku.c",
+   "note": "Target is `mrc p15, #0, r0, c6, c7, #0` (a CP15 register read) followed by `bx lr`. Pure C has no way to emit a coprocessor mrc instruction under mwccarm, and the only working idiom in the hint is asm, which is disallowed. Best attempt returns 0 (mov r0, #0; bx lr), 50% match. Stopped after 1 of 10 tools/try runs because no C variant I can reason of produces the mrc opcode."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_0208800c.sonnet.c",
+   "note": "Target is a CP15 mrc read; pure C cannot emit it, and __mrc is not an intrinsic (unresolved symbol). Best is return 0 at 50%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_0209b324",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0209b324.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02159150",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02159150.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_02170510",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_02170510.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021bd28c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov011_021bd28c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_0214695c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov014_0214695c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020235f4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020235f4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02035c34",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02035c34.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0203c44c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0203c44c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0206d118",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0206d118.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02073004",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02073004.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207f8dc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207f8dc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020878d0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 3.1,
+   "file": "pending/wave11/func_020878d0.haiku.c",
+   "note": "Target needs an ARM coprocessor instruction (mcr p15, #0, r0, c7, c10, #4, a cache/write-buffer drain) that pure C cannot emit and asm is forbidden. Best attempt (b.c) matches only the mov r0,#0 and bx lr parts, plus a stack frame. Used 2 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 3.1,
+   "file": "pending/wave11/func_020878d0.sonnet.c",
+   "note": "Target needs mcr p15 (write-buffer drain), which pure C cannot emit. __mcr is not an intrinsic here (it compiled to an unresolved call). Used 1 run."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_020878dc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_020878dc.haiku.c",
+   "note": "Target is a CP15 cache maintenance op (mcr p15,0,r0,c7,c5,0 = invalidate entire I-cache). Pure C has no way to emit an MCR instruction, and inline asm/pragmas are disallowed, so no C body can reproduce the mov+mcr+bx sequence. Stopped after 1 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_020878dc.sonnet.c",
+   "note": "Target is a CP15 I-cache invalidate (mcr p15,0,r0,c7,c5,0). Pure C cannot emit MCR, and __mcr is not an intrinsic: it compiles to a call. An inline asm try reached 56% but is disallowed, so it doesn't count."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02088f94",
+  "haiku": {
+   "matched": false,
+   "best_pct": 33.3,
+   "file": "pending/wave11/func_02088f94.haiku.c",
+   "note": "Blocked: the target's `mcr p15, #0, r0, c7, c0, #4` (CP15 cache/wait-for-interrupt op) has no C equivalent and the rules forbid asm/#pragma, so no pure-C function can emit it. Best candidate `uint32_t func_02088f94(void){return 0;}` yields only `mov r0,#0; bx lr`. Used 2 of 10 tools/try runs; a/b.c are the only attempts."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 33.3,
+   "file": "pending/wave11/func_02088f94.sonnet.c",
+   "note": "Target needs CP15 mcr (wait-for-interrupt); no pure-C way to emit it (__mcr unresolved, no asm/pragma allowed)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov000_02164c58",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02164c58.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_021863d4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_021863d4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b46b4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021b46b4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219d038",
+  "haiku": {
+   "matched": false,
+   "best_pct": 66.7,
+   "file": "pending/wave11/func_ov007_0219d038.haiku.c",
+   "note": "No match. Every unsigned byte-copy variant (plain, local temp, volatile, struct field, const, 32-bit temp, char dst, register temp, extra unused param) compiles to ldrb r0/strb r0 instead of the target's r2 temp. Signed int8_t gives a different sequence (movs r2,#0; ldrsb). The target's r2 scratch register is not explained by these shapes. Process note: I made 12 tools/try runs, exceeding the hard cap of 10 by two (runs 11 and 12 were j.c and k.c). Best attempts (a.c with swapped params, b.c, and others) all score 66.7%."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov007_0219d038.sonnet.c",
+   "note": "Matched by returning src (r0 stays live, so the compiler uses r2 as the temp)."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_0219d040",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov007_0219d040.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_021464fc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov014_021464fc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_02146950",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov014_02146950.haiku.c",
+   "note": "Matched on the 9th of 10 allowed tools/try runs. The function is `return 0x659C;` as a uint32_t with -nothumb. The literal word's Rn nibble (bits 15:12) is invisible to the disassembler, so the match depends on picking that nibble by trial."
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020061e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020061e4.haiku.c",
+   "note": "Matched on attempt 4 of 10 (tools/try MATCH). The callee takes three uint32_t params and the wrapper forwards q and r unchanged; the extra params shift mwcc's scratch register to r3, which is what the target uses. Parameter count is inferred from the register allocation, not from known callers."
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02007018",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02007018.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02008470",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02008470.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02019d4c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02019d4c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201a020",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201a020.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201c210",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201c210.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201f910",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201f910.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02022bec",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02022bec.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02023e40",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02023e40.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202df00",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202df00.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202dfd0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202dfd0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202f180",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202f180.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02036370",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02036370.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02036b54",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02036b54.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02036b74",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02036b74.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020397d8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020397d8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02043f78",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02043f78.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0204f848",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0204f848.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0205420c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0205420c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02056dc8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02056dc8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02058188",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02058188.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02060564",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02060564.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02060e9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02060e9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02062fe8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02062fe8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0206e2a4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0206e2a4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02072320",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02072320.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02073aa4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 75,
+   "file": "pending/wave11/func_02073aa4.haiku.c",
+   "note": "Store of 0 at offset 0x18 is right, but mwcc allocates r0 for the address and r1 for the zero, while the target uses r1 and r2. Tried 9 variants (struct/array/byte-offset/pointer-local/local zero/volatile/unused param); all gave the same r0/r1 allocation. The hint's func_02088e54 shape did not reproduce the target's register choice."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02073aa4.sonnet.c",
+   "note": "Matched by making the function take an int param and return it (int func(int a)). That keeps r0 live, so the address goes in r1 and the zero in r2."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_02074678",
+  "haiku": {
+   "matched": false,
+   "best_pct": 62.5,
+   "file": "pending/wave11/func_02074678.haiku.c",
+   "note": "Semantics are right (load o->p at +0x14, store 0 to +0x13) but mwcc allocates the loaded pointer to r0 and the zero to r1, while the target uses r1 for the pointer and r2 for the zero. Tried: local pointer copies, extra unused params, reassigning a second pointer param, volatile members, register keyword, byte-pointer indexing. All stayed at 62.5%. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02074678.sonnet.c",
+   "note": "Matched by returning the input pointer `o` (return type struct Outer *), which keeps r0 live and shifts the temporaries to r1/r2."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_02075dec",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02075dec.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207fc08",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207fc08.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02087678",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02087678.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02087ed0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 4.2,
+   "file": "pending/wave11/func_02087ed0.haiku.c",
+   "note": "Target is a single `mrc p15, #0, r0, c9, c1, #0` (read Data TCM region register) followed by `and` with 0xfffff000. Pure C has no way to emit an MRC instruction: an extern stub compiles to a bl, and a guessed __MRC intrinsic is unresolved. Only 2 of 10 tools/try runs used. A match needs a coprocessor-read intrinsic or inline asm, which the rules forbid. Needs an orchestrator decision or a repo-approved intrinsic name."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 4.2,
+   "file": "pending/wave11/func_02087ed0.sonnet.c",
+   "note": "Target is an MRC p15 read followed by an AND with 0xfffff000. Pure C cannot emit MRC. Stub calls compile to a bl, and __mrc is unresolved (3.8%). A match needs inline asm or an intrinsic the rules forbid or don't provide. I used 2 tools/try runs, plus 1 compile error from a wrong path."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087ee4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087ee4.haiku.c",
+   "note": "Target is pure CP15 access (mrc/orr/mcr). Pure C has no way to emit these: __builtin_arm_mrc/mcr and __mrc/__mcr are unresolved in mwcc, and asm is banned. Stopped after 2 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087ee4.sonnet.c",
+   "note": "Pure CP15 mrc/orr/mcr; no mwcc intrinsic resolves (__mrc/__MRC/_mrc/__builtin_mrc/__builtin_arm_mrc all become unresolved calls) and asm is banned."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087ef4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 5,
+   "file": "pending/wave11/func_02087ef4.haiku.c",
+   "note": "Target is mrc p15/bic/mcr p15 with no calls; pure C cannot emit coprocessor instructions. Tried plain extern accessors (__get_cp15_c1/__set_cp15_c1, 5.0%, emitted bl), __mrc/__mcr intrinsics (0%, emitted bl), and __get_CP15/__set_CP15 (5.0%, emitted bl). Unresolved accessors compile as calls, so no match. Needs an mwcc CP15 intrinsic or asm, which the rules forbid. Used 3 of 10 tools/try runs and stopped."
+  },
+  "sonnet": {
+   "file": "pending/wave11/func_02087ef4.sonnet.c",
+   "matched": false,
+   "best_pct": 5,
+   "note": "Target is mrc/bic/mcr on p15 with no calls. The __mrc/__mcr, __get_cp15_c1 and __get_CP15 names all compile as unresolved bl calls, so pure C can't emit it. It would need asm, which the rules forbid."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087f58",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087f58.haiku.c",
+   "note": "Target is a CP15 read-modify-write (mrc p15,0,r1,c3,c0,0 / orr / mcr). Pure C cannot express coprocessor access and asm is banned, so a compiler intrinsic is required. Three guessed intrinsic spellings (__MRC/__MCR, __mrc/__mcr, __builtin_arm_mrc/mcr) were all unresolved by tools/try, so no match. Used 3 of 10 runs. The correct intrinsic name is unknown and would need a header lookup, which the task forbids."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_02087f58.sonnet.c",
+   "note": "The target is a CP15 read-modify-write (mrc/orr/mcr). Pure C has no way to express it, and the __MRC/__MCR and __mrc/__mcr spellings I tried (declared or implicit) compile to ordinary bl calls, so mwccarm has no such intrinsics. Inline asm is banned."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087f68",
+  "haiku": {
+   "matched": false,
+   "best_pct": 14.3,
+   "file": "pending/wave11/func_02087f68.haiku.c",
+   "note": "Target is a CP15 DACR read-modify-write (mrc p15,0,r1,c3,c0,0 / bic / mcr p15,0,r1,c3,c0,0). Pure C with no asm or pragma has no way to emit mrc/mcr, and the extern-call guesses compile to bl, so no match is reachable under these rules. Stopped after 1 of 10 tools/try runs because further C variants cannot produce coprocessor instructions."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 14.3,
+   "file": "pending/wave11/func_02087f68.sonnet.c",
+   "note": "Target is CP15 DACR mrc/bic/mcr; mwcc has no __mrc/__mcr intrinsic (tried, unresolved symbols), and pure C cannot emit coprocessor instructions."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_0208ac34",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208ac34.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0208ae80",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208ae80.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0208b65c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208b65c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0214eaac",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0214eaac.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02159170",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02159170.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02159250",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02159250.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0216522c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0216522c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02165560",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02165560.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0217c6c4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0217c6c4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0217f27c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0217f27c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_02180868",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02180868.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_02180d4c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02180d4c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_02181b20",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02181b20.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_021889bc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_021889bc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021aa190",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021aa190.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021aac84",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021aac84.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0214de68",
+  "haiku": {
+   "matched": false,
+   "best_pct": 87.5,
+   "file": "pending/wave11/func_ov003_0214de68.haiku.c",
+   "note": "No match. Every variant gets the tail-call shape right but picks r1 for the 0x414 offset constant where the target uses r2 (ldr r1 vs ldr r2, 87.5%). Tried: void and uint32_t returns, extra unused params, offset in a local, intermediate pointer, signed types, int cast arithmetic, struct-typed param, function-pointer local, const pointer. Process note: I ran tools/try 11 times (a through k), one over the cap of 10, and did not stop at the cap; the 11th run was k.c."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0214de68.sonnet.c",
+   "note": "Callee takes a second arg that passes through in r1 (caller has param b), which pushes the 0x414 offset into r2."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov003_0215b0dc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0215b0dc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0215b344",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0215b344.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_02170564",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_02170564.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_0219c83c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_0219c83c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_0219c930",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_0219c930.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_0219ef6c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 66.7,
+   "file": "pending/wave11/func_ov006_0219ef6c.haiku.c",
+   "note": "No MATCH. Every variant that casts the second argument to uint8_t at the call site scores 66.7%: mwcc emits the lsls/lsrs truncation before the ldr of func_02084b2c, while the target loads the address first. Taking b as a uint8_t parameter removed the truncation entirely (8.3%). Cap overrun: I ran tools/try 11 times (a.c through k.c), one more than the 10-run cap; the 11th run (k.c) was identical to a.c."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 66.7,
+   "file": "pending/wave11/func_ov006_0219ef6c.sonnet.c",
+   "note": "mwcc always emits lsls/lsrs before ldr of func_02084b2c, but the target loads the address first. Variants tried: u8/u32/u16/int params, return value, extra passthrough args, C++, inline helper, mask and shift forms. All give 66.7% or worse."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219effc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 66.7,
+   "file": "pending/wave11/func_ov006_0219effc.haiku.c",
+   "note": "Store-then-tail-call shape matches, but the literal 0x0214ed25 can't be emitted: a direct extern call to func_0214ed25 is a tail call (ldr r3/bx r3) but gets an unresolved relocation (literal 0). Casting the constant to a function pointer gives the right literal but mwcc emits push/blx instead of a tail call, and it loads into r1/r0 instead of r3. Seven of ten tools/try runs used; no pure-C variant tried reproduced both."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 66.7,
+   "file": "pending/wave11/func_ov006_0219effc.sonnet.c",
+   "note": "Store plus tail call matches. A direct extern call gives the right code, but the literal is an unresolved reloc (0 instead of 0x0214ed25). I tried func_0214ed24, func_0214ed25 and func_ov006_0214ed24/25. A cast constant function pointer emits push/blx/pop instead of a tail call."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219f120",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_0219f120.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a0c0c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021a0c0c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a376c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021a376c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a6524",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021a6524.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a6558",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021a6558.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021ac904",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021ac904.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b1f60",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021b1f60.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b1f6c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021b1f6c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b3bf8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_021b3bf8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_021a1b28",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov009_021a1b28.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_02146798",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov014_02146798.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_02146d2c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov014_02146d2c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02006dc8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02006dc8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02007530",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02007530.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02007838",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02007838.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0200848c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0200848c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020084ac",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020084ac.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0200b994",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0200b994.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201d198",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201d198.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201d1a4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201d1a4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201dd0c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_0201dd0c.haiku.c",
+   "note": "Target is only an epilogue (add sp,#0x24; pop {r4-r7}; pop {r3}; add sp,#0x10; bx r3) with no prologue. Any C function compiled by mwcc emits a push prologue, so no C body I can write reproduces it. Likely a mid-function fragment, not a standalone function. One tools/try run used (NO MATCH, size 0x32 vs 0xa); the helper was unresolved, but the prologue mismatch makes that secondary."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 0,
+   "file": "pending/wave11/func_0201dd0c.sonnet.c",
+   "note": "Target is a bare epilogue fragment (add sp,#0x24; pop {r4-r7}; pop {r3}; add sp,#0x10; bx r3) from the middle of a larger function. Any compiled C function gets a prologue, so a standalone match is not possible. I used one tools/try run and it returned NO MATCH at 0% (size 0x32 vs 0xa)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02020f80",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02020f80.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02021bb0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02021bb0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020235fc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020235fc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202def4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202def4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02036490",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02036490.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02036b9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02036b9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02036ca8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02036ca8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02054d0c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02054d0c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02060558",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02060558.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02072f78",
+  "haiku": {
+   "matched": false,
+   "best_pct": 60,
+   "file": "pending/wave11/func_02072f78.haiku.c",
+   "note": "Opcodes and offsets match (ldr [p,#0x14], adds #0x24, strb 0); only register allocation differs. Target uses r1 for the inner pointer and r2 for zero, but mwcc reuses r0 and r1. Ten tools/try runs used (cap reached). Variants tried: local zero, unused extra params, void* base, uint32 field, byte-pointer arithmetic, reordered statements."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02072f78.sonnet.c",
+   "note": "Function returns p (keeps r0 live), which forces the r1/r2 allocation."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_02084a90",
+  "haiku": {
+   "matched": false,
+   "best_pct": 15,
+   "file": "pending/wave11/func_02084a90.haiku.c",
+   "note": "No MATCH after the 10-run tools/try cap. Target is a 16-byte copy (r0 src, r1 dst) using post-increment ldm/stm writeback in a 3-reg then 1-reg split (r2,r3,ip then r2). Every variant tried either used ldm with no writeback, split into ldr/str pairs, or changed the size to 0x10 or 0x1c/0x24. Unresolved: what C shape makes mwcc emit the writeback 3+1 split."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 15,
+   "file": "pending/wave11/func_02084a90.sonnet.c",
+   "note": "No MATCH. A 16-byte struct copy gives ldm r0,{r0-r3}, not the writeback 3+1 split. A 20-byte copy gives 4+1 writeback with push/pop lr. Split copies give no writeback. Over the 15-run cap."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02087f44",
+  "haiku": {
+   "matched": false,
+   "best_pct": 1,
+   "file": "pending/wave11/func_02087f44.haiku.c",
+   "note": "Blocked on the MRC/MCR coprocessor access (p15 c5 c0 2). Pure C has no way to emit mrc/mcr: __MRC/__MCR and __builtin_arm_mrc/__builtin_arm_mcr are unresolved, so mwcc emits bl calls instead. Only 2 of 10 tools/try runs used; stopped because further guesses at intrinsic names are unlikely to work and asm is banned. The project's real coprocessor intrinsic name would need to be known to finish this."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 2.8,
+   "file": "pending/wave11/func_02087f44.sonnet.c",
+   "note": "Needs mrc/mcr p15 c5 c0 2 and no coprocessor intrinsic is available. __mrc, __MRC, __builtin_mrc, _mrc, __mrc15, __MCR and __builtin_arm_mrc/mcr are all unresolved, so mwcc emits bl calls. Asm is banned."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02088964",
+  "haiku": {
+   "matched": false,
+   "best_pct": 10.7,
+   "file": "pending/wave11/func_02088964.haiku.c",
+   "note": "Target is a CPSR read/modify/write (mrs apsr, bic #0x80, msr cpsr_c, and #0x80) with no calls. Pure C has no way to emit mrs/msr; the only candidates were unresolved helper calls (__get_APSR/__set_CPSR_c, __get_cpsr/__set_cpsr_c), which compile to bl sequences. Needs an intrinsic that mwcc lowers to mrs/msr, which the rules forbid as asm. Used 2 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 10.7,
+   "file": "pending/wave11/func_02088964.sonnet.c",
+   "note": "Needs mrs/msr, which pure C cannot emit. Tried __mrs, __get_CPSR and __builtin_arm_mrs as intrinsics. All came out as unresolved bl calls."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov000_021633a8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_021633a8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0218085c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0218085c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_02184284",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02184284.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_02185748",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02185748.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021995d4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021995d4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021aa25c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021aa25c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021c86a4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021c86a4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0214e178",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0214e178.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_02155be4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_02155be4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov004_0214f12c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov004_0214f12c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_0219f114",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov006_0219f114.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a2658",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov007_021a2658.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov013_021c10cc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov013_021c10cc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov016_02145340",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov016_02145340.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02005f6c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02005f6c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02006080",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02006080.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02009e2c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02009e2c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02019d58",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02019d58.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201d02c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201d02c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0201f138",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0201f138.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02022e34",
+  "haiku": {
+   "matched": false,
+   "best_pct": 8.3,
+   "file": "pending/wave11/func_02022e34.haiku.c",
+   "note": "mwcc turns every shape tried into a tail call (ldr r3 / bx r3) instead of the target's push {r3, lr} / bl / pop {r3, pc}. Variants tried: void and int/uint8/float callee returns, unprototyped and variadic externs, a two-argument passthrough, and C++ with extern \"C\". Nothing suppressed the tail call; the construct that forces a non-tail call is still unknown."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02022e34.sonnet.c",
+   "note": "Matched in C++ mode. The call goes through an inline helper that takes a class with an empty destructor by const reference, which stops mwcc from making it a tail call. r.c also matches."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_0202304c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202304c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202b258",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202b258.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202b2b0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202b2b0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0202e1e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0202e1e4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02034fa0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02034fa0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02039120",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02039120.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02046900",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02046900.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0204a908",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0204a908.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0204a9a8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 75,
+   "file": "pending/wave11/func_0204a9a8.haiku.c",
+   "note": "Code bytes match (movs r0/r1/r2 then tail branch), but the literal-pool word is 0x00000000 instead of 0x0214ed05 because the callee address is unresolved in this build; no C source can emit that constant without a symbol. Only 1 of 10 tools/try runs used."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 75,
+   "file": "pending/wave11/func_0204a9a8.sonnet.c",
+   "note": "Code bytes match, but the literal word is 0 because the callee symbol is unresolved. Casting 0x0214ed05 to a function pointer emits push/blx/pop instead of the tail bx."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_0204de84",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0204de84.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02051448",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02051448.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02052248",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02052248.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02054498",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02054498.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02056e44",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02056e44.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02057190",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02057190.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02057a08",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02057a08.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02059d54",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02059d54.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0205ce10",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0205ce10.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0205fb68",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0205fb68.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02060574",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02060574.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02060b00",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02060b00.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02060de0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02060de0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0206173c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0206173c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020711a0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020711a0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02071f80",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02071f80.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02071fe8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 75,
+   "file": "pending/wave11/func_02071fe8.haiku.c",
+   "note": "Instruction sequence matches (two params: p in r0, x in r1; tail call via bx r3 with args (x+8, *(p+8))). Only blocker: the literal-pool word 0x021553c5 is emitted as 0 because the callee symbol is unresolved (extern func_021553c5 and FUN_021553c5 both unresolved; integer-literal function-pointer forms lose the tail call and produce bl/blx). Used 8 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 75,
+   "file": "pending/wave11/func_02071fe8.sonnet.c",
+   "note": "Instructions match, but the literal-pool word 0x021553c5 is emitted as 0 because the callee symbol never resolves. Tried func_021553c5, func_021553c4, FUN_021553c4, func_021553C4 and sub_021553c4. The run cap is nearly used up."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_02072224",
+  "haiku": {
+   "matched": false,
+   "best_pct": 75,
+   "file": "pending/wave11/func_02072224.haiku.c",
+   "note": "Codegen matches except the tail-call target word: tools/try reports the callee as unresolved (name func_02159561 and FUN_02159561 both fail), so .word is 0x00000000 instead of 0x02159561. A literal-address function pointer produces blx/push instead of bx, so it does not match either. Blocked on the symbol name for 0x02159561. Used 3 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02072224.sonnet.c",
+   "note": "Matched by naming the callee func_ov000_02159560 (the thumb function at 0x02159560); the target word 0x02159561 is its address with the thumb bit set."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_0207385c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207385c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02077a7c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02077a7c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020796dc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020796dc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020797d8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020797d8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02079828",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02079828.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02079838",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02079838.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207985c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207985c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207a404",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207a404.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207a7cc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207a7cc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207c908",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207c908.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0207fe70",
+  "haiku": {
+   "matched": false,
+   "best_pct": 33.3,
+   "file": "pending/wave11/func_0207fe70.haiku.c",
+   "note": "Hit the 10-run tools/try cap without a MATCH. Best (33.3%, size matches) uses two uint64_t stores; mwcc emits stm r0 without writeback and uses ip for a shared zero, while target uses two stm r0! with separate zero registers r1 and r3. Attempts a-j in work/func_0207fe70/ covered uint32 stores (str, not stm), struct-pair copies (stack spills), compound literals (static data, rejected), and pointer-return variants (extra add r0). Unresolved: a source form that yields two writeback stm with separate zero regs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 33.3,
+   "file": "pending/wave11/func_0207fe70.sonnet.c",
+   "note": "Size matches but registers and stores differ. mwcc emits `stm r0` without writeback with a shared ip zero, plus str for the second pair. Target has two `stm r0!` with separate zero regs r1 and r3. I tried about 15 more variants: uint64, struct pairs, C++ ctors, inline helpers, loops and unions. None got both stores combined with writeback."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_0207fe88",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0207fe88.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020817e0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020817e0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0208657c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208657c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020869b8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020869b8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_020869c8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_020869c8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02086a38",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02086a38.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_02086b28",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_02086b28.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0208b220",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208b220.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0208bcb4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208bcb4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_0208cdd8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_0208cdd8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "__FindExceptionTable",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/__FindExceptionTable.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02147794",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02147794.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_021477a4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_021477a4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0214ba1c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0214ba1c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0214d110",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0214d110.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0214eab4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0214eab4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0214ec34",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0214ec34.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_0214fb1c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_0214fb1c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02154e3c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02154e3c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02154e4c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02154e4c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02154ed8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02154ed8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02155498",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02155498.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02157338",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02157338.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02159154",
+  "haiku": {
+   "matched": false,
+   "best_pct": 68.8,
+   "file": "pending/wave11/func_ov000_02159154.haiku.c",
+   "note": "Blocker: target loads the 0x4457434d constant into r2 before the str r1,[r0,#4], so v in r1 stays live. Every C variant (local tag, const tag, struct field stores, uint32 pointer params, compound-literal struct) makes mwcc sink the literal load after the +4 store and use r1. Used 8 of 10 tools/try runs; no match found."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02159154.sonnet.c",
+   "note": "Matched by storing p[0]=tag first, then p[1]=v, returning p+8 (uint32_t* params)."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov000_02163974",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02163974.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02163bfc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02163bfc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_021643ec",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_021643ec.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02164418",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02164418.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_021658b4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_021658b4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov000_02166434",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov000_02166434.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0217c6b8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0217c6b8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0217c9e8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 80,
+   "file": "pending/wave11/func_ov001_0217c9e8.haiku.c",
+   "note": "Code bytes match except the literal-pool word for 0x02168b01: the tool reports the callee as unresolved for every name tried (sym_, FUN_, func_, func_ov001_, ov001_), so it emits 0. A second param (unused) is needed to get the r2 register allocation. Taking the address as a function-pointer local gives a blx call instead of the tail bx, so it does not match. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 80,
+   "file": "pending/wave11/func_ov001_0217c9e8.sonnet.c",
+   "note": "Code bytes match, but the literal-pool word 0x02168b01 comes out as 0 because the callee symbol is unresolved. A cast of the constant to a function pointer (d.c) gives blx with a push/pop frame, 16.7%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov001_0217ef6c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0217ef6c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0217f28c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0217f28c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0217fe00",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0217fe00.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_021807e8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 80,
+   "file": "pending/wave11/func_ov001_021807e8.haiku.c",
+   "note": "Code bytes match except the literal-pool word for 0x02168b85: tools/try resolves it to 0 because no symbol with that address is known (func_ov001_02168b85 and func_02168b85 both unresolved). Calling through a constant-address pointer cast instead gives an indirect blx with a frame (8.3%), so the direct-extern form is the only one that matches the tail call."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_021807e8.sonnet.c",
+   "note": "Matched by calling the extern func_ov000_02168b84, which resolves to 0x02168b85."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov001_02181b2c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02181b2c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_02186d24",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_02186d24.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_021898e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_021898e4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov001_0218b48c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov001_0218b48c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_02198dfc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_02198dfc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021a4a60",
+  "haiku": {
+   "matched": false,
+   "best_pct": 5,
+   "file": "pending/wave11/func_ov002_021a4a60.haiku.c",
+   "note": "No match after 8 of 10 tools/try runs. Every variant compiles to push {r3, lr} / ldr r2 / blx r2 / pop, but the target is a frameless tail call (ldr r3 / bx r3). The function-pointer call to the absolute address 0x21c863d never becomes a tail call under mwcc here. Variants tried: void/int/uint32 returns, extra unused params, local fn pointer, and direct cast. Still unexplored: a way to force a bx tail call, or a symbol-based direct call (none is referenced in the target)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 5,
+   "file": "pending/wave11/func_ov002_021a4a60.sonnet.c",
+   "note": "mwcc always emits push {r3,lr}/blx r2/pop for the fn-pointer call at 0x21c863d, never the frameless ldr r3/bx r3 tail call. I also tried noreturn, a volatile pointer, an inline helper and C++ mode."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov002_021c6260",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021c6260.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021c9ba8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021c9ba8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov002_021cb398",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov002_021cb398.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_02149564",
+  "haiku": {
+   "matched": false,
+   "best_pct": 8.3,
+   "file": "pending/wave11/func_ov003_02149564.haiku.c",
+   "note": "No match after 6 tools/try runs. The two-store body compiles, but mwcc emits no `sub sp, #0x10`/`add sp, #0x10` frame for it. Every attempt to force a 16-byte frame either folded the unused local away (unused array, volatile array, discarded &buf, dead null-compared pointer, empty C++ local class) or added extra code (volatile pointer produced push {r3} and sub sp, #0x14). The unmatched 16-byte frame is the blocker; a source shape that keeps a 4-word local alive without extra instructions is still needed."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave11/func_ov003_02149564.sonnet.c",
+   "note": "mwcc folds every unused 16-byte local away. Forcing the frame to stay (taking an address of the array and storing it) adds `add r0, sp, #0` and `str r0, [sp]`. Tried in C and C++: unused or volatile arrays, a local with a destructor, a by-value struct param and a guard class. None gave a bare sub/add sp #0x10 pair."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov003_0214dd80",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0214dd80.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0215b0e8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0215b0e8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0215f104",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0215f104.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0216c82c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0216c82c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov003_0216f064",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov003_0216f064.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov004_0214b9e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave11/func_ov004_0214b9e4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ }
+]
