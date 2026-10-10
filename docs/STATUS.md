@@ -171,7 +171,7 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
-0. Check cycle 9 landed (see session 8). `python3 tools/block_sysreg.py`.
+0. Cycle 9 landed (2fdfda6: 437/480 + clone 364, 801/801 integrated, one link). `python3 tools/block_sysreg.py`.
    Then integrate waves 11+12 in one link: `python3 tools/cycle.py 11 pending/wave11/result.json
    pending/wave12/result.json pending/wave13/result.json --next 240 --next-n 14 --bg` and run wave 14 meanwhile.
    Per wave: 4 Workflows → copy the 4 task outputs to work/waveN_out{0..3}.json → `tools/save_wave.py N ...` + commit
