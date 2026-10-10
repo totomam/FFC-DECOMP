@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**6,691+ functions matching C (~34%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**7,110 functions matching C (~37%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 6)
 - Speed-up plan steps 1, 2 and 4 are done; step 3 is code-complete but untested:
@@ -19,8 +19,8 @@
      Link timing with/without `-map closure,unused` not measured yet.
   4. Haiku cap 10; near-sibling hints in prompts (reg-renamed or one-instruction-different done shape: 289 haiku todo
      shapes); fixed tools/prompt (used removed mkwave.QUEUE).
-- Clone pass after w7: 228 cloned, integrate was still bisecting (overlay 4 failures) at handoff — **lost with the
-  container; rerun** (cheap: cycle.py's clone step covers it).
+- Clone pass after w7: +227/228 (func_ov004_0214f580 breaks overlay 4 → reverted), committed. Run took ~1h45m because
+  of the bisect. Queue: 305 blocked, 7110 done, 18 fail_sonnet, 240 queued (wave 8), 11737 todo.
 - Wave 8 (4×60, first 240-name wave): 211/239 matched, ~3M subagent tok, ~10 min per workflow. Results + sources saved
   in `pending/wave8/result.json` (paths point at pending/wave8/*.c). **Not integrated.** func_ov001_0218b304 never
   finished (still `queued` → set back to todo). Wave 8's rows are `queued` in queue.csv.
