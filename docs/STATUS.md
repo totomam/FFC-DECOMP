@@ -4,6 +4,30 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **6,691+ functions matching C (~34%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 6)
+- Speed-up plan steps 1, 2 and 4 are done; step 3 is code-complete but untested:
+  1. Hook: `agent_id`/`agent_type` verified in subagent PostToolUse input (debug dump, 1-agent Workflow), guard skips them.
+     fn-matcher.md: ignore guard messages, never git/docs. **But the Workflow harness relays the main user request to
+     every worker and says it overrides the task text**: workers saw the whole campaign prompt; one (wave 8, workflow 3)
+     abandoned its function and polled the clone pass for 45 min waiting to "do the session" (stopped). match_wave.js
+     now tells workers to ignore session-level requests. **Keep the orchestrator's user prompt short, or check workers.**
+  2. `ffclib.queue_update()` (flock `.queue.lock` + temp + `os.replace`) in mkwave/wave_done/clone; `FFC_QUEUE` env
+     override. wave_done takes several outputs + `--dry` (prints CSV diff). Validated: wave 7 rebuilt from fd3a51a's
+     queue diff → dry replay reproduces it exactly, as one file and split in two.
+  3. `tools/cycle.py N <outputs...> [--next 240] [--bg]`: mkwave N+1 (split 60/file → work/waveN+1_<i>.json), then wave
+     matches + clone.find(extra=wave matches as donors) → ONE integrate → queue → commit → push. **Not yet run.**
+     Link timing with/without `-map closure,unused` not measured yet.
+  4. Haiku cap 10; near-sibling hints in prompts (reg-renamed or one-instruction-different done shape: 289 haiku todo
+     shapes); fixed tools/prompt (used removed mkwave.QUEUE).
+- Clone pass after w7: 228 cloned, integrate was still bisecting (overlay 4 failures) at handoff — **lost with the
+  container; rerun** (cheap: cycle.py's clone step covers it).
+- Wave 8 (4×60, first 240-name wave): 211/239 matched, ~3M subagent tok, ~10 min per workflow. Results + sources saved
+  in `pending/wave8/result.json` (paths point at pending/wave8/*.c). **Not integrated.** func_ov001_0218b304 never
+  finished (still `queued` → set back to todo). Wave 8's rows are `queued` in queue.csv.
+- New blockers seen in w8: CP15 mrc/mcr (func_02087f04, func_02087f14) and CPSR mrs/msr (func_02088978) — not C, mark
+  blocked (or allow as asm like swi stubs: decide). func_ov015_021d6304 DS Protect → blocked. func_02075780 needs
+  `func_021640d1` in abs_symbols.txt. func_020376e0: literal-pool 0xf that mwcc always folds to movs.
+
 ## Done (session 5)
 - Clone pass after w5: +277 (first run aborted: I broke the baseline mid-pass — never edit delinks/src while a clone
   pass may integrate). Wave 6: 56/60 (51 Haiku/5 Sonnet, ~850k tok, 10 min, run as 2 concurrent workflows of 30).
@@ -110,8 +134,10 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
-0. `nohup python3 tools/clone.py run > work/clone_w7.log 2>&1` (clone pass after wave 7), commit.
-   Then implement the speed-up plan above (steps 1-4), running waves between steps once step 2 is in.
+0. Integrate wave 8 + clone pass in one link (first real test of cycle.py):
+   `nohup python3 tools/cycle.py 8 pending/wave8/result.json --next 240 > work/cycle8.log 2>&1` (writes wave 9 files
+   first). Validate 22/22 modules and integrated = wave + clone. Then time the link without `-map closure,unused`.
+   Then use `--bg` to overlap integrate N with matching N+1.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
