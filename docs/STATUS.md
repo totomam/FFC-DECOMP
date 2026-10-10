@@ -10,9 +10,8 @@
   Clone after w6: +133. Wave 7: 59/60 (54 Haiku/5 Sonnet, ~760k tok). **Clone pass after w7 NOT run yet.**
   Queue at handoff: 305 blocked    6883 done      18 fail_sonnet       1 status   12204 todo
 - **Context-guard hook also fires inside wave subagents** (it reads the main transcript): in w7, 2 Haiku workers
-  abandoned their function, rewrote STATUS.md and pushed (reverted; Sonnet then matched both). Fix (needs user
-  approval — auto mode blocked the edit): in `.claude/hooks/context_guard.py`, `sys.exit(0)` when the hook input
-  has `agent_id`. Until then, keep waves short once the orchestrator nears 180k.
+  abandoned their function, rewrote STATUS.md and pushed (reverted; Sonnet then matched both). Fixed:
+  the hook now exits early when its input has `agent_id`.
 - **Absolute call targets**: `config/usa/arm9/abs_symbols.txt` = the 103 `module:none` call targets in relocs.txt
   (runtime-loaded code at 0x021d....; ov017/ov018 ambiguity). `tools/lcf_post.py` (lcf rule) defines them in the lcf;
   ffclib loads them as module `abs`, so prompts/try show `func_021d9ad8` etc. func_02082908 done.
