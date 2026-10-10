@@ -17,8 +17,7 @@
   integrated TUs; record any applied-but-unrecorded TUs as done per session 3 note).
 - Waves 11 (206/240: 197 Haiku/9 Sonnet; ~14 CP15 stubs wasted) and 12 (226/240: 220/6), ~8–10 min each, ~2.6M tok.
   Saved by new `tools/save_wave.py N <outputs>` → `pending/waveN/result.json` (+ C). **Not integrated.**
-- Wave 13 (240, `work/wave13_*.json`) was running at handoff → its results are lost with the container; its rows are
-  `queued` in queue.csv. Reset: rows `queued` that are in no `pending/wave*/result.json` → `todo`.
+- Wave 13 saved to pending/wave13 (not integrated). Its rows are `queued`.
 - cycle.py: `--next-n M` names the next wave (it defaulted to N+1 = 10 for cycle 9). Session trailer updated.
 - Seen: func_ov001_0217c9e8 loads 0x02168b01 with an ambiguous `module:overlays(0,4)` reloc → try can't resolve it.
   Fix = pick the module in ov001 relocs.txt (config edit: only when no integrate runs). Others like it likely.
@@ -172,9 +171,9 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
-0. Check cycle 9 landed (see session 8). Reset orphan `queued` rows (wave 13). `python3 tools/block_sysreg.py`.
+0. Check cycle 9 landed (see session 8). `python3 tools/block_sysreg.py`.
    Then integrate waves 11+12 in one link: `python3 tools/cycle.py 11 pending/wave11/result.json
-   pending/wave12/result.json --next 240 --next-n 13 --bg` and run wave 13 meanwhile.
+   pending/wave12/result.json pending/wave13/result.json --next 240 --next-n 14 --bg` and run wave 14 meanwhile.
    Per wave: 4 Workflows → copy the 4 task outputs to work/waveN_out{0..3}.json → `tools/save_wave.py N ...` + commit
    (survives the container) → `tools/cycle.py N pending/waveN/result.json --next-n N+1 --bg` once the previous
    cycle is done (`pgrep -f "^python3 tools/cycle"`). Workflow notifications are ~10k context each: ~4 waves/session.
