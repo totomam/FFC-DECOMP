@@ -72,7 +72,7 @@ def integrate_and_commit(n, outputs, do_push):
     print(f"{msg}; integrated {len(ok)}/{len(pairs)}; queue {tally}")
     git("add", "src", "config", "queue.csv", *(["pending"] if (ROOT / "pending").exists() else []))
     c = git("commit", "-q", "-m", msg + "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
-            "Claude-Session: https://claude.ai/code/session_01Sd9Krmg4NtddTkB7ccKPiL")
+            "Claude-Session: https://claude.ai/code/session_01LuW7UG4X3rBWNufHn6fUtp")
     head = git("rev-parse", "--short", "HEAD").stdout.strip()
     print(f"commit {head}" + ("" if c.returncode == 0 else " (nothing committed)")
           + (f", {push()}" if do_push and c.returncode == 0 else ""))
