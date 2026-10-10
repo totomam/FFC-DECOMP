@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**7,110 functions matching C (~37%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**7,633 functions matching C (~39%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 7)
 - Bootstrap OK (22/22). cycle.py's first real run (cycle 8: wave 8 + clone, one integrate): the batch broke overlay 4 →
@@ -151,10 +151,8 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
-0. If cycle 8 did not commit (`git log` lacks "Wave 8: ..."): the integrate died mid-run → `git status`; if
-   `rm build/usa/arm9.o && ninja` gives 22/22, record applied TUs as done (see "killed integrate" below), else
-   `git checkout src config` and rerun `python3 tools/cycle.py 8 pending/wave8/result.json --next 0`.
-   Then force-relink check (above). Block func_ov004_0214f580.
+0. Cycle 8 committed (8e0e0fb: wave 8 211/239 + clone +312 = 523/524 integrated); forced relink verified 22/22.
+   Block func_ov004_0214f580 in queue.csv.
    Then integrate waves 9+10 (results + sources saved in pending/wave9, pending/wave10; their rows stay
    `queued`): `python3 tools/cycle.py 9 pending/wave9/result.json pending/wave10/result.json --next 240 --bg`.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
