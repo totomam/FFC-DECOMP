@@ -4,16 +4,6 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **6,691+ functions matching C (~34%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
-## Session 6 (context guard hit early, nothing run yet)
-- Read STATUS/WORKFLOW only. **Not done this session:** bootstrap (.assets symlink, `ninja` 22/22 check), wave-5
-  clone pass, waves 7+, Sonnet tier.
-- Working tree at handoff is dirty, uncommitted and unverified: `config/usa/arm9/delinks.txt` and
-  `config/usa/arm9/overlays/ov*/delinks.txt` modified, plus about 145 untracked `src/*/func_*.c` files (wave-5 integrate output).
-  Next session: run bootstrap + `ninja` FIRST. If it passes, commit those as "wave 5 integrated" and record them as done.
-  If it fails, a killed integrate may have left the tree applied (see session 3 note); fix or revert before continuing.
-- Then run the wave-5 clone pass in the background: `nohup python3 tools/clone.py run > work/clone_w5.log 2>&1`
-  (expect over 30 min). Wait with `pgrep -f "^python3 tools/clone"`.
-
 ## Done (session 5)
 - Clone pass after w5: +277 (first run aborted: I broke the baseline mid-pass — never edit delinks/src while a clone
   pass may integrate). Wave 6: 56/60 (51 Haiku/5 Sonnet, ~850k tok, 10 min, run as 2 concurrent workflows of 30).
