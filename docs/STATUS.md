@@ -155,8 +155,8 @@ compiles to the donor's own instructions), baseline-build stamp (ninja is alread
    `rm build/usa/arm9.o && ninja` gives 22/22, record applied TUs as done (see "killed integrate" below), else
    `git checkout src config` and rerun `python3 tools/cycle.py 8 pending/wave8/result.json --next 0`.
    Then force-relink check (above). Block func_ov004_0214f580.
-   Then integrate waves 9+10 (wave outputs are lost with the container: if work/ is gone, re-queue their rows
-   `queued`→`todo`): `python3 tools/cycle.py 9 work/wave9_out*.json work/wave10_out*.json --next 240 --bg`.
+   Then integrate waves 9+10 (results + sources saved in pending/wave9, pending/wave10; their rows stay
+   `queued`): `python3 tools/cycle.py 9 pending/wave9/result.json pending/wave10/result.json --next 240 --bg`.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
