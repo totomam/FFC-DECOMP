@@ -4,10 +4,6 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **6,691+ functions matching C (~34%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
-## Session 7 (context guard hit after reading docs; nothing run)
-- Read STATUS/WORKFLOW only. No bootstrap, no `ninja`, no clone pass, no waves, no commit of the dirty tree.
-- Working tree is the same as the session 6 handoff (see below). First steps stay: bootstrap + `ninja` 22/22, then the wave-5 clone pass.
-
 ## Session 6 (context guard hit early, nothing run yet)
 - Read STATUS/WORKFLOW only. **Not done this session:** bootstrap (.assets symlink, `ninja` 22/22 check), wave-5
   clone pass, waves 7+, Sonnet tier.
