@@ -82,8 +82,36 @@
 - Compiler default 1.2p2 (build 1028; V54: all builds tie). Flags in `ffclib.CC_FLAGS` (configure imports
   nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
+## Speed-up plan (audited end of session 5; implement in this order)
+Measured: link (mwld, `build/usa/arm9.o`) ~395 s and runs twice per wave = most of the ~40 min cycle. A 33-agent
+Workflow takes ~5 min; Haiku agent median 12 s, context peak median ~11k (max 22.5k) with fn-matcher — the old 47k
+baseline is obsolete. Clone ceiling: only ~1,389 haiku + 637 sonnet todo funcs still have a reachable donor; ~10k need
+their own agent (~170 waves of 60 at the current size).
+1. Hook: verify `agent_id` reaches context_guard in subagents (temporary debug hook dumping stdin keys, 1-agent
+   Workflow). Fallback: skip when the hook's `tool_use_id` is absent from the main transcript tail. Add to
+   `.claude/agents/fn-matcher.md`: ignore guard messages, never touch git or docs/.
+2. queue.csv: flock + write-temp/`os.replace` in mkwave, wave_done, clone (all rewrite it non-atomically; workers read
+   it via tools/prompt). wave_done accepts several Workflow outputs and integrates once. Validate: replay
+   work/wave7_result.json in a dry run → identical queue diff.
+3. One link per cycle: clone.py takes the wave's matched `work/<func>/*.c` as donors (donor_src reads only src/ and
+   pending/ today), then a single integrate for wave + clone. Time the link without `-map closure,unused` (14.6 MB
+   xMAP, unused by tools). Overlap: integrate wave N while wave N+1 matches (try needs only extract/ + symbols.txt).
+   Validate: 22/22 modules; integrated count = wave + clone.
+4. Bigger waves: 4 Workflows × 60 names (8 concurrent agents, under the 10 guideline). One cycle command
+   (wave_done → clone → mkwave → commit) printing ~3 lines. Haiku try cap 6 → 10; near-sibling C (register-renamed /
+   one-instruction-different done shapes: ~156 shapes) as prompt hints via sibling_extra. Expect ~8× per session
+   (240 names per ~20 min cycle).
+5. Parallel sessions last: module-group filter for mkwave and clone.py (clone.py today integrates any module →
+   duplicate TUs / delinks conflicts across branches). Balanced groups: main+itcm (4,814 todo) / ov000-003 (3,617) /
+   ov004-016 (3,773). Row-keyed queue merge (each row from the branch owning its module); only the orchestrator edits
+   tools/ and STATUS.md; after each merge: full ninja + one clone pass (178 todo shapes span groups). Child sessions
+   hand off by spawning a fresh session. Pilot: 2 branches × 1 wave, merge, ninja, queue totals = 19,410. ~2.5× more.
+Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanical fuzzy clone (rewritten donor C
+compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
+
 ## Next steps (in order)
 0. `nohup python3 tools/clone.py run > work/clone_w7.log 2>&1` (clone pass after wave 7), commit.
+   Then implement the speed-up plan above (steps 1-4), running waves between steps once step 2 is in.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
