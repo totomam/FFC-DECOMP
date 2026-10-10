@@ -23,12 +23,12 @@ Enforced by task design, not trust:
   excerpts are pasted into the prompt — no browsing the repo.
 - **Compact tools only.** `tools/try <func> <file.c>` prints `MATCH` or a diff capped
   at 40 lines. Workers must not `cat` asm files, headers, or build logs.
-- **Hard attempt cap:** 6 compiles, then return best attempt + best %.
+- **Hard attempt cap:** 10 compiles (Haiku), then return best attempt + best %.
 - Budget: ~47k baseline (measured) + prompt ≤ 8k + 6 × ~4k attempts ≈ 80k peak. Under 100k.
 - Functions too big for this budget go straight to Sonnet.
 
 ## Escalation
-Haiku (6 attempts) → Sonnet (15 attempts, sees Haiku's best attempt) → Opus/manual queue.
+Haiku (10 attempts) → Sonnet (15 attempts, sees Haiku's best attempt) → Opus/manual queue.
 Every failure records best match % + one-line reason in the queue.
 
 ## Isolation & merging

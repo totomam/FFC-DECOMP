@@ -63,20 +63,50 @@ def v54_extra(note):
     return ""
 
 
+REG_RE = re.compile(r"\b(?:r\d+|ip|lr|sb|sl|fp)\b")
+
+
+def _near_index(sh, done):
+    """Done functions keyed by register-renamed shape and by shape-with-one-line-masked."""
+    regs, one = {}, {}
+    for f in done:
+        lines = sh[f][0].split("\n")
+        if len(lines) > 80:
+            continue
+        regs.setdefault(REG_RE.sub("R", sh[f][0]), f)
+        for i in range(len(lines)):
+            one.setdefault((len(lines), i, "\n".join(lines[:i] + lines[i + 1:])), f)
+    return regs, one
+
+
 def sibling_extra(func):
-    """C of an already-matched function with the identical instruction shape (clone.py could not adapt it)."""
+    """C of an already-matched function with the identical instruction shape (clone.py could not adapt it),
+    else of a near sibling (same shape up to register names, or one instruction different)."""
     import clone
     sh = clone.shapes()
     if func not in sh:
         return ""
-    for r in ffclib.queue_rows():
-        f = r["func"]
-        if r["status"] == "done" and f != func and f in sh and sh[f][0] == sh[func][0]:
-            p = clone.donor_src(f, r["note"])
+    rows = [r for r in ffclib.queue_rows() if r["status"] == "done" and r["func"] != func and r["func"] in sh]
+    note = {r["func"]: r["note"] for r in rows}
+    for f in note:
+        if sh[f][0] == sh[func][0]:
+            p = clone.donor_src(f, note[f])
             if p:
                 return (f"`{f}` has the identical instruction shape (only constants, offsets or symbols differ) and "
                         f"matched with this C; adapt it (struct field offsets, constants, names):\n```\n"
                         f"{p.read_text().strip()}\n```\n")
+    regs, one = _near_index(sh, note)
+    lines = sh[func][0].split("\n")
+    hits = [(regs.get(REG_RE.sub("R", sh[func][0])), "the same instruction shape up to register allocation")]
+    hits += [(one.get((len(lines), i, "\n".join(lines[:i] + lines[i + 1:]))),
+              f"the same instruction shape except one instruction (target line {i + 1}: `{lines[i]}`)")
+             for i in range(len(lines))] if len(lines) <= 80 else []
+    for f, how in hits:
+        p = f and clone.donor_src(f, note[f])
+        if p:
+            return (f"Hint: matched function `{f}` has {how}. Its C is a strong starting point; change what differs "
+                    f"(statement order / types for registers, the one differing operation):\n```\n"
+                    f"{p.read_text().strip()}\n```\n")
     return ""
 
 
@@ -91,7 +121,7 @@ def build(func, tier, extra=""):
         s = ffclib.symbols().get(name)
         desc = protos().get(name) or (f"{s.kind}" + (f" ({s.mode})" if s and s.mode else "") if s else "unknown")
         refs.append(f"{name} : {desc}")
-    cap = 6 if tier == "haiku" else 15
+    cap = 10 if tier == "haiku" else 15
     armnote = ". This function is ARM: put `/* cflags: -nothumb */` as the very first line" if sym.mode == "arm" else ""
     return TEMPLATE.format(func=func, size=sym.size, mode=sym.mode, asm=asm,
                            refs="\n".join(f"- {r}" for r in refs) or "- none", cap=cap,

@@ -158,12 +158,17 @@ def donor_src(func, note):
     return ROOT / m[1] if m and (ROOT / m[1]).exists() else None
 
 
-def run(dry):
+def find(extra=None):
+    """Clone every todo/failed function that has a same-shape donor. extra = {func: matched .c} adds donors
+    not integrated yet (this cycle's wave matches). Returns ({func: donor}, [(func, clone.c)])."""
     sh = shapes()
     rows = ffclib.queue_rows()
     donors = defaultdict(list)
+    for f, path in (extra or {}).items():
+        if f in sh:
+            donors[sh[f][0]].append((f, Path(path) if Path(path).is_absolute() else ROOT / path))
     for r in rows:
-        if r["status"] in ("done", "skip_integrate") and r["func"] in sh:
+        if r["status"] in ("done", "skip_integrate") and r["func"] in sh and r["func"] not in (extra or {}):
             d = donor_src(r["func"], r["note"])
             if d:
                 donors[sh[r["func"]][0]].append((r["func"], d))
@@ -171,7 +176,7 @@ def run(dry):
     jobs = []
     for r in rows:
         f = r["func"]
-        if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh:
+        if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh or f in (extra or {}):
             continue
         cands = [(d, p, dv) for d, p in donors.get(sh[f][0], []) for dv in (False, True)
                  if f"{f}|{d}" + ("|d" if dv else "") not in tried]
@@ -201,6 +206,17 @@ def run(dry):
                 made[f] = d
                 pairs.append((f, out))
     TRIED.write_text(json.dumps(sorted(tried)))
+    return made, pairs
+
+
+def record(rows, ok, made):
+    for r in rows:
+        if r["func"] in ok and r["func"] in made:
+            r["status"], r["best_pct"], r["note"] = "done", "100", f"cloned from {made[r['func']]}"
+
+
+def run(dry):
+    made, pairs = find()
     print(f"cloned {len(made)} functions")
     if dry or not pairs:
         return
@@ -209,9 +225,7 @@ def run(dry):
     ok = set(re.findall(r"^OK (\w+)", p.stdout, re.M))
     print(p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr[-500:])
     with ffclib.queue_update() as rows:  # fresh read under the lock: mkwave may have marked rows queued meanwhile
-        for r in rows:
-            if r["func"] in ok:
-                r["status"], r["best_pct"], r["note"] = "done", "100", f"cloned from {made[r['func']]}"
+        record(rows, ok, made)
 
 
 def stats():

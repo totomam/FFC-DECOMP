@@ -31,9 +31,8 @@ def load(path):
     return [r for r in (data["result"] if isinstance(data, dict) else data) if r]
 
 
-def main():
-    dry = "--dry" in sys.argv
-    res = [r for a in sys.argv[1:] if a != "--dry" for r in load(a)]
+def accept(res):
+    """{func: matched file} for wave results that are real C matches (asm only for BIOS swi stubs)."""
     matched = {}
     for r in res:
         best = r.get("sonnet") or r.get("haiku")
@@ -43,6 +42,17 @@ def main():
                 best["note"] = "asm-only match rejected; " + best["note"]
                 continue
             matched[r["func"]] = best["file"]
+    return matched
+
+
+def integrate_status(stdout):
+    return {m[2]: (m[1], m[3] or "") for m in re.finditer(r"^(OK|SKIP|REVERT) (\w+)(?:: (.*))?$", stdout, re.M)}
+
+
+def main():
+    dry = "--dry" in sys.argv
+    res = [r for a in sys.argv[1:] if a != "--dry" for r in load(a)]
+    matched = accept(res)
     status = {}
     if dry:
         status = {f: ("OK", "") for f in matched}
@@ -50,10 +60,7 @@ def main():
         argv = [x for f, p in matched.items() for x in (f, p)]
         p = subprocess.run([str(ROOT / "tools/integrate"), *argv], cwd=ROOT, capture_output=True, text=True)
         print(p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr)
-        for line in p.stdout.splitlines():
-            m = re.match(r"(OK|SKIP|REVERT) (\w+)(?:: (.*))?", line)
-            if m:
-                status[m[2]] = (m[1], m[3] or "")
+        status = integrate_status(p.stdout)
     with ffclib.queue_update() as rows:
         before = {r["func"]: dict(r) for r in rows}
         tally = update(rows, res, matched, status, dry)
