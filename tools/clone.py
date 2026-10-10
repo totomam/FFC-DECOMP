@@ -172,7 +172,7 @@ def run(dry):
     jobs = []
     for r in rows:
         f = r["func"]
-        if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh or "unaligned" in r["note"]:
+        if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh:
             continue
         cands = [(d, p, dv) for d, p in donors.get(sh[f][0], []) for dv in (False, True)
                  if f"{f}|{d}" + ("|d" if dv else "") not in tried]

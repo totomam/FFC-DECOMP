@@ -37,10 +37,10 @@ def precheck(func, src: Path):
     dst = ROOT / "src" / sym.module / f"{func}.c"
     if dst.exists() or f"src/{sym.module}/{func}.c:" in delinks_path(sym.module).read_text():
         return None, "already integrated"
-    if sym.addr % 4:
-        return None, "start not 4-aligned (needs a multi-function TU)"
-    if not pad_ok(sym):
-        return None, "non-zero padding after function"
+    if sym.addr % 4 and (sym.addr % 2 or sym.mode != "thumb"):
+        return None, "unaligned arm function"
+    if overlaps(sym):
+        return None, "overlaps an existing TU"
     obj, msg = ffclib.compile_c(src, ROOT / "work" / func / "obj")
     if obj is None:
         return None, "compile error"
@@ -59,15 +59,23 @@ def precheck(func, src: Path):
 
 
 def tu_end(sym):
-    """Objects are 4-aligned, so the TU absorbs the zero padding up to the next 4-byte boundary."""
-    return (sym.addr + sym.size + 3) & ~3
-
-
-def pad_ok(sym):
+    """The TU absorbs zero padding up to the next 4-byte boundary; otherwise (code follows) it ends
+    exactly, and the next object starts unaligned (tools/lcf_post.py, tools/elf_align.py)."""
     end = sym.addr + sym.size
     start = ffclib.module_ranges()[sym.module][0]
-    pad = ffclib._bin(sym.module)[end - start:tu_end(sym) - start]
-    return not any(pad)
+    pad = ffclib._bin(sym.module)[end - start:((end + 3) & ~3) - start]
+    if any(pad) or (sym.module, end) in ffclib.addr_names():
+        return end
+    return (end + 3) & ~3
+
+
+def overlaps(sym):
+    for m in re.finditer(r"^\S+:\n(?:    .*\n)*?    \.text\s+start:(0x[0-9a-f]+) end:(0x[0-9a-f]+)",
+                         delinks_path(sym.module).read_text(), re.M):
+        a, b = int(m[1], 16), int(m[2], 16)
+        if a < tu_end(sym) and sym.addr < b and not (a == sym.addr and b == tu_end(sym)):
+            return True
+    return False
 
 
 def apply(items):

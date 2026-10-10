@@ -6,6 +6,7 @@
 # Usage: python3 tools/configure.py [usa]   then   ninja
 import argparse
 import json
+import re
 import os
 import subprocess
 import sys
@@ -124,13 +125,15 @@ def main():
         n.newline()
 
         n.rule("extract", f"{DSD} rom extract --rom $in --output-path $output_path")
-        n.rule("delink", f"{DSD} delink --config-path $config_path")
+        # gap objects get .text align 2 so they can follow a TU that ends unaligned (tools/lcf_post.py)
+        n.rule("delink", f"{DSD} delink --config-path $config_path"
+               f" && $python tools/elf_align.py 2 {build_path / game / 'delinks'}/_dsd_gap@*.o")
         n.rule("disassemble", f"{DSD} dis --config-path $config_path --asm-path $output_path --ual")
         n.rule("mwcc",
                f"{ENV} {WIBO} {CC} $base_flags {CC_INCLUDES} $cc_flags -d {game} -MD -c $in -o $basedir"
                f" && $python tools/transform_dep.py $basefile.d $basefile.d$post",
                depfile="$basefile.d", description="mwcc $in")
-        n.rule("lcf", f"{DSD} lcf -c $config_path")
+        n.rule("lcf", f"{DSD} lcf -c $config_path && $python tools/lcf_post.py $lcf_file $cfg_dir")
         n.rule("mwld", f"{ENV} {WIBO} {LD} {LD_FLAGS} $extra_ld_flags @$objects_file $lcf_file -o $out",
                description="mwld $out")
         n.rule("rom_config", f"{DSD} rom config --elf $in --config $config_path")
@@ -152,21 +155,31 @@ def main():
         n.newline()
 
         if delink_outputs:
-            n.build(delink_outputs, "delink", dsd_configs + [str(rom_config)], implicit=DSD,
+            n.build(delink_outputs, "delink", dsd_configs + [str(rom_config)], implicit=[DSD, "tools/elf_align.py"],
                     variables={"config_path": str(arm9_config)})
             n.build("delink", "phony", delink_outputs)
-        n.build([lcf_file, objects_file], "lcf", delinks_files + [str(rom_config)], implicit=DSD,
-                variables={"config_path": str(arm9_config)})
+        cfg_dir = arm9_config.parent
+        n.build([lcf_file, objects_file], "lcf", delinks_files + [str(rom_config)],
+                implicit=[DSD, "tools/lcf_post.py", str(cfg_dir / "abs_symbols.txt")],
+                variables={"config_path": str(arm9_config), "lcf_file": lcf_file, "cfg_dir": str(cfg_dir)})
         n.build("dis", "disassemble", dsd_configs, implicit=DSD,
                 variables={"config_path": str(arm9_config), "output_path": str(game_build / "asm")})
         n.newline()
 
-        mwcc_implicit = [CC, WIBO, "tools/transform_dep.py", "tools/strip_weak.py"]
+        mwcc_implicit = [CC, WIBO, "tools/transform_dep.py", "tools/strip_weak.py", "tools/elf_align.py"]
+        unaligned = set()  # complete TUs starting on a 2-byte boundary
+        for dl in delinks_files:
+            for m in re.finditer(r"^(src/\S+):\n(?:    .*\n)*?    \.text\s+start:(0x[0-9a-f]+)",
+                                 Path(dl).read_text(), re.M):
+                if int(m[2], 16) % 4:
+                    unaligned.add(Path(m[1]))
         for src in source_files():
             obj = game_build / src.with_suffix(".o")
             extra = file_cc_flags(src)
             # C++: drop unreferenced inline copies the original link dead-stripped
             post = f" && $python tools/strip_weak.py {obj}" if "c++" in extra else ""
+            if src in unaligned:
+                post += f" && $python tools/elf_align.py 2 {obj}"
             n.build(str(obj), "mwcc", str(src), implicit=mwcc_implicit, variables={
                 "post": post,
                 "base_flags": base_cc_flags(extra),
