@@ -1,0 +1,4 @@
+#include "ffc/overlay_02.h"
+#define CONST_FIELD(type, object, offset) (*(const type *)((const uint8_t *)(object) + (offset)))
+
+uint32_t func_0205505c(const void *object) { return CONST_FIELD(uint32_t, object, 0x174); }
