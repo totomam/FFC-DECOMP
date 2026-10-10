@@ -100,27 +100,38 @@ def revert(items, undo):
         dst.unlink(missing_ok=True)
 
 
+def check_module(name):
+    """dsd check name -> module name ('ARM9 main' -> main, 'overlay 4' -> ov004)."""
+    m = re.fullmatch(r"overlay (\d+)", name)
+    return f"ov{int(m[1]):03d}" if m else {"ARM9 main": "main", "ITCM": "itcm", "DTCM": "dtcm"}.get(name, name)
+
+
 def build_ok():
+    """(ok, failing modules); failing modules is empty when the build broke before the checksum check."""
     p = subprocess.run(["ninja"], cwd=ROOT, capture_output=True, text=True)
     out = p.stdout + p.stderr
-    ok = p.returncode == 0 and "checksum failed" not in out
+    bad = {check_module(m) for m in re.findall(r"Check (.*): checksum failed", out)}
+    ok = p.returncode == 0 and not bad
     if not ok:
-        fails = re.findall(r"Check (.*): checksum failed", out) or [
-            l for l in out.splitlines() if "ERROR" in l or "FAILED" in l][:3]
-        log(f"  build failed: {fails}")
-    return ok
+        log(f"  build failed: {sorted(bad) or [l for l in out.splitlines() if 'ERROR' in l or 'FAILED' in l][:3]}")
+    return ok, bad
 
 
 def try_batch(items):
     if not items:
         return []
     undo = apply(items)
-    if build_ok():
+    ok, bad = build_ok()
+    if ok:
         return items
     revert(items, undo)
     if len(items) == 1:
         log(f"REVERT {items[0][0]}: breaks build")
         return []
+    # modules are checked separately: items in passing modules go back as one batch, only the failing ones bisect
+    suspect = [it for it in items if it[2].module in bad]
+    if 0 < len(suspect) < len(items):
+        return try_batch([it for it in items if it[2].module not in bad]) + try_batch(suspect)
     mid = len(items) // 2
     return try_batch(items[:mid]) + try_batch(items[mid:])
 
@@ -136,7 +147,7 @@ def main():
         sys.exit(__doc__)
     lock = open(ROOT / "work" / ".integrate.lock", "w")
     fcntl.flock(lock, fcntl.LOCK_EX)
-    if not build_ok():
+    if not build_ok()[0]:
         sys.exit("baseline build is not clean; fix it first")
     items = []
     for func, src in pairs:
