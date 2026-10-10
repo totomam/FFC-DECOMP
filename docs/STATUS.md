@@ -10,7 +10,11 @@
 - block_sysreg: +2, then +24 after cycle 11 (re-run after every cycle).
 - Cycle 11 (waves 11+12+13 + clone): 657/720, clone +14, 671/671 integrated (cce14bb).
 - Wave 14: 221/240 (210 Haiku/11 Sonnet) → pending/wave14; cycle 14 started `--bg --next 0`.
-- Wave 15: 217/240 (209/8) → pending/wave15 (not integrated). Wave 16 matched → pending/wave16 (see git log).
+- Wave 15: 217/240 (209/8) → pending/wave15 (not integrated). Cycle 14 landed (4b5b431: 221/221). Cycle 15 (wave 15) started `--bg` at session end — if no "Wave 15:" commit, rerun
+  `python3 tools/cycle.py 15 pending/wave15/result.json --next 0` after `ninja` 22/22.
+- Wave 16: 3 of 4 Workflows saved → pending/wave16/result.json (180 names, NOT integrated). Workflow 2's 60 names
+  (pending/wave16/unmatched_names_wf2.json) never returned: their queue rows are `queued` — rerun them as one Workflow
+  and save_wave as wave 17 (or reset to todo).
 - Waves 15/16 were made while a cycle ran with `python3 -c "import sys;sys.path.insert(0,'tools');import cycle;cycle.mkwave(N,240,'haiku')"`
   → so run their cycles with `--next 0` or with `--next-n` past the last made wave.
 - Recurring Sonnet fixes (prompt tips): pass-through params keep r0–r3 live (scratch moves to r3); return the callee
@@ -185,6 +189,8 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
+-1. Session 10: after cycle 15 lands, `python3 tools/block_sysreg.py`; then `python3 tools/cycle.py 16
+   pending/wave16/result.json --next 240 --next-n 18 --bg`; rerun wave16 wf2 names (wave 17) meanwhile.
 0. Cycle 9 landed (2fdfda6: 437/480 + clone 364, 801/801 integrated, one link). `python3 tools/block_sysreg.py`.
    Then integrate waves 11+12 in one link: `python3 tools/cycle.py 11 pending/wave11/result.json
    pending/wave12/result.json pending/wave13/result.json --next 240 --next-n 14 --bg` and run wave 14 meanwhile.
