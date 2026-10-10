@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tools/cycle.py <N> <wave N task .output> ... [--next 240] [--tier haiku] [--bg] [--no-push]
+"""tools/cycle.py <N> <wave N task .output> ... [--next 240] [--next-n M] [--tier haiku] [--bg] [--no-push]
 One matching cycle, ~3 lines of output:
   1. mkwave for wave N+1 (unless --next 0): <count> dedup names -> work/wave<N+1>_<i>.json, 60 per Workflow
   2. wave N results + clone pass (wave matches serve as donors) -> ONE tools/integrate (one link)
@@ -83,6 +83,7 @@ def main():
     ap.add_argument("n", type=int)
     ap.add_argument("outputs", nargs="*")
     ap.add_argument("--next", type=int, default=240)
+    ap.add_argument("--next-n", type=int, help="number of the next wave (default N+1)")
     ap.add_argument("--tier", default="haiku")
     ap.add_argument("--bg", action="store_true")
     ap.add_argument("--no-push", action="store_true")
@@ -90,7 +91,7 @@ def main():
     a = ap.parse_args()
     if not a.integrate_only:
         if a.next:
-            mkwave(a.n + 1, a.next, a.tier)
+            mkwave(a.next_n or a.n + 1, a.next, a.tier)
         if a.bg:
             log = ROOT / "work" / f"cycle_{a.n}.log"
             argv = ["python3", "tools/cycle.py", str(a.n), *a.outputs, "--integrate-only",
