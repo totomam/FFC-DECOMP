@@ -4,6 +4,23 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **7,110 functions matching C (~37%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 7)
+- Bootstrap OK (22/22). cycle.py's first real run (cycle 8: wave 8 + clone, one integrate): the batch broke overlay 4 →
+  plain bisect, ~7 min/link, **>2 h**. Culprit again `func_ov004_0214f580` (also reverted in w7's clone pass): clone.py
+  re-picks it every pass → **mark it blocked in queue.csv**.
+- `tools/integrate` now bisects by module: dsd checks modules separately, so after a failed build the items in
+  passing modules are retried as one batch and only the failing modules' items are bisected (untested; committed).
+- Waves 9 and 10 matched while cycle 8 integrated (overlap works; mkwave marks queued shapes busy):
+  w9 229/240 (219 Haiku/10 Sonnet, ~3.2M tok, ~16 min); w10 208/240 (172/36, ~5M tok, ~36 min; Sonnet escalations
+  rising: C++ virtual calls / PMF calls / dtor temps for 8-byte frames are the common fixes).
+  Outputs: `work/wave9_out{0..3}.json`, `work/wave10_out{0..3}.json` (work/ is gitignored → lost with the container;
+  the matched C is in work/<func>/). **Not integrated.** No worker commits.
+- **Never run mwld outside ninja while an integrate may run**: the lcf writes `build/*.bin` by relative path. A
+  scratch timing link overwrote them twice during cycle 8 → its checks in that window are suspect. After cycle 8:
+  `rm build/usa/arm9.o && ninja` and confirm 22/22 before trusting its commit.
+- Link timing (-map vs none): ~412 s vs ~416 s, but both scratch links exited 1 (see above) → redo with a scratch
+  lcf whose `> build/...` paths point into a temp dir, with nothing else linking.
+
 ## Done (session 6)
 - Speed-up plan steps 1, 2 and 4 are done; step 3 is code-complete but untested:
   1. Hook: `agent_id`/`agent_type` verified in subagent PostToolUse input (debug dump, 1-agent Workflow), guard skips them.
@@ -19,7 +36,7 @@
      Link timing with/without `-map closure,unused` not measured yet.
   4. Haiku cap 10; near-sibling hints in prompts (reg-renamed or one-instruction-different done shape: 289 haiku todo
      shapes); fixed tools/prompt (used removed mkwave.QUEUE).
-- Clone pass after w7: +227/228 (func_ov004_0214f580 breaks overlay 4 → reverted), committed. Run took ~1h45m because
+- Clone pass after w7: +227/228 (func_ov004_0214f580 breaks overlay 4 → reverted; re-picked in cycle 8), committed. Run took ~1h45m because
   of the bisect. Queue: 305 blocked, 7110 done, 18 fail_sonnet, 240 queued (wave 8), 11737 todo.
 - Wave 8 (4×60, first 240-name wave): 211/239 matched, ~3M subagent tok, ~10 min per workflow. Results + sources saved
   in `pending/wave8/result.json` (paths point at pending/wave8/*.c). **Not integrated.** func_ov001_0218b304 never
@@ -134,10 +151,12 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
-0. Integrate wave 8 + clone pass in one link (first real test of cycle.py):
-   `nohup python3 tools/cycle.py 8 pending/wave8/result.json --next 240 > work/cycle8.log 2>&1` (writes wave 9 files
-   first). Validate 22/22 modules and integrated = wave + clone. Then time the link without `-map closure,unused`.
-   Then use `--bg` to overlap integrate N with matching N+1.
+0. If cycle 8 did not commit (`git log` lacks "Wave 8: ..."): the integrate died mid-run → `git status`; if
+   `rm build/usa/arm9.o && ninja` gives 22/22, record applied TUs as done (see "killed integrate" below), else
+   `git checkout src config` and rerun `python3 tools/cycle.py 8 pending/wave8/result.json --next 0`.
+   Then force-relink check (above). Block func_ov004_0214f580.
+   Then integrate waves 9+10 (wave outputs are lost with the container: if work/ is gone, re-queue their rows
+   `queued`→`todo`): `python3 tools/cycle.py 9 work/wave9_out*.json work/wave10_out*.json --next 240 --bg`.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
