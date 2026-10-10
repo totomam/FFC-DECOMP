@@ -4,6 +4,20 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **7,633 functions matching C (~39%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 9)
+- Branch `claude/ffc-matching-decomp-wave7-mt7q4y`. Bootstrap order that works: `tools/setup.sh` → `tools/fetch_assets.sh`
+  (builds rom/ from .assets) → `tools/setup.sh .assets/cw` → extract → configure → ninja (22/22).
+- block_sysreg: +2, then +24 after cycle 11 (re-run after every cycle).
+- Cycle 11 (waves 11+12+13 + clone): 657/720, clone +14, 671/671 integrated (cce14bb).
+- Wave 14: 221/240 (210 Haiku/11 Sonnet) → pending/wave14; cycle 14 started `--bg --next 0`.
+- Wave 15: 217/240 (209/8) → pending/wave15 (not integrated). Wave 16 matched → pending/wave16 (see git log).
+- Waves 15/16 were made while a cycle ran with `python3 -c "import sys;sys.path.insert(0,'tools');import cycle;cycle.mkwave(N,240,'haiku')"`
+  → so run their cycles with `--next 0` or with `--next-n` past the last made wave.
+- Recurring Sonnet fixes (prompt tips): pass-through params keep r0–r3 live (scratch moves to r3); return the callee
+  result keeps r0 live; `volatile u32 buf[2]; (void)buf;` reserves a stack frame with no stores; C++ real virtual
+  call instead of manual vtable. Unfixed class: literal address CSE'd into r4 across bl (target reloads).
+- Don't `pkill -f` a pattern that appears in your own command line (kills the shell).
+
 ## Done (session 8)
 - Bootstrap OK (22/22, ninja ~11 min cold). func_ov004_0214f580 blocked. `tools/block_sysreg.py`: 45 todo/fail funcs
   with mrc/mcr/mrs/msr (CP15/CPSR; mwcc has no intrinsics, workers burn Sonnet on them) → blocked. Re-run it after
