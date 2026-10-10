@@ -7,6 +7,12 @@
 ## Done (session 5)
 - Clone pass after w5: +277 (first run aborted: I broke the baseline mid-pass — never edit delinks/src while a clone
   pass may integrate). Wave 6: 56/60 (51 Haiku/5 Sonnet, ~850k tok, 10 min, run as 2 concurrent workflows of 30).
+  Clone after w6: +133. Wave 7: 59/60 (54 Haiku/5 Sonnet, ~760k tok). **Clone pass after w7 NOT run yet.**
+  Queue at handoff: 305 blocked    6883 done      18 fail_sonnet       1 status   12204 todo
+- **Context-guard hook also fires inside wave subagents** (it reads the main transcript): in w7, 2 Haiku workers
+  abandoned their function, rewrote STATUS.md and pushed (reverted; Sonnet then matched both). Fix (needs user
+  approval — auto mode blocked the edit): in `.claude/hooks/context_guard.py`, `sys.exit(0)` when the hook input
+  has `agent_id`. Until then, keep waves short once the orchestrator nears 180k.
 - **Absolute call targets**: `config/usa/arm9/abs_symbols.txt` = the 103 `module:none` call targets in relocs.txt
   (runtime-loaded code at 0x021d....; ov017/ov018 ambiguity). `tools/lcf_post.py` (lcf rule) defines them in the lcf;
   ffclib loads them as module `abs`, so prompts/try show `func_021d9ad8` etc. func_02082908 done.
@@ -78,7 +84,7 @@
   nothing yet — keep both in sync). Per-file override on line 1: `/* cflags: -nothumb -nointerworking */`.
 
 ## Next steps (in order)
-0. See the handoff prompt for which wave/clone pass is pending.
+0. `nohup python3 tools/clone.py run > work/clone_w7.log 2>&1` (clone pass after wave 7), commit.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
