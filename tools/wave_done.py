@@ -60,6 +60,8 @@ def main():
         q["best_pct"] = str(best["best_pct"]) if best else q["best_pct"]
         if r["func"] in matched:
             st, why = status.get(r["func"], ("SKIP", "no integrate result"))
+            if st == "SKIP" and why == "already integrated":  # e.g. a clone pass got there first
+                st = "OK"
             q["status"] = "done" if st == "OK" else "skip_integrate"
             keep = ""
             if st != "OK":  # work/ is gitignored: keep the matching source in pending/
