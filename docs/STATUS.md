@@ -4,6 +4,27 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **7,633 functions matching C (~39%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 8)
+- Bootstrap OK (22/22, ninja ~11 min cold). func_ov004_0214f580 blocked. `tools/block_sysreg.py`: 45 todo/fail funcs
+  with mrc/mcr/mrs/msr (CP15/CPSR; mwcc has no intrinsics, workers burn Sonnet on them) → blocked. Re-run it after
+  each cycle (wave 11's ~26 CP15 rows were still `queued`).
+- **Link timing settled**: mwld writes `> build/x.bin` relative to the `-o` file's dir (so `-o work/t/arm9.o` →
+  work/t/build/*.bin; safe scratch link, no lcf edit). `-map closure,unused` 520 s vs none 519 s, bins identical →
+  keep the map; the link is ~8.7 min regardless.
+- Cycle 9 (waves 9+10 + clone, first module-aware bisect) started `--bg` at ~16:58; it commits + pushes itself
+  ("Wave 9: ..."). **If that commit is not on the branch, the container died mid-run**: `ninja`; if 22/22, rerun
+  `python3 tools/cycle.py 9 pending/wave9/result.json pending/wave10/result.json --next 0` (precheck skips already-
+  integrated TUs; record any applied-but-unrecorded TUs as done per session 3 note).
+- Waves 11 (206/240: 197 Haiku/9 Sonnet; ~14 CP15 stubs wasted) and 12 (226/240: 220/6), ~8–10 min each, ~2.6M tok.
+  Saved by new `tools/save_wave.py N <outputs>` → `pending/waveN/result.json` (+ C). **Not integrated.**
+- Wave 13 (240, `work/wave13_*.json`) was running at handoff → its results are lost with the container; its rows are
+  `queued` in queue.csv. Reset: rows `queued` that are in no `pending/wave*/result.json` → `todo`.
+- cycle.py: `--next-n M` names the next wave (it defaulted to N+1 = 10 for cycle 9). Session trailer updated.
+- Seen: func_ov001_0217c9e8 loads 0x02168b01 with an ambiguous `module:overlays(0,4)` reloc → try can't resolve it.
+  Fix = pick the module in ov001 relocs.txt (config edit: only when no integrate runs). Others like it likely.
+- Haiku fixes worth a prompt tip: r0-live register shifts ("return the input pointer/int keeps r0 live → temps
+  in r1/r2") matched 3 Sonnet escalations in w11.
+
 ## Done (session 7)
 - Bootstrap OK (22/22). cycle.py's first real run (cycle 8: wave 8 + clone, one integrate): the batch broke overlay 4 →
   plain bisect, ~7 min/link, **>2 h**. Culprit again `func_ov004_0214f580` (also reverted in w7's clone pass): clone.py
@@ -151,10 +172,12 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
-0. Cycle 8 committed (8e0e0fb: wave 8 211/239 + clone +312 = 523/524 integrated); forced relink verified 22/22.
-   Block func_ov004_0214f580 in queue.csv.
-   Then integrate waves 9+10 (results + sources saved in pending/wave9, pending/wave10; their rows stay
-   `queued`): `python3 tools/cycle.py 9 pending/wave9/result.json pending/wave10/result.json --next 240 --bg`.
+0. Check cycle 9 landed (see session 8). Reset orphan `queued` rows (wave 13). `python3 tools/block_sysreg.py`.
+   Then integrate waves 11+12 in one link: `python3 tools/cycle.py 11 pending/wave11/result.json
+   pending/wave12/result.json --next 240 --next-n 13 --bg` and run wave 13 meanwhile.
+   Per wave: 4 Workflows → copy the 4 task outputs to work/waveN_out{0..3}.json → `tools/save_wave.py N ...` + commit
+   (survives the container) → `tools/cycle.py N pending/waveN/result.json --next-n N+1 --bg` once the previous
+   cycle is done (`pgrep -f "^python3 tools/cycle"`). Workflow notifications are ~10k context each: ~4 waves/session.
 1. Loop: `python3 tools/mkwave.py haiku 60 --dedup --names > work/waveN.json` → Workflow
    `{scriptPath: tools/workflows/match_wave.js, args: <names>}` → `python3 tools/wave_done.py <task .output>`
    → `python3 tools/clone.py run` → commit. Remaining multi-member shapes first, then singletons; then sonnet tier.
