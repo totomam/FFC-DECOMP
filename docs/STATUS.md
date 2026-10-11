@@ -16,6 +16,12 @@
 - Pilot children (spawned from 5a45128, before cycle 20 landed): wave 24 ov0-3 (session_01BQpfagqJYJVGL8GHMJnTnR,
   branch claude/ffc-wave24-ov0-3), wave 25 ov4-18 (session_01UsLB7Pr6bvLGyPPV3xW3T6, claude/ffc-wave25-ov4-18).
   stash@{0} = killed cycle-20 partial (local only; drop).
+- Pilot OK: wave 24 211/240, wave 25 204/240; merge_queue merged both (11,286 done, 19,410 rows), ninja 22/22, clone pass +0.
+  Child wall time ~70 min (bootstrap ~40 of it). Round 2 (3 groups) spawned 22:14 UTC: wave 26 main
+  (session_01NXCNLPFaubaFJPjXB2GYwJ), 27 ov0-3 (session_01HGe2ZxLkmmAxA9HKiVEfK5), 28 ov4-18
+  (session_017sgvTySCk1eKwPVAGXvD6C). Merge: `python3 tools/merge_queue.py origin/claude/ffc-wave26-main:main
+  origin/claude/ffc-wave27-ov0-3:ov0-3 origin/claude/ffc-wave28-ov4-18:ov4-18`, ninja, `tools/clone.py run`.
+  Idea: 2-3 waves per child to amortize the 40-min bootstrap.
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
