@@ -18,5 +18,5 @@ FFC matching decomp, child session: ONE wave in module group G only. Repo totoma
 6. Reply with the cycle's summary line and the final commit hash. Done.
 Rules: only queue.csv, pending/waveN/, src/ and config/ of group G may change — never tools/, docs/, .claude/.
 No rebase/force-push. Asm only for BIOS swi stubs. Never pkill -f a pattern from your own command line.
-Don't edit src/ or config/ or run mwld while an integrate runs.
+Don't edit src/ or config/ or run mwld while an integrate runs. Never merge other branches.
 ```
