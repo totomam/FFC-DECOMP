@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**10,871 queue rows done (~56%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**11,921 queue rows done (~61%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 12)
 - Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
@@ -21,7 +21,13 @@
   (session_01NXCNLPFaubaFJPjXB2GYwJ), 27 ov0-3 (session_01HGe2ZxLkmmAxA9HKiVEfK5), 28 ov4-18
   (session_017sgvTySCk1eKwPVAGXvD6C). Merge: `python3 tools/merge_queue.py origin/claude/ffc-wave26-main:main
   origin/claude/ffc-wave27-ov0-3:ov0-3 origin/claude/ffc-wave28-ov4-18:ov4-18`, ninja, `tools/clone.py run`.
-  Idea: 2-3 waves per child to amortize the 40-min bootstrap.
+- Round 2 merged (22:14 -> 23:33, ~80 min): wave 26 main 208, 27 ov0-3 215, 28 ov4-18 212 -> 11,921 done;
+  ninja 22/22, clone +0 (children's own clone passes already cover their groups).
+- Round 3 spawned 23:34 UTC, 3 waves per child, integrate overlapped (docs/CHILD.md): waves 29/32/35 main
+  (session_019xgmCnTNwdrCqiJpWvAgpY, claude/ffc-waves29-main), 30/33/36 ov0-3 (session_01LrpZvQ4LeVDTCDV2PGygCs,
+  claude/ffc-waves30-ov0-3), 31/34/37 ov4-18 (session_01JiEi2RPdA98jZa6WBTjAMa, claude/ffc-waves31-ov4-18).
+  When all show "Wave 35/36/37:": `python3 tools/merge_queue.py origin/claude/ffc-waves29-main:main
+  origin/claude/ffc-waves30-ov0-3:ov0-3 origin/claude/ffc-waves31-ov4-18:ov4-18`, ninja, clone pass.
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
