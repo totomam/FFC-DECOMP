@@ -4,6 +4,21 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **7,633 functions matching C (~39%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 11)
+- Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
+  dtor with a literal pool (IME save/restore guard, e.g. func_02052d10/02055070/0205509c) has a local `$d` symbol,
+  which was counted as a non-weak function → the unreferenced dtor (+0x18) stayed in main → every module shifted.
+  Now `$`-prefixed mapping symbols are ignored. Full ninja after the fix: 22/22.
+- The killed first cycle-19 integrate's partial TUs are in `git stash@{0}` (local only; drop it).
+- **Cycle 19 rerun started `--bg --next 0`** (work/cycle_19.log). If no "Wave 19:" commit: `ninja` (22/22) then
+  `python3 tools/cycle.py 19 pending/wave19/result.json --next 0`.
+- Waves 21 (221/240: 199 Haiku/22 Sonnet) and 22 saved in pending/ (NOT integrated, rows `queued`).
+- Wave 23 (work/wave23_{0..3}.json) was launched at handoff; its outputs are lost with the container → its 240
+  rows stay `queued`: set them back to `todo` (names in queue.csv status=queued and not in pending/wave20..22).
+- New Sonnet fix patterns: unnamed callee 0x021a4360 = func_ov009_021a4360 (and 0x021686f4 = func_ov000_021686f4) —
+  prompt tip worth adding; 1-byte struct by value for ldrb/strb stack args. Unfixed: self-address literal with thumb
+  bit (func_0208828c), clz idiom (func_0209a4cc), fragments without push (func_ov000_0214c7c8 → block).
+
 ## Done (session 10)
 - Bootstrap OK (22/22). Cycle 15 landed (cbcf6be: 227/227), cycle 16 (279ce6c: 222/240 + clone 5, 227/227),
   cycle 18 (21dc95c: 210/240 + clone 1, 211/211). block_sysreg: 0 new each time. Wave 17 was never made (skipped).
@@ -200,7 +215,10 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
--2. Session 11: see session 10 notes (cycle 19 check, then cycle 20 + wave 21).
+-3. Session 12: check cycle 19 landed; reset wave-23 rows to todo; `python3 tools/block_sysreg.py`; then integrate
+   20+21+22 in one link: `python3 tools/cycle.py 20 pending/wave20/result.json pending/wave21/result.json
+   pending/wave22/result.json --next 240 --next-n 23 --bg`, run wave 23 meanwhile.
+-2. (done) Session 11.
 -1. (done) Session 10: after cycle 15 lands, `python3 tools/block_sysreg.py`; then `python3 tools/cycle.py 16
    pending/wave16/result.json --next 240 --next-n 18 --bg`; run wave 18 meanwhile.
 0. Cycle 9 landed (2fdfda6: 437/480 + clone 364, 801/801 integrated, one link). `python3 tools/block_sysreg.py`.
