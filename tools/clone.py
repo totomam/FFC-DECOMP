@@ -7,7 +7,8 @@ mapping donor atoms -> target atoms (symbol renames + integer literal substituti
 the same compare as tools/try, then integrated in one batch.
 
   tools/clone.py stats              shape groups among todo functions
-  tools/clone.py run [--dry]        clone all todo functions that have a donor; integrate; update queue
+  tools/clone.py run [--dry] [--group G]   clone all todo functions that have a donor; integrate; update queue
+                                    (--group: only targets in that module group; donors come from anywhere)
   tools/clone.py reps               (library) used by mkwave --dedup: one representative per todo shape
 """
 import csv
@@ -158,7 +159,7 @@ def donor_src(func, note):
     return ROOT / m[1] if m and (ROOT / m[1]).exists() else None
 
 
-def find(extra=None):
+def find(extra=None, group=None):
     """Clone every todo/failed function that has a same-shape donor. extra = {func: matched .c} adds donors
     not integrated yet (this cycle's wave matches). Returns ({func: donor}, [(func, clone.c)])."""
     sh = shapes()
@@ -177,6 +178,8 @@ def find(extra=None):
     for r in rows:
         f = r["func"]
         if r["status"] not in ("todo", "fail_haiku", "fail_sonnet") or f not in sh or f in (extra or {}):
+            continue
+        if group and r["tu"] not in ffclib.GROUPS[group]:
             continue
         cands = [(d, p, dv) for d, p in donors.get(sh[f][0], []) for dv in (False, True)
                  if f"{f}|{d}" + ("|d" if dv else "") not in tried]
@@ -215,8 +218,8 @@ def record(rows, ok, made):
             r["status"], r["best_pct"], r["note"] = "done", "100", f"cloned from {made[r['func']]}"
 
 
-def run(dry):
-    made, pairs = find()
+def run(dry, group=None):
+    made, pairs = find(group=group)
     print(f"cloned {len(made)} functions")
     if dry or not pairs:
         return
@@ -243,6 +246,8 @@ def stats():
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "stats"
     if cmd == "run":
-        run("--dry" in sys.argv)
+        g = sys.argv[sys.argv.index("--group") + 1] if "--group" in sys.argv else None
+        assert g is None or g in ffclib.GROUPS, f"--group must be one of {list(ffclib.GROUPS)}"
+        run("--dry" in sys.argv, g)
     else:
         stats()

@@ -52,6 +52,17 @@ def module_dirs():
         yield name, CONFIG / name
 
 
+# Module groups for parallel sessions: each session matches/integrates only into its group, so branches
+# touch disjoint src/<module>/ and delinks.txt files (only queue.csv needs tools/merge_queue.py).
+GROUPS = {"main": ("main", "itcm", "dtcm"),
+          "ov0-3": tuple(f"ov{i:03d}" for i in range(0, 4)),
+          "ov4-18": tuple(f"ov{i:03d}" for i in range(4, 19))}
+
+
+def group_of(module: str) -> str:
+    return next(g for g, mods in GROUPS.items() if module in mods)
+
+
 SYM_RE = re.compile(r"^(\S+) kind:(\w+)(?:\(([^)]*)\))? addr:(0x[0-9a-f]+)")
 
 

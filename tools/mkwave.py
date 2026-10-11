@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tools/mkwave.py <tier> <count> [--module M] [--min-diff N] -> prints JSON items for a Workflow wave.
+"""tools/mkwave.py <tier> <count> [--module M | --group G] [--min-diff N] -> prints JSON items for a Workflow wave.
 Each item: {func, tier, prompt}; with --names just func names (workers fetch prompts via tools/prompt). Picks todo functions by ascending difficulty and marks them `queued`."""
 import argparse
 import csv
@@ -133,6 +133,7 @@ def main():
     ap.add_argument("tier")
     ap.add_argument("count", type=int)
     ap.add_argument("--module")
+    ap.add_argument("--group", choices=ffclib.GROUPS, help="only this module group (parallel sessions)")
     ap.add_argument("--min-diff", type=int, default=0)
     ap.add_argument("--status", default="todo")
     ap.add_argument("--dry", action="store_true")
@@ -150,7 +151,8 @@ def main():
 
 def pick_items(a, rows):
     pick = [r for r in rows if r["status"] == a.status and r["tier"] == a.tier
-            and (not a.module or r["tu"] == a.module) and int(r["difficulty"]) >= a.min_diff
+            and (not a.module or r["tu"] == a.module)
+            and (not a.group or r["tu"] in ffclib.GROUPS[a.group]) and int(r["difficulty"]) >= a.min_diff
             and "unaligned" not in r["note"]]
     pick.sort(key=lambda r: int(r["difficulty"]))
     if a.dedup:

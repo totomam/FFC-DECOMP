@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tools/cycle.py <N> <wave N task .output> ... [--next 240] [--next-n M] [--tier haiku] [--bg] [--no-push]
+"""tools/cycle.py <N> <wave N task .output> ... [--next 240] [--next-n M] [--tier haiku] [--group G] [--bg] [--no-push]
 One matching cycle, ~3 lines of output:
   1. mkwave for wave N+1 (unless --next 0): <count> dedup names -> work/wave<N+1>_<i>.json, 60 per Workflow
   2. wave N results + clone pass (wave matches serve as donors) -> ONE tools/integrate (one link)
@@ -23,8 +23,9 @@ ROOT = ffclib.ROOT
 PER_WORKFLOW = 60
 
 
-def mkwave(n, count, tier):
-    out = subprocess.run([sys.executable, str(ROOT / "tools/mkwave.py"), tier, str(count), "--dedup", "--names"],
+def mkwave(n, count, tier, group=None):
+    out = subprocess.run([sys.executable, str(ROOT / "tools/mkwave.py"), tier, str(count), "--dedup", "--names",
+                          *(["--group", group] if group else [])],
                          cwd=ROOT, capture_output=True, text=True, check=True).stdout
     names = json.loads(out)
     (ROOT / "work" / f"wave{n}.json").write_text(json.dumps(names))
@@ -49,10 +50,10 @@ def push():
     return "PUSH FAILED"
 
 
-def integrate_and_commit(n, outputs, do_push):
+def integrate_and_commit(n, outputs, do_push, group=None):
     res = [r for o in outputs for r in wave_done.load(o)]
     matched = wave_done.accept(res)
-    made, cpairs = clone.find(extra=matched)
+    made, cpairs = clone.find(extra=matched, group=group)
     pairs = [*matched.items(), *[(f, str(p)) for f, p in cpairs]]
     status = {}
     if pairs:
@@ -85,22 +86,26 @@ def main():
     ap.add_argument("--next", type=int, default=240)
     ap.add_argument("--next-n", type=int, help="number of the next wave (default N+1)")
     ap.add_argument("--tier", default="haiku")
+    ap.add_argument("--group", choices=ffclib.GROUPS, help="mkwave + clone only in this module group")
     ap.add_argument("--bg", action="store_true")
     ap.add_argument("--no-push", action="store_true")
     ap.add_argument("--integrate-only", action="store_true", help=argparse.SUPPRESS)
     a = ap.parse_args()
     if not a.integrate_only:
         if a.next:
-            mkwave(a.next_n or a.n + 1, a.next, a.tier)
+            mkwave(a.next_n or a.n + 1, a.next, a.tier, a.group)
+        if not a.outputs:  # mkwave only
+            return
         if a.bg:
             log = ROOT / "work" / f"cycle_{a.n}.log"
             argv = ["python3", "tools/cycle.py", str(a.n), *a.outputs, "--integrate-only",
+                    *(["--group", a.group] if a.group else []),
                     *(["--no-push"] if a.no_push else [])]
             subprocess.Popen(argv, cwd=ROOT, stdout=log.open("w"), stderr=subprocess.STDOUT,
                              start_new_session=True)
             print(f"wave {a.n}: integrating in background -> {log.relative_to(ROOT)}")
             return
-    integrate_and_commit(a.n, a.outputs, not a.no_push)
+    integrate_and_commit(a.n, a.outputs, not a.no_push, a.group)
 
 
 if __name__ == "__main__":
