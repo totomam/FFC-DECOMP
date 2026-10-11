@@ -34,7 +34,7 @@ def strip(path: Path) -> int:
     for i, s in enumerate(e.sh):
         if s["type"] != 1 or not s["name"].startswith(".text") or not s["size"] or i in used:
             continue
-        funcs = [y for y in e.syms if y["shndx"] == i and y["type"] == 2 and y["name"] != "$t" and y["name"] != "$a"]
+        funcs = [y for y in e.syms if y["shndx"] == i and y["type"] == 2 and not y["name"].startswith("$")]  # $a/$t/$d
         if not funcs or any(y["bind"] not in WEAK_BINDS for y in funcs):
             continue
         struct.pack_into("<I", d, shoff + i * shentsize + 0x14, 0)  # sh_size
