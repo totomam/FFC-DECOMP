@@ -13,8 +13,7 @@
 - **Cycle 19 rerun started `--bg --next 0`** (work/cycle_19.log). If no "Wave 19:" commit: `ninja` (22/22) then
   `python3 tools/cycle.py 19 pending/wave19/result.json --next 0`.
 - Waves 21 (221/240: 199 Haiku/22 Sonnet) and 22 saved in pending/ (NOT integrated, rows `queued`).
-- Wave 23 (work/wave23_{0..3}.json) was launched at handoff; its outputs are lost with the container → its 240
-  rows stay `queued`: set them back to `todo` (names in queue.csv status=queued and not in pending/wave20..22).
+- Wave 23 saved in pending/wave23 (NOT integrated, rows `queued`).
 - New Sonnet fix patterns: unnamed callee 0x021a4360 = func_ov009_021a4360 (and 0x021686f4 = func_ov000_021686f4) —
   prompt tip worth adding; 1-byte struct by value for ldrb/strb stack args. Unfixed: self-address literal with thumb
   bit (func_0208828c), clz idiom (func_0209a4cc), fragments without push (func_ov000_0214c7c8 → block).
@@ -215,9 +214,8 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
--3. Session 12: check cycle 19 landed; reset wave-23 rows to todo; `python3 tools/block_sysreg.py`; then integrate
-   20+21+22 in one link: `python3 tools/cycle.py 20 pending/wave20/result.json pending/wave21/result.json
-   pending/wave22/result.json --next 240 --next-n 23 --bg`, run wave 23 meanwhile.
+-3. Session 12: check cycle 19 landed; `python3 tools/block_sysreg.py`; then integrate 20-23 in one link:
+   `python3 tools/cycle.py 20 pending/wave2{0,1,2,3}/result.json --next 240 --next-n 24 --bg`, run wave 24 meanwhile.
 -2. (done) Session 11.
 -1. (done) Session 10: after cycle 15 lands, `python3 tools/block_sysreg.py`; then `python3 tools/cycle.py 16
    pending/wave16/result.json --next 240 --next-n 18 --bg`; run wave 18 meanwhile.
