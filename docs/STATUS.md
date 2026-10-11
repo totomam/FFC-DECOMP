@@ -4,6 +4,18 @@
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **7,633 functions matching C (~39%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 10)
+- Bootstrap OK (22/22). Cycle 15 landed (cbcf6be: 227/227), cycle 16 (279ce6c: 222/240 + clone 5, 227/227),
+  cycle 18 (21dc95c: 210/240 + clone 1, 211/211). block_sysreg: 0 new each time. Wave 17 was never made (skipped).
+- Wave 19 saved (pending/wave19); **cycle 19 was running `--bg` at session end** (work/cycle_19.log) — if no
+  "Wave 19:" commit on the branch: `ninja` (22/22) then `python3 tools/cycle.py 19 pending/wave19/result.json --next 0`.
+- Wave 20 saved (pending/wave20, NOT integrated; rows `queued`). Next: `python3 tools/cycle.py 20
+  pending/wave20/result.json --next 240 --next-n 21 --bg`, run wave 21 meanwhile.
+- Haiku hit rate falling (~85-88%), Sonnet fixes mostly r0-live passthrough, C++ virtual/RAII guard (IME save/restore
+  with `sub sp,#4` frame = C++ guard struct ctor/dtor), struct-by-value params. Unfixed: stm-writeback zero fills,
+  `adds rX,r0,#0` copy before beq, literal re-load instead of CSE, 8-byte frames with no stores.
+- Clone yield now tiny (+1..+10/cycle).
+
 ## Done (session 9)
 - Branch `claude/ffc-matching-decomp-wave7-mt7q4y`. Bootstrap order that works: `tools/setup.sh` → `tools/fetch_assets.sh`
   (builds rom/ from .assets) → `tools/setup.sh .assets/cw` → extract → configure → ninja (22/22).
@@ -187,7 +199,8 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
--1. Session 10: after cycle 15 lands, `python3 tools/block_sysreg.py`; then `python3 tools/cycle.py 16
+-2. Session 11: see session 10 notes (cycle 19 check, then cycle 20 + wave 21).
+-1. (done) Session 10: after cycle 15 lands, `python3 tools/block_sysreg.py`; then `python3 tools/cycle.py 16
    pending/wave16/result.json --next 240 --next-n 18 --bg`; run wave 18 meanwhile.
 0. Cycle 9 landed (2fdfda6: 437/480 + clone 364, 801/801 integrated, one link). `python3 tools/block_sysreg.py`.
    Then integrate waves 11+12 in one link: `python3 tools/cycle.py 11 pending/wave11/result.json
