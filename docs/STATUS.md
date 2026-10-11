@@ -214,8 +214,13 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
--3. Session 12: check cycle 19 landed; `python3 tools/block_sysreg.py`; then integrate 20-23 in one link:
-   `python3 tools/cycle.py 20 pending/wave2{0,1,2,3}/result.json --next 240 --next-n 24 --bg`, run wave 24 meanwhile.
+-3. Session 12 = **parallel sessions (speed-up plan step 5)**. Cycle 19 landed (cc2ec99). First: `python3 tools/block_sysreg.py`;
+   integrate 20-23 in one link: `python3 tools/cycle.py 20 pending/wave2{0,1,2,3}/result.json --next 0 --bg`.
+   Meanwhile build (only tools/, no src/config edits): `--group G` for mkwave.py and clone.py (G = main|ov0-3|ov4-16:
+   main+itcm+dtcm / ov000-003 / ov004-018; clone must only integrate into its group); a row-keyed queue merge
+   (`tools/merge_queue.py`: each row taken from the branch owning its module); child-session prompt.
+   Pilot: 2 child sessions (create_session, own branches off this one) x 1 wave each, merge into this branch,
+   `ninja` 22/22, one clone pass, queue totals = 19,410. Then scale to 3 groups; orchestrator only merges + edits tools/STATUS.
 -2. (done) Session 11.
 -1. (done) Session 10: after cycle 15 lands, `python3 tools/block_sysreg.py`; then `python3 tools/cycle.py 16
    pending/wave16/result.json --next 240 --next-n 18 --bg`; run wave 18 meanwhile.
