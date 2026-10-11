@@ -7,6 +7,7 @@
 ## Done (session 10)
 - Bootstrap OK (22/22). Cycle 15 landed (cbcf6be: 227/227), cycle 16 (279ce6c: 222/240 + clone 5, 227/227),
   cycle 18 (21dc95c: 210/240 + clone 1, 211/211). block_sysreg: 0 new each time. Wave 17 was never made (skipped).
+- Cycle 19 integrate: 4 builds failed in ALL 22 modules (main-level shift or link error) → full bisect, >1.7 h; culprit unknown at handoff (see work/integrate.log).
 - Wave 19 saved (pending/wave19); **cycle 19 was running `--bg` at session end** (work/cycle_19.log) — if no
   "Wave 19:" commit on the branch: `ninja` (22/22) then `python3 tools/cycle.py 19 pending/wave19/result.json --next 0`.
 - Wave 20 saved (pending/wave20, NOT integrated; rows `queued`). Next: `python3 tools/cycle.py 20
