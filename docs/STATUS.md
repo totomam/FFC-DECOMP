@@ -2,7 +2,20 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**7,633 functions matching C (~39%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**10,871 queue rows done (~56%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+
+## Done (session 12)
+- Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
+  `main` checksum failure: func_0208f404 (wave 22) passes try but breaks the main link (cause unknown; excluded in
+  pending/wave22/result.json). **Faster than integrate's bisect**: diff build/usa/build/arm9.bin vs
+  extract/usa/arm9/arm9.bin and map the first differing offset to its function (it was the only one).
+- Parallel sessions (speed-up step 5): `ffclib.GROUPS` (main | ov0-3 | ov4-18); `--group` on mkwave/clone/cycle;
+  `cycle.py N-1 --next 240 --next-n N --group G` with no outputs = mkwave only; `tools/merge_queue.py ref:G ...`
+  (scope check, 3-way per-row queue merge, delinks.txt union driver via .gitattributes + duplicate-TU dedupe);
+  child prompt in docs/CHILD.md.
+- Pilot children (spawned from 5a45128, before cycle 20 landed): wave 24 ov0-3 (session_01BQpfagqJYJVGL8GHMJnTnR,
+  branch claude/ffc-wave24-ov0-3), wave 25 ov4-18 (session_01UsLB7Pr6bvLGyPPV3xW3T6, claude/ffc-wave25-ov4-18).
+  stash@{0} = killed cycle-20 partial (local only; drop).
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
