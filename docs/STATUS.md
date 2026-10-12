@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**13,544 queue rows done (~70%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**14,127 queue rows done (~73%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 12)
 - Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
@@ -43,7 +43,10 @@
   haiku-tier todo whose shapes wait on clone attempts. Plus ~840 fail_sonnet (future: Opus/manual).
 - Running children: ov4-18 39/41/43 sonnet (session_01EcvmuSm59j2zYXb5U7aR1Y, claude/ffc-waves39-ov4-18),
   ov0-3 47/48/49 sonnet (session_016cF95xmFzrppJdiZGW9mfY, claude/ffc-waves47-ov0-3),
-  main 50/51/52 sonnet (session_01Dcyo9hvbbefrgjCBbc7tQi, claude/ffc-waves50-main). Next free wave numbers: 53+.
+  main 50/51/52 sonnet (session_01Dcyo9hvbbefrgjCBbc7tQi, claude/ffc-waves50-main).
+- ov4-18 39/41/43 = 160(+80 clone)/168/152 merged -> 14,127 done. The orchestrator's clone pass had integrated some
+  of the same functions -> add/add conflicts; merge_queue now takes the group owner's C for those.
+  Respawned ov4-18: 53/54/55 sonnet (session_01TcVSAaT6UVRui2CQtrnSnb, claude/ffc-waves53-ov4-18). Next free: 56+.
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
