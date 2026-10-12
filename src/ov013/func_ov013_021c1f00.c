@@ -1,0 +1,16 @@
+#include "ffc/types.h"
+
+extern void *func_020059cc(void *object);
+extern void func_ov013_021c1eac(void *object);
+extern void func_020558d8(void *object);
+extern void func_02056db0(void *object);
+extern void func_02056844(void *object);
+
+void *func_ov013_021c1f00(void *p) {
+    func_020059cc((uint8_t *)p + 0x104);
+    func_ov013_021c1eac((uint8_t *)p + 0xf4);
+    func_020558d8((uint8_t *)p + 0x80);
+    func_02056db0(p);
+    func_02056844(p);
+    return p;
+}
