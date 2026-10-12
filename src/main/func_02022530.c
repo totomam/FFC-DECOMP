@@ -3,15 +3,16 @@
 extern void func_0200d5ec(void *p);
 extern void func_02056858(void *p);
 extern void func_0202249c(void *p);
-extern void func_02052d3c(void *p, void *q);
-extern void func_02052c04(void *p);
+extern void func_02052d3c(void *a, void *b);
+extern void func_02052c04(void *a);
 extern void *func_02053290(void *object);
 extern void func_02056db0(void *p);
-extern char data_020ad6f4[];
+extern uint8_t data_020ad6f4[];
 
-void *func_02022530(void *a)
+void *func_02022530(void *obj)
 {
-    uint8_t *p = (uint8_t *)a;
+    uint8_t *p = (uint8_t *)obj;
+    uint8_t *s;
     uint8_t *q;
 
     func_0200d5ec(p + 0xcc);
@@ -26,24 +27,24 @@ void *func_02022530(void *a)
 
     func_0202249c(p + 0xa0);
 
-    q = p + 0x90;
-    if (*(void **)(q + 4) != 0) {
-        if (q[0xc] != 0) {
-            func_02052d3c(*(void **)(q + 4), *(void **)(q + 8));
+    s = p + 0x90;
+    if (*(void **)(s + 4) != 0) {
+        if (s[0xc] != 0) {
+            func_02052d3c(*(void **)(s + 4), *(void **)(s + 8));
         }
-        func_02052c04(*(void **)(q + 4));
+        func_02052c04(*(void **)(s + 4));
     }
-    func_02053290(q);
+    func_02053290(s);
 
-    q = p + 0x80;
-    if (*(void **)(q + 4) != 0) {
-        if (q[0xc] != 0) {
-            func_02052d3c(*(void **)(q + 4), *(void **)(q + 8));
+    s = p + 0x80;
+    if (*(void **)(s + 4) != 0) {
+        if (s[0xc] != 0) {
+            func_02052d3c(*(void **)(s + 4), *(void **)(s + 8));
         }
-        func_02052c04(*(void **)(q + 4));
+        func_02052c04(*(void **)(s + 4));
     }
-    func_02053290(q);
+    func_02053290(s);
 
-    func_02056db0(a);
-    return a;
+    func_02056db0(p);
+    return p;
 }
