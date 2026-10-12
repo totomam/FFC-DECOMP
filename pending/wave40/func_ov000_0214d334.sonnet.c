@@ -1,0 +1,42 @@
+#include "ffc/types.h"
+
+extern uint32_t data_ov000_02169a34;
+extern uint32_t data_ov000_0216e078[];
+extern void *func_ov000_0214d40c(void);
+extern int32_t func_ov000_0214d1d8(void *fn, void *p, int32_t x);
+extern void func_ov000_0214d2c4(void *p, int32_t v);
+extern int32_t func_ov000_0214d3b0(void);
+
+static inline int hasflag(void *p, int m)
+{
+    if (p == 0) return 0;
+    return (*(int16_t *)((uint8_t *)p + 0xac) & m) != 0;
+}
+static inline int istype(void *p)
+{
+    int t = *(int8_t *)((uint8_t *)p + 0xaf);
+    return t == 0 || t == 4;
+}
+
+void *func_ov000_0214d334(void)
+{
+    void *r5;
+    int32_t m = 1;
+
+    if (data_ov000_02169a34 == 0) {
+        return (void *)-39;
+    }
+    r5 = func_ov000_0214d40c();
+    if (r5 == 0) {
+        return (void *)-49;
+    }
+    func_ov000_0214d2c4(r5, func_ov000_0214d1d8((void *)func_ov000_0214d3b0, r5, m));
+    if (hasflag(r5, m)) {
+        if (istype(r5)) {
+            data_ov000_0216e078[0]++;
+        } else {
+            data_ov000_0216e078[1]++;
+        }
+    }
+    return r5;
+}
