@@ -34,6 +34,10 @@
   claude/ffc-waves38-ov0-3), 39/41/43 ov4-18 (session_01EcvmuSm59j2zYXb5U7aR1Y, claude/ffc-waves39-ov4-18),
   44/45/46 main (session_01LcjAusF7Kg6GUuYWfyCRgs, claude/ffc-waves44-main). Merge each as it finishes
   (`merge_queue.py origin/<branch>:<group>`), ninja, clone pass; respawn that group (next free wave numbers: 47+).
+- Matching takes ~15 min/wave; **integrate is the bottleneck** (children's first round-4 integrates ran >40 min,
+  likely bisecting). tools/integrate now pins breaking functions by a byte diff of build/usa/build/<module>.bin vs
+  extract (1a89c9db); falls back to bisect only on a size change. Children were told to sync that one file
+  (merge_queue now accepts tools/ files identical to HEAD).
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
