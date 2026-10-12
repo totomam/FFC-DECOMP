@@ -1,0 +1,65 @@
+#include "ffc/types.h"
+typedef struct S {
+    uint32_t f0;
+    uint32_t f4;
+    uint32_t f8;
+    uint32_t fc;
+    uint32_t f10;
+    uint8_t f14;
+    uint32_t f18;
+    uint8_t f1c;
+    uint32_t f20;
+    uint32_t f24;
+    uint8_t f28;
+    uint8_t f29;
+    uint32_t f2c;
+    uint32_t f30;
+    uint8_t f34;
+    uint32_t f38;
+    uint32_t f3c;
+    uint32_t f40;
+    uint32_t f44;
+    uint32_t f48;
+    uint32_t f4c;
+    uint8_t f50;
+    uint8_t f51;
+    uint32_t f54;
+    uint32_t f58;
+} S;
+typedef struct D { void *vt; uint32_t x, y, z, w; S s; } D;
+extern void func_ov002_021c8e44(void *p);
+extern uint8_t data_020ab838[];
+D *func_ov002_021c9450(D *o, uint32_t r1, S *p)
+{
+    o->y = 0;
+    o->z = 0x10100;
+    o->vt = data_020ab838;
+    func_ov002_021c8e44(&o->s);
+    o->w = r1;
+    o->s.f0 = p->f0;
+    o->s.f4 = p->f4;
+    o->s.f8 = p->f8;
+    o->s.fc = p->fc;
+    o->s.f10 = p->f10;
+    o->s.f14 = p->f14;
+    o->s.f18 = p->f18;
+    o->s.f1c = p->f1c;
+    o->s.f20 = p->f20;
+    o->s.f24 = p->f24;
+    o->s.f28 = p->f28;
+    o->s.f29 = p->f29;
+    o->s.f2c = p->f2c;
+    o->s.f30 = p->f30;
+    o->s.f34 = p->f34;
+    o->s.f38 = p->f38;
+    o->s.f3c = p->f3c;
+    o->s.f40 = p->f40;
+    o->s.f44 = p->f44;
+    o->s.f48 = p->f48;
+    o->s.f4c = p->f4c;
+    o->s.f50 = p->f50;
+    o->s.f51 = p->f51;
+    o->s.f54 = p->f54;
+    o->s.f58 = p->f58;
+    return o;
+}
