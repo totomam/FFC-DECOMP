@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**14,127 queue rows done (~73%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 12)
 - Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
@@ -47,6 +47,20 @@
 - ov4-18 39/41/43 = 160(+80 clone)/168/152 merged -> 14,127 done. The orchestrator's clone pass had integrated some
   of the same functions -> add/add conflicts; merge_queue now takes the group owner's C for those.
   Respawned ov4-18: 53/54/55 sonnet (session_01TcVSAaT6UVRui2CQtrnSnb, claude/ffc-waves53-ov4-18). Next free: 56+.
+- Main 50/51/52 sonnet = 151(+134 clone)/164/139 merged (f0853d06) -> 14,696 done (76%). Respawned main 56/57/58
+  sonnet (session_01PcT6CPn5rAbD6mwsbELEzx, claude/ffc-waves56-main). ov0-3 47/48 = 144/137 (49 pending).
+  ov4-18 53 = 127 (54/55 pending).
+
+## OPEN at end of session 12 (orchestrator)
+- Running children (merge each when its final "Wave N:" commit lands or its session is completed):
+  ov0-3 claude/ffc-waves47-ov0-3 (final 49), ov4-18 claude/ffc-waves53-ov4-18 (final 55),
+  main claude/ffc-waves56-main (final 58). Merge: `python3 tools/merge_queue.py origin/<branch>:<group>`, push,
+  `ninja` (22/22), `python3 tools/clone.py run`, commit src config queue.csv, push. Respawn from docs/CHILD.md
+  (tier sonnet; next free wave numbers 59+). Check with `git log --oneline origin/<branch> ^HEAD --`.
+- A ninja + clone pass after the f0853d06 merge may still be uncommitted if the session died: run `ninja`, then
+  `tools/clone.py run`, commit.
+- Remaining after Sonnet tier: ~1,340 fail_sonnet + 517 opus-tier -> needs an Opus/manual approach (next phase).
+- stash@{0}: killed cycle-20 partial (local only, drop).
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
@@ -258,7 +272,8 @@ Dropped after audit: packing several funcs per Haiku agent (saves <5%), mechanic
 compiles to the donor's own instructions), baseline-build stamp (ninja is already a no-op on an unchanged tree).
 
 ## Next steps (in order)
--3. Session 12 = **parallel sessions (speed-up plan step 5)**. Cycle 19 landed (cc2ec99). First: `python3 tools/block_sysreg.py`;
+-4. Session 13 = keep the 3-group child pipeline running: see "OPEN at end of session 12".
+-3. (done) Session 12 = **parallel sessions (speed-up plan step 5)**. Cycle 19 landed (cc2ec99). First: `python3 tools/block_sysreg.py`;
    integrate 20-23 in one link: `python3 tools/cycle.py 20 pending/wave2{0,1,2,3}/result.json --next 0 --bg`.
    Meanwhile build (only tools/, no src/config edits): `--group G` for mkwave.py and clone.py (G = main|ov0-3|ov4-16:
    main+itcm+dtcm / ov000-003 / ov004-018; clone must only integrate into its group); a row-keyed queue merge
