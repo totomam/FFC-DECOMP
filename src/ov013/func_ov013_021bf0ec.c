@@ -1,26 +1,28 @@
 #include "ffc/types.h"
 
 extern uint32_t func_020098e0(void);
-extern uint32_t func_0209a978(uint32_t a, uint32_t b);
+extern uint32_t func_0209a978(uint32_t cap, uint32_t align);
 
-uint32_t func_ov013_021bf0ec(uint32_t *p, uint32_t n) {
-    uint32_t len = p[2];
-    uint32_t g;
-    uint32_t h;
+typedef struct {
+    uint32_t a;
+    uint32_t b;
+    uint32_t size;
+} Obj;
+
+uint32_t func_ov013_021bf0ec(Obj *p, uint32_t n) {
+    uint32_t size = p->size;
     uint32_t *q;
-
-    if (n > 0x9249249u - len) {
+    if (n > 0x9249249u - size) {
         func_020098e0();
     }
-    if (len < 0x30c30c3u) {
-        g = func_0209a978(3 * (len + 1), 5);
-        q = (g < n) ? &n : &g;
-        return len + *q;
-    }
-    if (len < 0x6186186u) {
-        h = (len + 1) >> 1;
-        q = (h < n) ? &n : &h;
-        return len + *q;
+    if (size < 0x30c30c3u) {
+        uint32_t cap = func_0209a978(3 * (size + 1), 5);
+        q = (cap < n) ? &n : &cap;
+        return size + *q;
+    } else if (size < 0x30c30c3u * 2u) {
+        uint32_t half = (size + 1) >> 1;
+        q = (half < n) ? &n : &half;
+        return size + *q;
     }
     return 0x9249249u;
 }

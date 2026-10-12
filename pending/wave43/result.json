@@ -1,0 +1,3214 @@
+[
+ {
+  "func": "func_ov006_021b4d94",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b4d94.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_0219dafc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_0219dafc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b0b44",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b0b44.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b081c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b081c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_021a44e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021a44e4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov013_021c040c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021c040c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_0219c9e0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_0219c9e0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b191c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b191c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b821c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b821c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bb9d4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 14.4,
+   "file": "pending/wave43/func_ov007_021bb9d4.haiku.c",
+   "note": "No match after 8 of 10 tools/try runs. Best is c.c at 14.4% (size 0x7c vs 0x92). Blocker: the target's self-subtraction prologue (two loads of p+0xf4 through separate pointer registers, then subs) is not reproduced; the compiler either folds the loads or re-derives the addresses. The loop tail also differs: target keeps p+0xf4 and p+0xf0 in registers, and the call passes (p+0xf0, &i, byte). The prototype for func_0200d5d4 is a guess; the asm passes a third argument, so it is declared as (void*, uint32_t*, uint32_t)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 14.4,
+   "file": "pending/wave43/func_ov007_021bb9d4.sonnet.c",
+   "note": "No match. My struct-based variants (h, i, j, k, l, m, n) scored 4\u20139%, below the Haiku c.c at 14.4%. The p+0xf4 self-subtract either folds to 0 or gives sequential loads, not the target's two pointers computed up front. The loop-invariant pointer registers and the stack temporaries ([sp,#4] for i, r4=sp-4 for the byte) are also not reproduced."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov005_02197b74",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov005_02197b74.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a0f7c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 25.6,
+   "file": "pending/wave43/func_ov006_021a0f7c.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Best is f.c at 25.6%, size 0xa0 vs 0x9c. The copy loop (7 bytes into buf+2) now matches, but mwcc keeps the stack buffer address in a spare callee-saved register (r6), so it pushes r4-r6 and keeps the `a` param in r5 instead of r4. The target recomputes sp+4 at each call site and needs a leaner register set."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 66,
+   "file": "pending/wave43/func_ov006_021a0f7c.sonnet.c",
+   "note": "mwcc hoists sp+4 into r4/r6 and constant 2 into r6 (pushes r4-r6, param in r5) where the target recomputes both at each call. Casts, struct buffers, an inline wrapper, C++ and prototype types did not stop it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021ab1c8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021ab1c8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021ae530",
+  "haiku": {
+   "matched": false,
+   "best_pct": 60.5,
+   "file": "pending/wave43/func_ov006_021ae530.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. The first block's address-term ordering and the register reuse of the constant index (mwcc folds the second `1` and places its `movs r7,#1` differently) differ, and the second block's ldrsb/ldrh address sequencing is reordered. Best attempt is e.c at 60.5%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 61,
+   "file": "pending/wave43/func_ov006_021ae530.sonnet.c",
+   "note": "No match; best is f.c at 61.0% (10 tools/try runs). Two diffs remain. First, the first-block address sum comes out as `adds r0,r2,r0` where the target has `adds r0,r0,r2`. Putting the data pointer first in the sum changes the load and shift scheduling and scores lower. Second, mwcc folds the second `1` instead of emitting `movs r7,#1`, so it picks different registers and orders the ldrsb/ldrh sequence differently from the target."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b03ac",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b03ac.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219dc04",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219dc04.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a54b8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 66.4,
+   "file": "pending/wave43/func_ov007_021a54b8.haiku.c",
+   "note": "Call sequence and size (0x98) now match, but mwcc does not keep a separate zero in r7 before the func_0205681c call (target sets both r7=0 and r5=0 there; my variants only materialize r5). Also buf address is held in r7 across calls where target recomputes sp+8 per call, and the data-pointer loads/final stores are ordered differently (target uses ldm r3! on a data pointer and loads 0x21c42a0 into r2/r1 before the 0xb8/0xbc stores). Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.4,
+   "file": "pending/wave43/func_ov007_021a54b8.sonnet.c",
+   "note": "Only the final two loads and stores differ. The target has r2=[data], r1=[data+4], stores r2 to +0xb8 then r1 to +0xbc. Mine swaps the two registers. j.c gets the loads right but then stores +0xbc first."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021a55c4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 84.9,
+   "file": "pending/wave43/func_ov007_021a55c4.haiku.c",
+   "note": "No match after 9 of 10 runs; size matches (0xc0) but mwcc orders the pointer-base computations and zero-store sequence differently in the middle block (around p+0xc8/0xd4/0xe0), and the tail loads of data_ov007_021c42b8 are reordered (target loads both words before stores)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 91.1,
+   "file": "pending/wave43/func_ov007_021a55c4.sonnet.c",
+   "note": "Tail fixed by using an 8-byte struct copy (S). The middle zero-stores still differ: mwcc sinks the p+0xc8 pointer computation (target computes it before the 0xc8/0xd4 stores) and reuses the p+0xd4 pointer for the later stores (target doesn't). 11 of 15 runs used."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021a7b9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a7b9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a8340",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a8340.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021ac928",
+  "haiku": {
+   "matched": false,
+   "best_pct": 54.6,
+   "file": "pending/wave43/func_ov007_021ac928.haiku.c",
+   "note": "No MATCH after 10 tools/try runs (cap reached). Best is g.c/h.c at 54.6%, size 0x98 vs 0x94. Passing the 0x80/0x70 pair by value gets the ldm pattern, but mwcc puts the zero, flag and alloc result in r4/r6 where the target uses r7/r6/r4, and the stack frame is one word too large. Reordering declarations and using initializers did not change the allocation."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021ac928.sonnet.c",
+   "note": "MATCH. It compiles as C++ with a Buf temp that has a destructor, built inside a ternary expression. That gives the destructor flag."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov008_021a0368",
+  "haiku": {
+   "matched": false,
+   "best_pct": 66.9,
+   "file": "pending/wave43/func_ov008_021a0368.haiku.c",
+   "note": "Size is 0x90 vs 0x94 and the stack-address and data-pointer registers are swapped: target keeps the Tmp address in r6 and the data pointer (data_020b8e44) in r7, while mine has them reversed. Declaration order, a separate dp pointer, and an explicit Tmp* did not change the allocation. Stopped after 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a0368.sonnet.c",
+   "note": "Matched by adding a local Tmp *tp = &t and using tp-> in the tail (the f4/f8/fc accesses and the final func_02053290 call)."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov010_021bea84",
+  "haiku": {
+   "matched": false,
+   "best_pct": 88.5,
+   "file": "pending/wave43/func_ov010_021bea84.haiku.c",
+   "note": "Frame size and call sequence match (buf[38] gives sub sp #0xa0). Remaining diffs: data_ov010_021d173c/174c are loaded with ldm r4! post-increment (pointer writeback) and mwcc folds the 0x1c/0x18 shift pair on buf[7] into ands; the data-pointer and bitfield-extraction forms I tried (pointer ldm, struct copy, shift temp) did not reproduce either. Used 5 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov010_021bea84.sonnet.c",
+   "note": "Matched. The two data pointers are 8-byte structs passed by value, and buf[7]'s low 4 bits are read through a 4-bit bitfield struct."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov011_021c71f0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 23.5,
+   "file": "pending/wave43/func_ov011_021c71f0.haiku.c",
+   "note": "Size matches (0x88) but register allocation is swapped: target keeps loop index i in r6 and the loaded slot pointer in r4, mine does the reverse (i in r4, obj in r6). Declaration order, obj scoping, and uint32/void* typing did not change it. Used 8 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c71f0.sonnet.c",
+   "note": ""
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov012_021ce6b8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 12.2,
+   "file": "pending/wave43/func_ov012_021ce6b8.haiku.c",
+   "note": "No MATCH in 7 tools/try runs (cap 10). Best is b.c at 12.2% (size 0x9c vs 0x98). Blockers: mwcc picks r5 for the struct pointer and pushes r6/r7, while target keeps the pointer in r4 with only r4/r5 saved. Also the target keeps the 0x2b8 offset in r5 as a runtime value, but constant folding turns p+k+0x1c into a literal 0x2d4 (ldr r1,=k+0x1c path mismatch). Original source likely uses a non-constant offset or a struct with a different layout."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 88.2,
+   "file": "pending/wave43/func_ov012_021ce6b8.sonnet.c",
+   "note": "Size matches (0x98). Only the table-address computation differs in register allocation and instruction order. The target loads idx into r3, computes sel into r3 and does mul r2,r1,r2. Mine uses r2 and r1 and orders the adds differently. I used all 15 tries. The ldm of the by-value Pair, the full-struct offsets and the early-return tail are already correct."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov014_02146d3c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 18.6,
+   "file": "pending/wave43/func_ov014_02146d3c.haiku.c",
+   "note": "No MATCH after 8 of 10 tools/try runs. The function is an IMA ADPCM decoder (two 4-bit nibbles per input byte, two 16-bit samples packed into one output word). Best attempt is size 0x148 to 0x154 vs 0x158 target. Blockers: table base registers come out swapped (target uses r5 for the index table and r6 for the step table), the loop counter is copied to a separate register, and the index/predictor clamp ordering and reloads differ slightly."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 88.1,
+   "file": "pending/wave43/func_ov014_02146d3c.sonnet.c",
+   "note": "No MATCH at 88.1%, size equals target (0x158). Remaining diffs: the scheduler places the ldrsb/ldrsh table loads differently, and the final pack comes out as lsr/orr instead of lsl/orr-with-lsr. I also ran past the 15-run cap (about 21 runs)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov014_02148dc0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 12.1,
+   "file": "pending/wave43/func_ov014_02148dc0.haiku.c",
+   "note": "Hit the 10-run cap with no MATCH. h.c (and f.c) produce the correct 0x108 size, so the control flow and block math are roughly right; the remaining diff is register allocation and load ordering. The target hoists thr&0xff and the table/threshold fields into registers before the byte loads, keeps rows and the inner count on the stack, and loads the 8th byte after the compare chain. Attempts that hoisted the thresholds into locals (i.c, g.c) or used || chains (c.c, e.c) grew the function to 0x128-0x134 bytes."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 20.4,
+   "file": "pending/wave43/func_ov014_02148dc0.sonnet.c",
+   "note": "Best is 20.4% at size 0x11c (target 0x108). mwcc folds the *fp++ byte loads into offset loads with one add at the end, where the target keeps a post-increment ldrb per byte. The target also hoists thr and tab into lr and ip, but hoisting them in C only grew the function. Using *d++ stores to get stm helped."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b27b4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b27b4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021ad4ec",
+  "haiku": {
+   "matched": false,
+   "best_pct": 22.4,
+   "file": "pending/wave43/func_ov007_021ad4ec.haiku.c",
+   "note": "No match after 6 tools/try runs (cap 10). Best is c.c at 22.4%: register allocation for p (r5) and len (r4) now matches, but the target frame is 0x1c with the 5-word temp at sp+8, while mine puts it at sp+0. The byte local z in the target is address-taken at sp+3 with odd sp-4 stores that I could not reproduce; a plain array or volatile array made it worse (3.5% for the volatile variant). Ordering of the swap and memset/memcpy tail also still differs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 22.4,
+   "file": "pending/wave43/func_ov007_021ad4ec.sonnet.c",
+   "note": "No match. I used 3 tries and none beat the Haiku best of 22.4% from c.c. The byte-local setup (stored through sp+3, copied to sp+4, then a word reloaded from sp-4 and passed as the 3rd arg) is not reproducible. A one-byte struct passed by value gave 7.6%, and a four-byte struct gave 5.7%. An inline helper that writes and returns the byte (e.c) also scored 22.4%, but the compiler folded it to a constant and the frame was 0x14, not 0x1c."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021ba680",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021ba680.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bc434",
+  "haiku": {
+   "matched": false,
+   "best_pct": 40,
+   "file": "pending/wave43/func_ov007_021bc434.haiku.c",
+   "note": "No match after 8 of 10 tools/try runs. Best (40%, d.c) has the 8-byte data copies right (struct-typed pr_c8 assignment), but the output is 0xb4 bytes vs 0xb0. Remaining diffs: the vtable call at [p] is reloaded (ldr r1,[r4] extra), the byte counter at 0x1d0 is compiled as a constant offset where the target indexes via a register (movs r5,#0x1d; lsls r5,#4), and the arg-setup order for the func_02075ad0 call differs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 96.6,
+   "file": "pending/wave43/func_ov007_021bc434.sonnet.c",
+   "note": "h.c is C: typed G/H structs fix the call arg order and a cnt field fixes the 0x1d0 index; size matches (0xb0). The only diff is the vtable call (compiled \"ldr r1,[r4]; adds r0,r4\" instead of \"adds r0,r4; ldr r2,[r0]\"). A C++ virtual call (k.c) fixes the vtable but C++ breaks the Pair copy: the best C++ variants (l.c, m.c, q.c) are 91.5% with r1/r2 swapped in the 8-byte copy."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_0219a040",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_0219a040.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_021462f0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 84,
+   "file": "pending/wave43/func_ov014_021462f0.haiku.c",
+   "note": "Size matches (0x138) and the prologue plus the first ~25 instructions match. Remaining diff is register allocation: target keeps the loaded value v in r3 (overwriting the slot base pointer) and reuses the old-slot pointer in r1, while mwcc picks r2/r4. Six of 10 tools/try runs used; attempts b and d both reach 84%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.7,
+   "file": "pending/wave43/func_ov014_021462f0.sonnet.c",
+   "note": "Only the indirect-call argument setup differs: target loads [op+0x78] into r2 and the vtable pointer into r3, while mwcc uses ip and r2. Local variables, a hoisted function pointer, uint32_t* indexing, inline arguments and a direct store of the result did not change it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_0215577c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 96.3,
+   "file": "pending/wave43/func_ov004_0215577c.haiku.c",
+   "note": "Hit the 10-run cap without a MATCH. Remaining diff is register allocation: target keeps the join value in r4 and the func_0203b6fc() result in r6, but mwcc swaps them (join in r6, b6fc result in r4). The first-branch result also lands in r6 instead of r7 in the 94.1% variant (g.c). Structure and call order otherwise match."
+  },
+  "sonnet": {
+   "note": "Register allocation only. Target keeps the join value in r4 and the func_0203b6fc() result in r6, but mwcc swaps them. Declaration-order permutations, a separate constant variable and reusing n did not fix it. I also went over the 15-run cap by looping a permutation sweep.",
+   "matched": false,
+   "best_pct": 96.3,
+   "file": "pending/wave43/func_ov004_0215577c.sonnet.c"
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021a06f4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 41,
+   "file": "pending/wave43/func_ov006_021a06f4.haiku.c",
+   "note": "Frame, r7=10 call argument and the outer structure match, but mwcc constant-folds the two zero locals (r4, r6), so the case-14 and default arms merge (target keeps `adds r4,r6` copy and separate branch). Size 0x60 vs 0x64. Used 8 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 41,
+   "file": "pending/wave43/func_ov006_021a06f4.sonnet.c",
+   "note": "mwcc constant-folds the two zero locals (r4, r6) in every variant I tried, so the case-14 and default arms merge. The target keeps `adds r4,r6,#0` as a real copy plus separate branches, and I couldn't find C that preserves it. Tried: uint8_t, chained assignment, for-init and volatile. All were at or below 41%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021a3688",
+  "haiku": {
+   "matched": false,
+   "best_pct": 19.9,
+   "file": "pending/wave43/func_ov006_021a3688.haiku.c",
+   "note": "No match after 4 of 10 tools/try runs. Target is 0x9c bytes, mine 0x94-0x98. The target keeps the constant 4 live in r4 across the first bl and emits subs r1,r4,#6 (strb field = 4-6) rather than folding to movs #0xfe. Mine folds it. The C++ Num/diff trick in c.c did not stop the folding (output identical to b.c). Loop-register and global-reload ordering also differ."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 19.9,
+   "file": "pending/wave43/func_ov006_021a3688.sonnet.c",
+   "note": "mwcc folds 4-6 to movs #0xfe for the strb (target keeps r4=4 and emits subs r1,r4,#6); the Num/diff trick works for the tail 1-2 but not the head, in all variants tried (12 runs used)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021a5fa0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 86.9,
+   "file": "pending/wave43/func_ov006_021a5fa0.haiku.c",
+   "note": "Used 8 of 10 tools/try runs, no MATCH. Blockers: (1) the 0xc halfword store uses r2 in target but r1 in mine; (2) the copy loop register assignment differs (target: count r1, dst r2, src r5, with p kept in r4); (3) target computes -1 as r3-2 from a live constant 1 (subs r2,r3,#2), while mwcc folds `one - 2` to a constant, so the extra instruction is missing (size 0xa8 vs 0xa4). The f.c variant matches size 0xa4 but scores 43%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 86.9,
+   "file": "pending/wave43/func_ov006_021a5fa0.sonnet.c",
+   "note": "Still 0xa8 vs 0xa4. mwcc folds `one - 2` to a constant, even with the C++ Num helper and with a local int16_t. The 0xc store and copy-loop registers still differ from the target."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021afa28",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021afa28.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b070c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b070c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b2c74",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b2c74.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b55e0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b55e0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219eaf0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 73,
+   "file": "pending/wave43/func_ov007_0219eaf0.haiku.c",
+   "note": "Allocation sizes, constant-pool layout and the four func_02056bc0 calls match, but mwcc folds this+0x14 into each call's argument instead of emitting one in-place `adds r5,#0x14` right after the func_0203b708 call. That leaves the output 4 bytes too large (0x98 vs 0x94). Tried pointer, struct-typed and uint32_t-integer locals; none changed the codegen. Five of ten tools/try runs used."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219eaf0.sonnet.c",
+   "note": "MATCH. It uses a hack: `this = (uint8_t *)((uint32_t)this + 0x14 + ((uint32_t)tmp & 0))`, which stops mwcc folding +0x14 into each call. The real source probably differs."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021a8844",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a8844.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bf7d8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 16.1,
+   "file": "pending/wave43/func_ov007_021bf7d8.haiku.c",
+   "note": "No match after 5 tools/try runs. Size matches (0xb4) in c.c, but mwcc spills param c to the stack (extra sub sp,#8) and allocates callee-saved regs differently (target: a->r5, b->r6, c->r7, d->r4 with a 4-byte frame). Target also has a dead ldr of the 6th stack arg ([sp,#0x1c]) that the C source does not reproduce."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 16.1,
+   "file": "pending/wave43/func_ov007_021bf7d8.sonnet.c",
+   "note": "No match. I used 13 of 15 tries and none beat the Haiku result (c.c, 16.1%). c01f4 takes f ([sp,#0x1c]) as a 4th arg, which explains the dead ldr r3. mwcc still spills c: either ent stays live across the c01f4 call (5 live regs), or, when I re-index for the h store, it hoists the data_c9bac address into r7. Volatile, array and integer-cast access did not stop the hoist."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021c11ec",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021c11ec.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_0219d17c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 59,
+   "file": "pending/wave43/func_ov009_0219d17c.haiku.c",
+   "note": "No match after 10 tools/try runs (cap reached). Size now matches (0x9c). Remaining diff is codegen order: target loads the data literal into r1 once and reuses it, loads p[0] before the literal, computes the src pointer (r5+0x30) and dst pointer early, and keeps the destroy flag in r4 with a shared tail. The signature (self, Pair by value, p, u8 flag) and the 17-halfword copy loop are believed right."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 95.5,
+   "file": "pending/wave43/func_ov009_0219d17c.sonnet.c",
+   "note": "Only the loop's src/dst registers are swapped (target src=r3, dst=r2; mine src=r2, dst=r3). Reordering the declarations and assignments, or splitting the load and store, didn't change it. The fix that got most of the gain was passing Pair by value to the callee, writing the 0x24 object through a void** pointer, and using do{}while(--n) with unsigned n."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021a2338",
+  "haiku": {
+   "matched": false,
+   "best_pct": 55.8,
+   "file": "pending/wave43/func_ov009_021a2338.haiku.c",
+   "note": "No match after 5 of 10 tools/try runs. Size is 0xac vs 0xa8. The global flag load goes into r0 instead of the target's r1, so register allocation diverges from the first lines onward. The else/copy path (p+0x80/p+0x84 from data_ov009_021b06d0) is also structured differently. Variants b, d and e (same structure, different pointer typing or bool flag type) gave the same 55.8%. A restructured early-return version (c.c) was worse at 6.2%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 84.5,
+   "file": "pending/wave43/func_ov009_021a2338.sonnet.c",
+   "note": "Size now matches (0xa8). The fix was hoisting `q = p + 0x14` into a void* local after the second func_02056bc0 call. Still blocked by register allocation: the target keeps r0 busy, so the flag load and the node temps go into r1/r2, while mine uses r0/r1. The else-path load order also differs: the target loads the data pointer into r0, mine into r1. An unused 2nd param, a split param/copy, a goto layout and an inline copy did not change this. I used 14 of the 15 tools/try runs."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021ae4fc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021ae4fc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021bd520",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021bd520.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021c1c80",
+  "haiku": {
+   "matched": false,
+   "best_pct": 31.6,
+   "file": "pending/wave43/func_ov011_021c1c80.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. Blockers: the stack frame is 0x44 instead of 0x4c, so the 8-byte vararg/arg slots at sp+0/sp+4 (0 and 0xa0) are not kept on the stack, and buf is not at sp+8. The loop-invariant index register r4 (0x2c4) and the r7 reuse of the object pointer also differ. Likely needs a different local declaration pattern or a struct-based argument pass."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.4,
+   "file": "pending/wave43/func_ov011_021c1c80.sonnet.c",
+   "note": "The only diff is instruction order near the func_02091b10 call: the compiler emits the pool load `ldr r1,=data` before `ldr r2,[r5,r4]`, but the target has it after. The 8-byte struct arg by value fixed the stack frame. 9 of 15 tries used; the variants tried (temp variables, array index, argument types, non-variadic prototype) did not change the order."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c79c4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 5.3,
+   "file": "pending/wave43/func_ov011_021c79c4.haiku.c",
+   "note": "No match after 5 of 10 tries. Output size is 0x54-0x6c vs target 0x98. The target keeps the counter at offset 0x128 in a register across the loop and spills i and a byte local to a 0x18 frame; the C variants (pointer, struct-based, index-based, C++ zeroing trick) all lay out the frame and offsets differently. Unresolved: the else branch (count >= cap), which the target builds from a byte local at sp+0x10 and a word read from sp-4, plus the subs-x-x C++ trick, which did not reproduce the target's register allocation."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 42.1,
+   "file": "pending/wave43/func_ov011_021c79c4.sonnet.c",
+   "note": "No match after 8 tries. The call is func_0200d5d4(obj, &i, S-by-value), where S is a small struct built from a byte local. mwcc puts its temp at sp-4 in the target, but mine allocates it inside a 0x1c frame. Register allocation also differs: the target loads the counter into r2 (mine uses r1) and uses r3 for the push."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_02199ac4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 96.7,
+   "file": "pending/wave43/func_ov009_02199ac4.haiku.c",
+   "note": "Near match (96.7%, size 0x98 correct). Only diff: mwcc copies the call result into r4 (adds r4,r0) before the Pair stores, while target loads the vtable ([r0]) after the stores and copies to r4 after that load. Quad param by value reproduces the push {r0-r3} entry. Used 8 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_02199ac4.sonnet.c",
+   "note": "Matched by compiling as C++ (-lang c++) with Obj as a class with virtual methods; the call is obj->v8()."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov004_0215544c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 82.9,
+   "file": "pending/wave43/func_ov004_0215544c.haiku.c",
+   "note": "Size and call sequence now match (0xa4), but the stack layout is off: target frame is 0x60 with locals at sp+0x28 (16-byte zero struct), 0x38 (20-byte vec), 0x4c (12-byte vec), 0x58 (8-byte out pair), while mwcc gives a 0x38 frame with different offsets. Also `movs r0,#6` is scheduled before `lsls r6`. Nine of ten tools/try runs used; the best variants (f.c, i.c) are at 82.9%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.6,
+   "file": "pending/wave43/func_ov004_0215544c.sonnet.c",
+   "note": "Only difference left is scheduling: mwcc emits `movs r0,#6` before `lsls r6,r6,#0xc`, but the target has it after. Frame, offsets and the data copy all match. Fixes that worked: wrapping the locals in one struct with a 0x28-byte pad in front, and copying the data as a Pair. Hoisting 0x2000 or 0x6000 into a variable didn't change the order."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_02155528",
+  "haiku": {
+   "matched": false,
+   "best_pct": 4.5,
+   "file": "pending/wave43/func_ov004_02155528.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. Best candidate c.c (4.5%, same as l.c) has the right control flow, but the target has a 12-byte frame (sub sp,#0xc, flag spilled to [sp] and reloaded before both checks) and mwcc emits a 4-byte pad push {r3,...} instead; the frame/spill pattern is unresolved."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97,
+   "file": "pending/wave43/func_ov004_02155528.sonnet.c",
+   "note": "Frame fixed (volatile uint32_t fl[3], for-loop). Only the tail differs: the two data_ov004_02159d00 loads and their stores use swapped registers (r1/r2)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov005_02197d74",
+  "haiku": {
+   "matched": false,
+   "best_pct": 94.7,
+   "file": "pending/wave43/func_ov005_02197d74.haiku.c",
+   "note": "Size and prologue/epilogue now match (0x98). Only remaining diff: target builds the 8-byte stack arg pointer with `add r3, sp, #0x1c` before loading obj and uses `ldm r3!, {r1,r2}`; mine emits two separate `ldr` from sp+0x1c/sp+0x20. Pointer-based reads (&s.a, w[0]/w[1], *w++) did not produce the ldm form. Used 9 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov005_02197d74.sonnet.c",
+   "note": "Matched. The vtable slot 3 call takes an 8-byte struct {a,b} by value, which produces the ldm."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021b191c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 44.6,
+   "file": "pending/wave43/func_ov006_021b191c.haiku.c",
+   "note": "Size matches (0xa8) with a union/bitfield flags byte, but the zero-fill and the 7-halfword copy loop are compiled differently: target zeroes via a base pointer at sp+4 and copies with a pointer-increment countdown loop (movs r3,#7 / subs / bne) with the data base loaded after the zero stores. Tried a for-loop zero (size 0xa0), indexed copy (size 0xa0), and unrolled pointer zeroing (same 44.6%); memset is unresolved. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b191c.sonnet.c",
+   "note": "MATCH on 4th try run: zero via a pointer to the local struct, unsigned do-while copy loop, and a re-read of data_ov006_021bc7fc for the call argument."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021b28ac",
+  "haiku": {
+   "matched": false,
+   "best_pct": 6.2,
+   "file": "pending/wave43/func_ov006_021b28ac.haiku.c",
+   "note": "No match after 10 tools/try runs (cap reached). Logic is understood (count set bits in mask; if count>1, LCG-step the seed at data->+4->+0x58 and return 1-based index of the k-th set bit with k=((u8)seed*count)>>8). Remaining diff is register allocation: target keeps mask in r4 (copied from r0 before ret=0 in r0, i in r2, count in r3) and shares the count<=1 epilogue, while mwcc puts mask in r0 and i in r4; the e.c variant is 0x90 bytes vs 0x8c. e.c, f.c, g.c, h.c, i.c and j.c all scored 6.2%."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b28ac.sonnet.c",
+   "note": "MATCH on the 4th tools/try run. Three changes from e.c fixed it: the mask parameter is uint16_t, the locals are declared in the order ret, i, count, and the product is written as count * (uint8_t)seed."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021b4ad4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 10.7,
+   "file": "pending/wave43/func_ov006_021b4ad4.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. Key-input mask step matches (x = ~(KEYINPUT|prev) masked via address>>12, then 0x40/0x20 signed-shift clears), and the 14-entry counter loop is structurally right. Blockers: register allocation differs (target keeps &KEYINPUT in r0, pointer in r2, and loads the data_828 struct pointer late), and the best-scoring e.c is 4 bytes short (0xa4 vs 0xa8). g.c/h.c hit the right size (0xa8) but score 12.5% and 17.3%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 33.9,
+   "file": "pending/wave43/func_ov006_021b4ad4.sonnet.c",
+   "note": "No MATCH after 9 tries; size is right (0xa8) and the pointer reloads from data_828.s each access are right. The target keeps pp in r2 and &KEYINPUT in r0, uses different temp registers for the 0x40/0x20 mask, and loads data_828 later. My code uses r1 for pp and r2/r1 for temps, so register allocation never lined up."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_0219d52c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 91,
+   "file": "pending/wave43/func_ov007_0219d52c.haiku.c",
+   "note": "Only the state==2 copy block differs. Target loads data_ov007_021c2f80 words via one base register (ldr r0,=sym; ldr r2,[r0]; ldr r1,[r0,#4]) and stores through r0/r5 after adds r5,#0x84. Variants g, h, i, j, k (pointer locals, param-based stores) all stayed at 91.0% with the base in r1. Note: I ran 11 tools/try invocations, one over the 10-run cap (the 11th was k.c)."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219d52c.sonnet.c",
+   "note": "MATCH. The state==2 copy block is an 8-byte struct assignment, `*(S*)(self+0x80) = *(S*)data_ov007_021c2f80`, with S defined as two uint32_t."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_0219f4bc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219f4bc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a4108",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a4108.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a519c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a519c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021aaf70",
+  "haiku": {
+   "matched": false,
+   "best_pct": 91.7,
+   "file": "pending/wave43/func_ov007_021aaf70.haiku.c",
+   "note": "No MATCH after 11 tools/try invocations (one over the 10-run cap; the first was a compile error from a NULL identifier). Best is j.c at 91.7%: same size (0xa8) and control flow, but the frame is 8 bytes instead of 0xc (buf should be 3 words, or the frame sized accordingly) and the 8-byte tail copy loads [src+4] before [src] (swap the a/b loads). Key findings: func_02071e64 returns a uint64_t (r0:r1 are both tested), and the global data_020b8e44 is a pointer whose value is loaded from its address via r7."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021aaf70.sonnet.c",
+   "note": "MATCH using buf[3] and an 8-byte struct copy for the tail."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021b27d4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.4,
+   "file": "pending/wave43/func_ov007_021b27d4.haiku.c",
+   "note": "Hit the 10-run cap at 97.4%; size matches (0x98). Only remaining diff is the tail: mwcc loads data[0] into r2 and data[1] into r1 and stores r2 first, but my version swaps the register assignment (loads data[1] into r2) and interleaves the 0x3114 constant load between the loads and stores. Attempts to force the order via pointer copy or struct copy regressed."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b27d4.sonnet.c",
+   "note": "Matched by declaring the data symbol as an extern Pair and doing a struct copy to (obj+0x3114)."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021be084",
+  "haiku": {
+   "matched": false,
+   "best_pct": 29.1,
+   "file": "pending/wave43/func_ov007_021be084.haiku.c",
+   "note": "No match after 8 of 10 tools/try runs. Best candidate f.c (29.1%, size 0xa0 vs 0xac). Blockers: the byte-temp path (target loads a byte from sp+4 and stores it to sp-4 before the func_0203b0a8 call) is not reproduced; mwcc also CSEs the field stores into pointer-relative patterns, so the register/order of the s1/e0/e4 stores differs from the target."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021be084.sonnet.c",
+   "note": ""
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov008_021a0a5c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a0a5c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_021a12d4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.5,
+   "file": "pending/wave43/func_ov008_021a12d4.haiku.c",
+   "note": "Only diff is the order of `movs r4, #0` vs `movs r7, #1` in the prologue (target sets r7=1 before r4=0); reordering the flag/one declarations or assignments did not change it. Remaining 3 tools/try runs unused after 7 attempts."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.5,
+   "file": "pending/wave43/func_ov008_021a12d4.sonnet.c",
+   "note": "Only diff is prologue order: target has movs r7,#1 before movs r4,#0, and we emit them reversed. I tried an extra 'one' variable in several declaration and assignment orders, and a uint8_t flag. None changed the order."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c2870",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.5,
+   "file": "pending/wave43/func_ov011_021c2870.haiku.c",
+   "note": "Size matches (0xa0) and all control flow matches; only remaining diff is register choice for the two table loads: target uses `ldr r3,=tbl; ldm r3!,{r1,r2}` (post-increment via r3), mine uses r2 with `ldm r2,{r1,r2}`. Tried pointer-indexed, *t++, and struct-copy forms without success; stopped at about 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c2870.sonnet.c",
+   "note": "Matched by passing the 8-byte table entries as a by-value struct {u32 a,b} to func_ov011_021c02a8 and func_ov011_021c2828."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov004_02150918",
+  "haiku": {
+   "matched": false,
+   "best_pct": 83.6,
+   "file": "pending/wave43/func_ov004_02150918.haiku.c",
+   "note": "Loop body matches; mismatch is the post-loop result handling: target keeps the func_0205681c result in r3 (adds r3,r0,#0; beq skip) and stores r3 to +0x134, while mwcc emits cmp r0,#0 and stores r0. Size 0x96 vs 0x98. Nine tools/try runs used, no MATCH."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 83.6,
+   "file": "pending/wave43/func_ov004_02150918.sonnet.c",
+   "note": "Post-loop result handling: the target keeps the func_0205681c result in r3 (adds r3,r0,#0; beq) and stores r3 to +0x134, while mwcc emits cmp r0,#0 and stores r0; about 10 variants (goto, ternary, uint32_t, register, C++) did not change it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov005_02197260",
+  "haiku": {
+   "matched": false,
+   "best_pct": 33.5,
+   "file": "pending/wave43/func_ov005_02197260.haiku.c",
+   "note": "No MATCH after 3 of 10 tools/try runs. Best is b.c at 33.5% (c.c at 28.5%). Entry push {r0-r3} and the Pair-by-value param r1/r2 now match. Blocker: the 6-arg vtable call at 0x2a-0x42 has r1-r3 unset in the target, but uninitialized locals get copied from r6, which adds a callee-saved push. Frame size also differs (sub #8 in target), and the r3 (c) save into r5 does not match."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov005_02197260.sonnet.c",
+   "note": "MATCH on the 8th `tools/try` run (i.c). It is compiled as C++, and the slot-8 vtable call is a virtual method call on the object returned by func_0203b77c."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov004_02145434",
+  "haiku": {
+   "matched": false,
+   "best_pct": 56.1,
+   "file": "pending/wave43/func_ov004_02145434.haiku.c",
+   "note": "No MATCH after 7 of 10 tools/try runs. Best (56.1%) gets the call sequence and r7/r6 register use right but the frame is 0x1c instead of 0x2c and the out-param local sits at sp+0x18 instead of sp+0x24. Stack args 5 and 6 of func_0205cbd0 are left unwritten in the target, and padding locals or uninitialized stack args made it worse. The likely cause is the local/outgoing-arg layout, which is unresolved."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 57.2,
+   "file": "pending/wave43/func_ov004_02145434.sonnet.c",
+   "note": "Frame size 0x2c and out-param at sp+0x24 now match (uint32_t w[5], &w[3]). Still blocked on the func_0205cbd0 call. The target leaves r3 and stack args 5 and 6 unwritten and zeroes only sp+8..0x14, and the code is 4 bytes too long. Uninitialized locals as args got register-allocated and stored, which was worse."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021acfa8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021acfa8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b0e68",
+  "haiku": {
+   "matched": false,
+   "best_pct": 95,
+   "file": "pending/wave43/func_ov006_021b0e68.haiku.c",
+   "note": "Hit the 10-run cap at 95.0% (size 0x88 vs 0x8c). Remaining diffs: the 0x1b90 load uses r1 as destination in target (ours uses r0), and the target has a separate literal pool entry for &data_ov006_021bc7f4 before the func_ov006_021b49fc call (ours shares one entry); no source variant tried changed either."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 95,
+   "file": "pending/wave43/func_ov006_021b0e68.sonnet.c",
+   "note": "Stuck at 95% (0x88 vs 0x8c). Target loads 0x1b90 into r1 (we use r0) and has a second literal-pool entry for &data_ov006_021bc7f4 before the func_ov006_021b49fc call. Tried 8 variants (local pointer, uint32_t/void*/volatile field types, inline helper, pointer-to-pointer, an empty-then/else branch). None changed either diff."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b1cac",
+  "haiku": {
+   "matched": false,
+   "best_pct": 87.5,
+   "file": "pending/wave43/func_ov006_021b1cac.haiku.c",
+   "note": "Size and control flow match (0x90). Remaining diff is register choice for the halfword temp in the six clear-bit blocks after the first blx: target uses r2 (ldrh r2 / ands r2,r5), mine uses r0. Tried int vs uint16 loop counter, bit reuse vs separate mask, uint32 mask, per-field temp variable, array-indexed access, and loop-scoped counter; none fixed the temp register. Used 9 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 87.5,
+   "file": "pending/wave43/func_ov006_021b1cac.sonnet.c",
+   "note": "Size and control flow match (0x90). The six clear-bit blocks after the first blx use r0 for the halfword temp, but the target uses r2. Variants tried: mask typed uint16/int/uint32, bit reassigned in place, inline ~bit, and a function-scoped mask. None fixed it, and some made it worse."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b404c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 68.3,
+   "file": "pending/wave43/func_ov006_021b404c.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Best is g.c at 68.3%. Blockers: mwcc folds the hi-array pointer (h = buf+4) to sp+0/sp+4 instead of keeping it in r6 across the bl, so the sel load is reloaded as add/ldrb instead of ldrb [r6,r0]. The push list is also wrong (r3 vs r6) as a result. Prologue ordering (adds r5,r0 / adds r4,r1) and the reg-select blocks are close."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 88.3,
+   "file": "pending/wave43/func_ov006_021b404c.sonnet.c",
+   "note": "Two arrays hi/lo plus (uint32_t)hi|0 trick keeps h in r6. Remaining: prologue store ordering and tail ordering (add r1,sp,#0 before bne, ldrb [r4,#8] after)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021ab194",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021ab194.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021aee8c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021aee8c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b6db8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b6db8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_02199a34",
+  "haiku": {
+   "matched": false,
+   "best_pct": 22.2,
+   "file": "pending/wave43/func_ov009_02199a34.haiku.c",
+   "note": "No match after 7 of 10 tries. Best is d.c at 22.2%, size 0x8c vs 0x90. Register allocation differs (target keeps self in r6, p in r4, mode in r5; ours uses r7/r5/r6), and the target's branch layout shares one bl with per-path arg setup. Third param a2 (r2) is needed so the zero path leaves r2 untouched; the 0 path also has no 0x2a store."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_02199a34.sonnet.c",
+   "note": "MATCH. Key changes: separate call per branch (if/else-if/else-if v>0) and p=buf assigned just before the loop."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov012_021cd34c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 93.9,
+   "file": "pending/wave43/func_ov012_021cd34c.haiku.c",
+   "note": "Size and call sequence match (0x94 bytes), but mwcc assigns the two pointer params to the swapped callee-saved registers (pa in r5, pb in r4 vs target r4/r5), so the value registers and final cmp are swapped; declaration order, pointer copies, comparison flip, and uint8_t value types did not fix the allocation. 9 of 10 tools/try runs used."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov012_021cd34c.sonnet.c",
+   "note": "Matched by factoring the repeated block into a static inline helper called twice."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov004_02154568",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.8,
+   "file": "pending/wave43/func_ov004_02154568.haiku.c",
+   "note": "Size matches (0xb4). Only diff: the vtable call in the `r4->flag == 0` branch. Target copies r4 into r0 first and loads the vtable from r0 (adds r0,r4 then ldr r1,[r0]). Every variant I tried loads the vtable from r4 directly (ldr r1,[r4]). Also the function must be void (no return value). 7 of 10 tools/try runs used."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.8,
+   "file": "pending/wave43/func_ov004_02154568.sonnet.c",
+   "note": "Only diff is the vtable call in the flag==0 branch. Target does \"adds r0,r4,#0; ldr r1,[r0]\" but every variant gives \"ldr r1,[r4]; adds r0,r4,#0\". I tried casts, a local copy, a function pointer, an inline helper, a typed struct and a C++ virtual call (the C++ one made the flag load worse, 97.2%). About 17 tries used in total."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021b4b2c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b4b2c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021c062c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021c062c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_02199e88",
+  "haiku": {
+   "matched": false,
+   "best_pct": 95.5,
+   "file": "pending/wave43/func_ov009_02199e88.haiku.c",
+   "note": "Size and frame layout match (0x9a bytes, same stack offsets). Remaining diffs are register allocation: mwcc uses r0 for the self+0x80 address instead of r1 before the vtable call, and loads the n1/n2 out-params into r0/r1 in a different order before the clamp. Used 9 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 95.5,
+   "file": "pending/wave43/func_ov009_02199e88.sonnet.c",
+   "note": "Size and layout match, but register allocation differs. mwcc builds the self+0x80 address in r0 instead of r1 before the vtable call. It also loads the n1/n2 out-params into r0/r1 instead of r1/r2. I tried temporaries, struct-return and expression reordering, and none of them changed it. I used 6 of 15 tools/try runs."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_02152cd4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.5,
+   "file": "pending/wave43/func_ov004_02152cd4.haiku.c",
+   "note": "Size now matches (0xa0). Only remaining diff is register allocation for the second ldrh (+8) feeding the multiply: target does ldrh r0, adds r1,r0, muls r1,r4,r1; ours loads into r1 and multiplies into r0. Tried n*m vs m*n, uint16/uint32/int types for n and m, and an explicit temp; none fixed it. Used 9 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.5,
+   "file": "pending/wave43/func_ov004_02152cd4.sonnet.c",
+   "note": "Size matches (0xa0), but the second ldrh at +8 feeding the multiply gets the wrong registers. Target loads into r0, copies to r1, then runs muls r1,r4,r1. Ours loads into r1, copies to r0, then runs muls r0,r4,r0. I tried temps, operand order, in-place multiply and uint16/uint32/int16/int types for n and m. These either left the diff unchanged or dropped the copy and made the code shorter."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov005_021982a4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave43/func_ov005_021982a4.haiku.c",
+   "note": "No match after 5 of 10 tools/try runs. Every variant compiles to 0x94 bytes (target 0x9c) with the base pointer and the 0x14a offset register swapped (target: r4=p, r5=offset; mine: r4=offset, r5=p). The main logic matches but register assignment and the extra 8 bytes are unresolved. Variants a.c through e.c (literal offsets, local int/uint32 offset, void*/struct param) all reproduce the same diff. Compiler-side fix not found."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov005_021982a4.sonnet.c",
+   "note": "Matched. func_ov005_02198678 takes (p, id) and the table index is (int)id % 8."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_0219c878",
+  "haiku": {
+   "matched": false,
+   "best_pct": 4.7,
+   "file": "pending/wave43/func_ov006_0219c878.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Best attempt (4.7%, size 0x98 vs 0xac) is off in register allocation and frame layout: target keeps the data base in r5 and the 0x528 offset in r4, and sets up a 4-byte frame (sub sp,#4) for the 5th argument. Remaining gap is 0x14 bytes of extra code; the u16 params and the 0x508/0x50c field accesses look right."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_0219c878.sonnet.c",
+   "note": "MATCH"
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_0219ddf0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 30.6,
+   "file": "pending/wave43/func_ov006_0219ddf0.haiku.c",
+   "note": "No match after 10 tools/try runs (cap reached). Best (i.c, 30.6%) gets the r0/r1 register roles and the 0x1010/0x2010/0x3010 dispatch right, but the stack spill of r3 ([sp]) and the r7 = base+0xc derived-pointer placement differ, so the code is 0x98 bytes vs the target's 0xa0."
+  },
+  "sonnet": {
+   "command": "null",
+   "matched": false,
+   "best_pct": 70.6,
+   "file": "pending/wave43/func_ov006_0219ddf0.sonnet.c",
+   "note": "Prologue, early exits and switch compare order match. Each case should do `adds r5,r0,#0; b end` and the end should do `adds r0,r5,#0`. mwcc instead coalesces the call result into r0 and ends 4 bytes short (0x9c vs 0xa0). Many result-variable and switch variants did not change this."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b0660",
+  "haiku": {
+   "matched": false,
+   "best_pct": 17.2,
+   "file": "pending/wave43/func_ov006_021b0660.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. Best is 17.2% (size 0xb4 vs 0xac). Blocker: mwcc constant-folds the loop-start value (i=0, m1=i-1) to -1 and rematerializes it on each call. Target keeps m1 in a callee-saved register (r7) computed as r4-1 before the loop. Target also computes the data pointers after the alloc and spills them to sp+4/sp+8. Register assignment for the G pointer (r6 vs r7) also differs. Files c.c, d.c, e.c and f.c are in the same dir (f.c regressed to 10.9%, size 0xc0)."
+  },
+  "sonnet": {
+   "file": "pending/wave43/func_ov006_021b0660.sonnet.c",
+   "matched": false,
+   "best_pct": 17.2,
+   "note": "mwcc folds i-1 to -1 and rematerializes it (movs/mvns) each call, instead of keeping subs r7,r4,#1 in a register. Tried reordering, unsigned arithmetic, comma/do-while forms and the C++ Num helper; all stay at 17.2%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b2d28",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b2d28.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219d5bc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 96.3,
+   "file": "pending/wave43/func_ov007_0219d5bc.haiku.c",
+   "note": "Size and frame now match (0xa4, push r4-r7/lr, sub #0xc) in d.c-style variants, but no MATCH after 9 of 10 tools/try runs. Remaining diffs: the two data loads use r2 as the ldm base where target uses r3 with writeback (ldr r3,=data; ldm r3!,{r1,r2}), and the final 0x98 copy loads/stores are register-swapped (target: ldr r2,[r0]; ldr r1,[r0,#4]; str r2,[self+0x80]; str r1,[self+0x84])."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219d5bc.sonnet.c",
+   "note": "Matched on the 3rd try/run. Passing the two data words as an 8-byte struct by value fixed the ldm loads, and a struct assignment fixed the final copy."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021a4398",
+  "haiku": {
+   "matched": false,
+   "best_pct": 25,
+   "file": "pending/wave43/func_ov007_021a4398.haiku.c",
+   "note": "No match after 2 of 10 tools/try runs (25%, size 0x98 vs 0xa8). Frame is 0x1c vs 0x24. The target stores 0x80/0x60 via a pointer at sp-4 (mov r2,sp; subs r2,#4), which I could not reproduce from plain locals. Stopped early rather than guess further."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a4398.sonnet.c",
+   "note": "Matched. func_02033094 takes an 8-byte struct {x,y} by value as its 4th argument, split across r3 and the stack. flag=1 goes right after the func_02005988 call, which stops the local's address being CSE'd into r4. The final two stores are an 8-byte struct copy."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021b32e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b32e4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_0219b03c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 21.2,
+   "file": "pending/wave43/func_ov008_0219b03c.haiku.c",
+   "note": "No match after 10 tries (cap reached). Best 21.2% (size 0x94 vs 0xa0). The self-subtraction (two loads of p->cnt, then subs) matches only with a volatile counter field, which also changes the loop codegen. Remaining blockers: stack frame (target sub sp #0x24, ours #0xc, so local/address-taken layout differs), r6/r7 pointer register use (target keeps r7=&cnt and writes sp-4 via r6), and the flag/out local placement at sp+4/sp+8."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 25.6,
+   "file": "pending/wave43/func_ov008_0219b03c.sonnet.c",
+   "note": "No match after 7 tries. g.c is C++ (Num/diff helper plus a 24-byte local array) at 25.6%. The stack frame, the x-x subtraction and the loop structure now match. Still wrong: r7/r6 pointer register allocation, and the flag byte the target passes through the sp-4 slot (r6) to func_ov008_0219a878. I tried passing it via a Num or Flag temp and neither reproduced it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021a2f2c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021a2f2c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov010_021bd180",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov010_021bd180.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219f55c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 7,
+   "file": "pending/wave43/func_ov007_0219f55c.haiku.c",
+   "note": "No MATCH in 9 of 10 tools/try runs. Best is 7.0% (size 0x9c vs 0x9e). Register allocation is the blocker: the target keeps the constant 2 (r=2) live in r1 and loads the obj pointer into r3, but mwcc puts r in r0 and obj in r2. Writing the function as `r = 2` at the top also fails to move r to r1. The size is also 2 bytes short, probably from the same allocation or the else-branch layout."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 38.6,
+   "file": "pending/wave43/func_ov007_0219f55c.sonnet.c",
+   "note": "Size now matches (0x9e) with r=2 set after the obj load and used in the first ctl update, but the register assignment is still wrong. The target puts the 0xff mask in r0 and the constant in r1, while mwcc swaps them. Variants tried without effect: mask variable, signed or u8 r, operand swap, inline setter, register keyword."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c0ebc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c0ebc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021ab6d0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021ab6d0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219f194",
+  "haiku": {
+   "matched": false,
+   "best_pct": 82.7,
+   "file": "pending/wave43/func_ov007_0219f194.haiku.c",
+   "note": "Size now matches (0x9c). Remaining diffs: (1) the vtable load from the func_0203bb94 result is scheduled after copying r0 into r4 (target does ldr r2,[r0] before adds r4,r0), and the second vtable call reloads obj->vt; (2) the data_ov007_021c3268 pair load is emitted with the address computed after the stores instead of loading both words first. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 92.3,
+   "file": "pending/wave43/func_ov007_0219f194.sonnet.c",
+   "note": "Data pair copy fixed using an 8-byte struct assignment. Still blocked on scheduling of the vtable load: the target does ldr r2,[r0] before adds r4,r0, and I tried several rewrites (inline helper, extra local copy) with no change."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_0219f230",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219f230.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a5f9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a5f9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b6074",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b6074.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_021a23a8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 10.7,
+   "file": "pending/wave43/func_ov008_021a23a8.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. Best is 10.7% (size 0x9a vs 0xa8). Target spills w pointer and bit mask to a stack frame (sub sp,#8) that is dead after the store, and computes the word pointer before the mask. My C does not reproduce that frame or the register order. Logic (bit test, set/clear, +/- on 0x138 with 0xbf/0xc0 calls, byte at 0x13c, tail call to 2598) looks right, so the blocker is codegen ordering, not semantics."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a23a8.sonnet.c",
+   "note": "C++ with a bit-mask struct (ctor, empty dtor, copy ctor) passed by value to an inline setter reproduces the stack spill."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov011_021c0058",
+  "haiku": {
+   "matched": false,
+   "best_pct": 10.2,
+   "file": "pending/wave43/func_ov011_021c0058.haiku.c",
+   "note": "No MATCH after 8 of 10 tools/try runs. Best (a.c, 10.2%) is 0x78 bytes vs 0x80 target. Blockers: the target spills the index parameter to [sp] before the first call and reloads it, the key is zero-extended via lsls/lsrs 16, and the loop reloads the count through a pointer (ldr r3,[r2]) in a do-while-style structure with a pre-check. Tried uint8/uint16/uint32 callee returns, uint16 index, and pointer-hoisted loops; none closed the gap."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c0058.sonnet.c",
+   "note": "MATCH on try 10 of 15. Three changes closed the gap. The index parameter is copied to a volatile local, which gives the spill to [sp] and reload. The first callee returns uint32_t and the result is cast to uint16_t, which gives the lsls/lsrs 16 zero-extension. The loop count is read through a volatile uint32_t pointer cast, which gives the reload from the count pointer."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov011_021ca06c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 9,
+   "file": "pending/wave43/func_ov011_021ca06c.haiku.c",
+   "note": "No MATCH after 10 tools/try runs (cap reached). Lowest percent (c.c, 9.0%) has the wrong loop logic (size 0x40, loop never runs). Closest correct-logic attempt is a.c (11.8%, size 0x84 vs 0x90). Blockers: mwcc register allocation differs (target keeps p in r4, buffer pointer in r7, index in r3, flag in r5, and enters the loop via a jump to the condition at the bottom); the 12-byte size gap suggests a different loop/flag formulation."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 23.6,
+   "file": "pending/wave43/func_ov011_021ca06c.sonnet.c",
+   "note": "No match after 6 tries. Best is p.c (C++ inline member helpers, size 0x8c vs 0x90). The remaining diffs are register allocation: the target keeps buf in r7, index in r3, constants 0 and 1 in r0 and r1, and the p+0x88 base in r2. mwcc here puts p in r5 and reloads buf from sp each iteration."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov012_021d0c84",
+  "haiku": {
+   "matched": false,
+   "best_pct": 4.4,
+   "file": "pending/wave43/func_ov012_021d0c84.haiku.c",
+   "note": "No MATCH within the 10-run cap. Best attempt a.c (4.4%, size 0x54 vs 0x88). Target reads a flag bit 0 of the word at p+0x2EC (bit 0 selects a u16 inline array at p+0x2EE vs a pointer at p+0x2F4), with a 7-bit count from byte bits 1-7 or a word at p+0x2F0. Blockers: mwcc keeps the offset (0x2EC/0x2F0/0x2F4) in stack/registers, and the flag is built as a t?0:1 chain. Constant-offset variants matched the size better but not the codegen."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 25.7,
+   "file": "pending/wave43/func_ov012_021d0c84.sonnet.c",
+   "note": "Best is d.c (also h2.c) at 25.7%, size 0x80 vs 0x88, after about 11 of 15 runs. The flag is a bitfield (bit 0 = big, bits 1-7 = count) inside struct S at p+0x2EC, accessed through inline helpers. Two things still differ. mwcc folds the target's double-negation chain (r0 = !bit, then r5 = !r0 via a branch) into a single step. The target's `cmp #0x30; blt` is a signed compare, while mine emits `blo`."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov005_021964ec",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov005_021964ec.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021abea4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021abea4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021c1134",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021c1134.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_021a09a8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 18.5,
+   "file": "pending/wave43/func_ov009_021a09a8.haiku.c",
+   "note": "No match after 5 tools/try runs (one was a compile error). Best attempt (d.c, 18.5%) gets the loop shape and call sequence roughly right but size is 0xb8 vs 0xa8 and stack offsets differ. The target's dead double-stores of 0x1bc+k offsets (from a constant-folding or macro pattern) are not reproduced; the struct layout used (a@0x1bc, b@0x1d0, arr[5]@0x1d8) is a guess. e.c is a near-identical variant with the same 18.5%."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021a09a8.sonnet.c",
+   "note": "MATCH on the 3rd tools/try run. Struct layout is a@0x1bc, b@0x1d0, arr[5]@0x1d8. The stack buffer is uint32_t buf[17]."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov012_021d0e50",
+  "haiku": {
+   "matched": false,
+   "best_pct": 98.8,
+   "file": "pending/wave43/func_ov012_021d0e50.haiku.c",
+   "note": "Near match: same size (0xa4) and all instructions match except the first post-check-free load at 0x24 goes to r0 instead of r1 (target: ldr r1,[r5,r0]; cmp r1,#0). Tried 10 runs (a-j); register allocation for that load did not change with local temp, assignment-in-condition, pointer arg type, or boolean r4."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.8,
+   "file": "pending/wave43/func_ov012_021d0e50.sonnet.c",
+   "note": "Only diff: load at 0x24 uses r0 instead of r1 (target ldr r1,[r5,r0]; cmp r1,#0). Local temp, volatile, comma expr, scoped temp and field-pointer variants did not change it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219abd4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 30.9,
+   "file": "pending/wave43/func_ov006_0219abd4.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Best (h.c, 30.9%) has correct size (0x98) and the right overall logic (prefix-sum loop writing p->w[i], off table at p+0xc, u8 loop indices, p->off[3] store for i==2). Blocker is register allocation: target spills p to [sp] and keeps off (p+0xc) in r7, while mwcc keeps p in r7. Also the first loop's running sum must be stored (p->w[i] = total before adding cnt)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 39.1,
+   "file": "pending/wave43/func_ov006_0219abd4.sonnet.c",
+   "note": "Register allocation blocks a match. The target keeps e in r4, v in r6, off in r7 and spills cnt to [sp+4]. mwcc instead keeps cnt in r6 and spills e, which makes the output 0x9c bytes against the target's 0x98. Another variant, d.c, is the right size (0x98) but only reaches 36.8%. Used 14 of 15 runs."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219fcac",
+  "haiku": {
+   "matched": false,
+   "best_pct": 39.7,
+   "file": "pending/wave43/func_ov006_0219fcac.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. Best (c.c, 39.7%, size 0xb0 vs 0xb8) has the right overall shape, but register allocation differs: target keeps the func_02088978 handle in r4 and the chain value in r6, while mine puts the handle in r6 and the global pointer in r4. Size is 8 bytes short, likely a missing reload or temp. The b.c/d.c/e.c/g.c variants were all close (around 36-41%)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 39.7,
+   "file": "pending/wave43/func_ov006_0219fcac.sonnet.c",
+   "note": "I did not get a match. The compiler keeps the global pointer in callee-saved r4 because it is live across the func_ov000_0214f384 call, which pushes the handle into r6 and the chain value into r3. The target reloads the address from the literal pool after the call and keeps the handle in r4. Using the global directly in the tail gave 35.9% (size 0xb4). A static helper for the tail was not inlined and scored 8.7%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021a0318",
+  "haiku": {
+   "matched": false,
+   "best_pct": 36.2,
+   "file": "pending/wave43/func_ov006_021a0318.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. Best is d.c at 36.2%, size 0xb8 vs target 0xbc. Target spills p2 to a 4-byte stack slot (push includes r3) and keeps h in r4, while mwcc puts the data pointer in r4 and h in r6. The data struct is accessed by global name in d.c. Remaining diffs are register allocation and the missing spill slot."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 39.9,
+   "file": "pending/wave43/func_ov006_021a0318.sonnet.c",
+   "note": "No match. I used 8 tools/try runs; the best was j.c at 39.9%, size 0xb8 vs target 0xbc. mwcc keeps the data pointer in callee-saved r4 and puts h in r6. The target keeps data in r2 (reloaded from the literal pool after the first call) and h in r4. I couldn't find a source form that stops the data pointer being held across the calls."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021a694c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a694c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021ad970",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021ad970.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021af940",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021af940.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b312c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b312c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a25a8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a25a8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a8ed4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 10.4,
+   "file": "pending/wave43/func_ov007_021a8ed4.haiku.c",
+   "note": "No match after 4 of 10 tools/try runs. Target frame is 0x18 (sub sp,#0x18) with r3 spilled to [sp] and two live stack slots (p+4 at [sp,#0x10], node at [sp,#0x14]). Mine compiles to sub sp,#8, so register allocation and stack-arg offsets (src at [sp,#0x30] in target) diverge. Dead load of p->list before the bl (ldr r1,[r4,#4]) is not reproduced; a volatile field did not fix it."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 93.3,
+   "file": "pending/wave43/func_ov007_021a8ed4.sonnet.c",
+   "note": "Size and code match; only the prologue order differs. The target has `str r3,[sp]` before `adds r6,r1,#0`, and mine has them swapped. Tried an early copy of flag2, an early copy of link, uint32_t flag2, and a pointer-typed flag2/at_tail, all with no change. The C++ guard with a dtor calling func_02056844 is what produced the 0x18 frame."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021b8f70",
+  "haiku": {
+   "matched": false,
+   "best_pct": 98.6,
+   "file": "pending/wave43/func_ov007_021b8f70.haiku.c",
+   "note": "Size matches (0x8a) and all control flow matches except the first 0xb8 null check: target loads it into r1 (ldr r1,[r0]; cmp r1,#0), mine loads into r0. Tried plain pointer, uint32 and struct-typed fields, and a separate temp; none changed the register choice. Cap of tools/try runs reached."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.6,
+   "file": "pending/wave43/func_ov007_021b8f70.sonnet.c",
+   "note": "Only diff is the first 0xb8 null check: target uses ldr r1,[r0]; cmp r1,#0 and mine uses r0. Tried a temp, an inline helper, a hoisted zero, a volatile cast, a restructured pointer and a loop form; none changed it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c5378",
+  "haiku": {
+   "matched": false,
+   "best_pct": 34.1,
+   "file": "pending/wave43/func_ov011_021c5378.haiku.c",
+   "note": "No match after 6 tools/try runs. Best is 34.1% (a.c, b.c, c.c, e.c tie). Target is 4 bytes larger (0xa4 vs 0xa0): mwcc emits a redundant second `beq` after the first null check of the 0xdc field around the bf4 call, and the first check compares a value loaded into r1 rather than reusing r0. The current C does not reproduce that double branch. The pointer-to-field variant (d.c) is worse at 25.6%."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.8,
+   "file": "pending/wave43/func_ov011_021c5378.sonnet.c",
+   "note": "Size matches (0xa4). One diff remains: the target loads the first 0xdc field into r1 (ldr r1,[r0]; cmp r1,#0) but mine uses r0. Tried q/p locals, type changes, an inline load helper and a comma expression; none changed it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov013_021bd2c0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021bd2c0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov013_021c15fc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 43.9,
+   "file": "pending/wave43/func_ov013_021c15fc.haiku.c",
+   "note": "Size now matches (0xb4). Remaining diffs: mwcc hoists the sp+0x10 buffer address into r4 (target recomputes it per call, r4 is the flag), so later instructions shift by 2 bytes; plus a missing `mov r8, r8` pad before the literal pool. Address-expression variants (struct buffer, cast) did not change codegen. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021c15fc.sonnet.c",
+   "note": "Matched by moving flag = 1 before the func_02033094 call."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov013_021c34e4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021c34e4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_021482c8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 61.9,
+   "file": "pending/wave43/func_ov014_021482c8.haiku.c",
+   "note": "No MATCH after 10 tools/try runs (best 61.9%, size 0x9c vs 0xa0). Blockers: mwcc spills the ctx param to the stack instead of keeping it in r7 (target copies r0 to r7 and reloads ctx fields from it), and the loop-body address/key arithmetic order differs. Making count/stride volatile fixed the ctx register choice but introduced extra reloads."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov014_021482c8.sonnet.c",
+   "note": "MATCH"
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov014_02148b94",
+  "haiku": {
+   "matched": false,
+   "best_pct": 11,
+   "file": "pending/wave43/func_ov014_02148b94.haiku.c",
+   "note": "No MATCH after 5 of 10 tools/try runs (best 11.0%, c.c). Output is 0x174 bytes vs target 0x138 and the frame differs: mwcc spills the row/column counters with pushes (str ...,[sp,#-4]!), while my versions allocate a stack frame with sub sp. Inner 8-byte block and the interpolation logic look right; the remaining mismatch is register allocation and stack layout, not the arithmetic."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 11,
+   "file": "pending/wave43/func_ov014_02148b94.sonnet.c",
+   "note": "Not matched, best 11.0% (c.c). I ran tools/try twice (c.c, e.c) and stopped. The target looks hand-written ARM asm, not compiler output. It pushes ip in the prologue and pops it into pc. It spills loop counters with `str rX,[sp,#-4]!` and `pop`. It uses post-increment `ldrb` throughout. mwcc instead emitted a sub-sp frame and spilled to fixed slots, giving 0x164 bytes against the target's 0x138. The arithmetic in c.c looks right. I don't expect plain C to reproduce this register and stack layout."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219ae4c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 98.4,
+   "file": "pending/wave43/func_ov006_0219ae4c.haiku.c",
+   "note": "Size matches (0xb8). Only diff: the (uint16_t)(n*2) size argument before the last copy call. Target does lsls r2,r0,#1 / lsls #16 / lsrs #16; mwcc folds the cast-and-shift into lsls #17 or reorders it. Hit the 10-run cap without a MATCH."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.4,
+   "file": "pending/wave43/func_ov006_0219ae4c.sonnet.c",
+   "note": "Only diff is the size arg of the last copy call: the target does lsls #1, then lsls #16 and lsrs #16 separately, while mwcc folds it to lsls #17. Tried 13 variants (u16/int/int16 return types, u16 callee param, temps, n+n, n<<1) with no change."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219cd8c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_0219cd8c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a8e9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a8e9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b54a8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b54a8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a689c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a689c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bab74",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021bab74.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bf21c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021bf21c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021c08a0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 78.7,
+   "file": "pending/wave43/func_ov007_021c08a0.haiku.c",
+   "note": "No MATCH after 6 of 10 tries. Best (c.c, 78.7%) has the right struct walk and type/entry register use, but the name index is a separate counter kept in r3, while target copies i into r4 at each loop top (adds r4, r2, #0) and pushes r3-r6 with size 0x78 vs 0x7a. Variants with k = i copied in the loop were folded by mwcc back to r2 and dropped to 6.7%."
+  },
+  "sonnet": {
+   "file": "pending/wave43/func_ov007_021c08a0.sonnet.c",
+   "matched": false,
+   "best_pct": 78.7,
+   "note": "Target copies i into r4 each loop iteration for the name index (pushes r3-r6, size 0x78). mwcc folds a k=i copy back into r2 (6.7%). Haiku's separate counter in c.c gives 0x7a bytes. do-while, inline helper, unsigned and volatile variants failed."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov010_021c8ffc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 19,
+   "file": "pending/wave43/func_ov010_021c8ffc.haiku.c",
+   "note": "No MATCH after 8 of 10 tools/try runs (best 19.0%, same-size 0xb8). Compiled prologue differs: mwcc keeps the param in r5 and the 0x120 offset in r0, but my versions put the param in r4 and the constant in r2. The if/else shape (shared tail after `b`) and the r0-relative offsets (0x10c as r0-0x14, 0x114 as r0-0xc) also do not line up. Would need a different source shape for the 0x120 base or the p-copy register allocation."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 19.6,
+   "file": "pending/wave43/func_ov010_021c8ffc.sonnet.c",
+   "note": "No match after 12 tries (best 19.6%, size 0xb8). The compiler puts p in r4, not r5, and keeps the 0x120 constant in r2, not r0. It also reloads a new 0x17c constant after the if/else instead of reusing the r0 base for the 0x5c, 0x14 and 0xc offsets. I found no source shape that changes this."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021bee10",
+  "haiku": {
+   "matched": false,
+   "best_pct": 92.4,
+   "file": "pending/wave43/func_ov011_021bee10.haiku.c",
+   "note": "Hit the 10-run cap without a MATCH. Frame size and call sequence match; remaining diff is register allocation in the two pointer-walk copy loops (target uses r3 as source pointer and r2 as destination for the halfword loop, and r3 as the byte-loop counter, r1 as the byte source). Declaration order, assignment order, and initializer changes did not flip the allocation."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 92.4,
+   "file": "pending/wave43/func_ov011_021bee10.sonnet.c",
+   "note": "Register allocation in the two pointer-walk copy loops still differs: target uses r3 as source and r2 as destination, we get the reverse; in the byte loop target uses r3 as source and r1 as counter, we get r1 as source and r3 as counter. Declaration order, init order, loop forms (do/for, indexed), counter types and struct assignment did not change it (indexed loops 23%, struct assign 22%)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c0e1c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 71.6,
+   "file": "pending/wave43/func_ov011_021c0e1c.haiku.c",
+   "note": "No MATCH after 4 of 10 tools/try runs. Best is a.c at 71.6%: size 0xa2 vs 0xa0. Two blockers: the 0x0219a130 call is unresolved (no C name maps to the literal address, and the function-pointer cast gave blx instead of bl), and the entry struct copies come out as separate ldr instead of the target's ldm r4!,{r2,r3}. Also the 0x0219a390 4th argument is sp+0x48 (a post-ldm pointer), not a scalar."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 77.2,
+   "file": "pending/wave43/func_ov011_021c0e1c.sonnet.c",
+   "note": "Not matched, 9 of 15 tries used. The 0x0219a130 call is solved by naming it func_ov009_0219a130 with S2 passed by value, which gives ldm r4!,{r2,r3}. The remaining gap is the 0x0219a390 call. The target does `ldm r3!,{r1,r2}` and uses the incremented r3 as the 4th argument. mwcc instead emits the ldm early and a separate `add r3,sp,#0x48`, so the result is 2 bytes too large (0xa2 vs 0xa0). Variants I tried: &s3, &s2+1, a q++ walk, and scalar loads."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c2600",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c2600.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov013_021bdcb0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021bdcb0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov014_02148598",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov014_02148598.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov004_0214edcc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave43/func_ov004_0214edcc.haiku.c",
+   "note": "No match after 8 of 10 tools/try runs. Best (e.c, 50.0%) has size 0xb4 vs 0xb6 and key-param stack spill/copy ordering differs (target keeps key in the sp+0x3c spill slot and copies tmp words through it); a Pair-by-value key plus a scalar flag arg reproduces the sp-4 struct-temp pattern."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.3,
+   "file": "pending/wave43/func_ov004_0214edcc.sonnet.c",
+   "note": "Size matches (0xb6). The remaining diff is the final return copy: the target loads [sp+0x3c] into r0 and stores it to [r6], while mine uses r1 and stores after the second load. Fieldwise key.w0/key.w1 copies after each call got 97.3%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219e044",
+  "haiku": {
+   "matched": false,
+   "best_pct": 25.6,
+   "file": "pending/wave43/func_ov006_0219e044.haiku.c",
+   "note": "No MATCH after 7 tools/try runs (cap 10). Best is 25.6% (a.c and f.c tie). Blockers: the target's pointer math is split (adds r1,#0xc then #0x10, with r4=p+0x24 copied before the r3 adjust), and mwcc keeps cnt in r5 and picks r5 as the scratch for the -2/-3 constant compares, where the target uses r1. Output is 0xa4 bytes against the target's 0xa2. The likely fix is a different source shape for the p+0x1c argument or the -2/-3 compare sequence."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 69.1,
+   "file": "pending/wave43/func_ov006_0219e044.sonnet.c",
+   "note": "Writing the argument as (uint32_t*)(p+0xc)+4 fixed the split pointer math (h1.c, 68.1%). The tail still differs. mwcc hoists -1 into r4 and uses r5 for the -2 compare, where the target uses r1 and rebuilds -1 with movs 0 / mvns at each return. k2.c (69.1%) is an else-if chain but its size is 0x90, not the target's 0xa2."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021a42c0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021a42c0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021c5eac",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c5eac.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov004_0214a264",
+  "haiku": {
+   "matched": false,
+   "best_pct": 58.2,
+   "file": "pending/wave43/func_ov004_0214a264.haiku.c",
+   "note": "No match after 6 of 10 tries. Blockers: target frame is 0x98 (locals at sp+0x60..0x90) but mwcc gives 0x30 because the unused stack region is not reproduced, and the clamp value lands in r6 instead of r4. Clamp is ret>0?ret:0 via an address-taken 2-element array, matching the target's stack pattern."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 58.2,
+   "file": "pending/wave43/func_ov004_0214a264.sonnet.c",
+   "note": "Frame is 0x28 where the target is 0x98. The unused 0x60-byte stack region is not reproduced: pad arrays are optimized away, and a C++ max helper made the match worse (27.7%). The clamp value also lands in r6 instead of r4."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_0214ced4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 15.5,
+   "file": "pending/wave43/func_ov004_0214ced4.haiku.c",
+   "note": "Size 0x86 vs 0x8e: mwcc folds the loop-entry test (q == base + n) into a plain n != 0 check, dropping the target's adds+cmp at each loop top. Tried while/do-while, for-loop, uint32 iterator, and signed-count variants; all folded the same way. The target keeps the entry end pointer as a separate, non-foldable value, so the source shape differs. Used 4 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov004_0214ced4.sonnet.c",
+   "note": "Matched on the 5th tools/try run. It compiles as C++ with an iterator struct that has an empty destructor, which stops mwcc folding the entry test."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021a7990",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a7990.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021aa2d0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.2,
+   "file": "pending/wave43/func_ov006_021aa2d0.haiku.c",
+   "note": "Control flow and all calls match; only diff is literal-pool layout. Target emits a separate literal for data_ov006_021bc780 at the final call (0xac), giving size 0xb0; mine reuses the 0x08 literal, giving 0xac. Tried a cast on the final &data (same result), a char[] declaration (21.6%), and a local pointer alias (12.5%). Used 4 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 97.2,
+   "file": "pending/wave43/func_ov006_021aa2d0.sonnet.c",
+   "note": "Only diff is literal pool: target has a second .word data_ov006_021bc780 at 0xac for the final call (size 0xb0), mine reuses the first literal (0xac). Tried local extern redeclaration, array decl, uint cast, pointer-to-pointer param, struct decl; none changed it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b3888",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b3888.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a4c98",
+  "haiku": {
+   "matched": false,
+   "best_pct": 43.8,
+   "file": "pending/wave43/func_ov007_021a4c98.haiku.c",
+   "note": "No match after 8 of 10 tools/try runs. Frame size now matches (0xc0), but the stack layout differs: target keeps a zeroed 4-byte slot at sp+8 and the obj buffer at sp+0x10, while mwcc places obj at sp+0xc. The flag lives in r4 in the target, and the 6th call argument (4) and the 5th-arg struct copy are ordered differently. Attempts using volatile locals made it worse (0xc8 size)."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a4c98.sonnet.c",
+   "note": "MATCH on the 4th tools/try run (of 15 allowed). The fixes were adding a 7th call argument of 0, setting the flag right after func_02005988, and making obj a 12-byte array (obj[3])."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov008_021a68b0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 27.9,
+   "file": "pending/wave43/func_ov008_021a68b0.haiku.c",
+   "note": "Stack layout matches now, but the branch merge does not: mwcc copies the func_02052d90 return value into a temp register (adds r1/r3, r0) and gets 0xac bytes vs 0xa8. Target keeps the return value in r0 and loads the offset straight into r2. Tried pointer types (u8*, u32*, struct header), a merged address expression, and declaration order; none removed the copy. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 73.8,
+   "file": "pending/wave43/func_ov008_021a68b0.sonnet.c",
+   "note": "Size and stack layout now match (0xa8). The remaining diff is register choice. mwcc loads the offset into r1 and adds into r1/r0, but the target loads it into r2 and does the adds r0,r0,r2 then adds r0,r1,r0 after lsls r1. I made about 14 tools/try runs, including m += off, a struct, a uint32_t m and different association orders. None got r2."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_0219ad44",
+  "haiku": {
+   "matched": false,
+   "best_pct": 3.9,
+   "file": "pending/wave43/func_ov009_0219ad44.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. The guard local (set to 1, then tested) is only kept in memory when its field is volatile, but the frame is 0x34 instead of 0x44 and the locals are laid out differently. The vtable-call and struct-by-value argument shapes are guesses, so the body diverges from the target after the first block."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 12.2,
+   "file": "pending/wave43/func_ov009_0219ad44.sonnet.c",
+   "note": "No match after 8 of 15 tries; best is 12.2%. The frame is 0x34 vs the target's 0x44, so a 0x10-byte gap is missing below the Pair locals. The prologue register choice and ordering differ too (target uses r2 for the guard flag), and the p0+0x94 load is scheduled differently before the vtable call."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov010_021beb20",
+  "haiku": {
+   "matched": false,
+   "best_pct": 8.1,
+   "file": "pending/wave43/func_ov010_021beb20.haiku.c",
+   "note": "No match after 5 of 10 tools/try runs. Target keeps a 0x30-byte frame with four spilled words at sp+0..0xc (offset values 0x11c/0x124 and p+0x120) and an sp-4 byte scratch (mov r6,sp; strb/ldr), which none of my local-array variants reproduced; the x-x fold at the start needs the C++ Num trick, and the 0x120 offset is held in a register. Best attempt is e.c (8.1%, frame 0x1c vs 0x30)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 52.9,
+   "file": "pending/wave43/func_ov010_021beb20.sonnet.c",
+   "note": "Frame and size now match (0xac). Remaining: val/obj locals sit 4 bytes high (sp+0x18/0x1c vs 0x14/0x18), and the push-back store compiles to lsls/adds/subs #4 instead of subs #1 then lsls and str [r0,r2]."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_0214ed10",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov004_0214ed10.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a60cc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a60cc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_02199f58",
+  "haiku": {
+   "matched": false,
+   "best_pct": 34.2,
+   "file": "pending/wave43/func_ov009_02199f58.haiku.c",
+   "note": "No MATCH after 10 tools/try runs (cap reached). Best is h.c at 34.2%: the prologue and the first stores now match with a Pair by-value parameter, but the frame is 0x14 instead of 0x18 and the register allocation of out/u8 is swapped (target keeps out in r1 and u8 in r0). Variadic and address-taken-param variants gave the push r0-r3 prologue but worse diffs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.4,
+   "file": "pending/wave43/func_ov009_02199f58.sonnet.c",
+   "note": "Only a register-allocation diff remains, in the first vtable load. The target builds the object address in r1 (adds r1,r4; adds r1,#0x80; ldr r1,[r1]); mine builds it in r0 (ldr r1,[r0]). Size matches at 0xbc. Variants that didn't change this: struct-typed self, return-by-value vs hidden out pointer, and a local copy of the object pointer."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021a4954",
+  "haiku": {
+   "matched": false,
+   "best_pct": 23.3,
+   "file": "pending/wave43/func_ov009_021a4954.haiku.c",
+   "note": "Six of 10 tools/try runs used, no MATCH. Best 23.3% (a.c; d.c, e.c, f.c tie). Blockers: the first null check compiles as ldr r0 then cmp r0 instead of target's ldr r1 then cmp r1, the inner null check and its dead second beq are not reproduced, and data_ov009_021b0824 is read via ldr r2 + ldm r2 instead of ldr r3 + ldm r3! writeback (a by-value struct copy made it worse, 41%)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.9,
+   "file": "pending/wave43/func_ov009_021a4954.sonnet.c",
+   "note": "Only diff left is the first null check, where the target uses ldr r1/cmp r1 and mine uses r0. Nested duplicate check and by-value struct arg (ldm r3!) are fixed. Tried temp locals, pointer local, int type, goto, and array index; none changed the register."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021a4a08",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021a4a08.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_021ae7a0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021ae7a0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_021aefe8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 94.8,
+   "file": "pending/wave43/func_ov009_021aefe8.haiku.c",
+   "note": "Used all 10 tools/try runs with no MATCH. The whole call sequence is right; the only remaining diff is the data_ov009_021b0e78 argument load before the vtable call at 0x48-0x4e. The target loads the data pointer into r3 before the str to [r5+0xdc] and reads the pair with a post-incrementing ldm r3!, {r1,r2}. My variants put the pointer in r2 and used a plain ldm. The best run was 95.3% (struct-copy variant), but the file on disk now holds the 94.8% version."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021aefe8.sonnet.c",
+   "note": "MATCH. Took a local `const Pair *pp = &data_ov009_021b0e78` declared before the store to r5+0xdc, plus the vtable fetch folded into the call expression instead of a separate `vt` local."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov012_021d11ac",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov012_021d11ac.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov004_02150118",
+  "haiku": {
+   "matched": false,
+   "best_pct": 53.6,
+   "file": "pending/wave43/func_ov004_02150118.haiku.c",
+   "note": "No MATCH after 6 of 10 tools/try runs. Main blocker: target prologue pushes r0-r3 (params spilled to a frame with a 5th stack arg at [sp,#0x40] used as the out pointer), which none of the signatures tried reproduce (plain 5-arg, struct-by-value, variadic, address-taken &d). Best (b.c, struct-by-value Args3 param) has matching size 0xa8 but 53.6% diff; the 4 remaining runs were not used."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 53.6,
+   "file": "pending/wave43/func_ov004_02150118.sonnet.c",
+   "note": "No MATCH. Tried 6 more variants (plain args, address-taken, variadic, {c,d} struct with local copies, in-place modification); none beat b.c at 53.6%. In the target, x and y live in the outgoing-arg slots [sp] and [sp+4] (frame 0x18, c and d reloaded from spill slots 0x38 and 0x3c). Every variant allocates separate slots for x and y and grows the frame to 0x20 or more."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b44a4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 24.1,
+   "file": "pending/wave43/func_ov006_021b44a4.haiku.c",
+   "note": "No match after 9 tools/try runs. Best (e.c, 24.1%) gets the 0x6a-byte frame and jump-table switch shape but misses the r2/r3 copies into r6/r7 before the buffer zeroing (target keeps r2 as the zero/value register, forcing those copies) and mwcc register choices; the switch-case mapping (mode 0,7->buf[0]=1; 1,2->buf[1]=1; 3,4->buf[0]=0xff; 5,6->buf[1]=0xff) was decoded from the jump table and seems right."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 37.1,
+   "file": "pending/wave43/func_ov006_021b44a4.sonnet.c",
+   "note": "Not matched. The best attempt uses the C++ Num/diff trick for the unfolded 0-1, but it adds an extra stack temp (frame 0x18 vs 0x10, buffer at sp+0xe). The zero also lands in r4 instead of r2, so the r2/r3 copies into r6/r7 are missing. Plain C folds 0-1 to a constant and reaches only 24.1%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021ad090",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.7,
+   "file": "pending/wave43/func_ov007_021ad090.haiku.c",
+   "note": "Hit the 10-run cap without a MATCH. Remaining diff is only the tail of the else path (the 0x100 branch): mwcc loads data[1] into r2 and data[0] into r1, while the target loads data[0] into r2 and data[1] into r1 before the stores. Frame size, branch layout, and call order otherwise match."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021ad090.sonnet.c",
+   "note": "Matched by replacing the two word loads and stores in the else path with a Pair struct copy."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021b2268",
+  "haiku": {
+   "matched": false,
+   "best_pct": 28.2,
+   "file": "pending/wave43/func_ov007_021b2268.haiku.c",
+   "note": "No match after 10 tools/try runs (cap reached). f.c has matching size (0xbc) and prologue/frame (push r4-r7,lr; sub #0x1c); remaining diffs: the fec-copy path is emitted inline (target shares a tail copy and returns from L009a), the fe4 copy ordering, and the scheduling of the 0x80/0x60 struct ldm vs the movs #4 / str [sp] args before the func_02032d24 call."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b2268.sonnet.c",
+   "note": "MATCH on the 5th tools/try run."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021bff3c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021bff3c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_0219c3e8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 7.8,
+   "file": "pending/wave43/func_ov008_0219c3e8.haiku.c",
+   "note": "No match after 4 of 10 tries. Blockers: the leading `p->cnt - p->cnt` is folded to 0 in C, and in C++ the two loads are merged into one, while target does two separate loads (sub r1,r0,r1). Target frame is 0x24 but ours is 0x10, so there are extra locals/temporaries not yet modeled. The byte temp at sp+4 and the sp-4 scratch store (strb/ldr via r6) are also unmatched. Attempts c.c and d.c hit the same merged-load result."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 22.8,
+   "file": "pending/wave43/func_ov008_0219c3e8.sonnet.c",
+   "note": "Volatile read of p->cnt gives the two separate loads, but frame size (0x24 vs 0xc), stack slot layout, r7/r6 register use and the sp-4 byte scratch store still differ. 7 of 15 tries used."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov008_0219da58",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_0219da58.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021beee4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021beee4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021c20d8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 71,
+   "file": "pending/wave43/func_ov011_021c20d8.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. Size now matches (0xb0). Remaining diffs: mwcc puts the param r1 in r6 and the local 0x60 struct address in r4 (target is the reverse), the 0x11-halfword copy loop shape (target uses two pointer registers counting down from 17), and extra register pressure from the 0x2b8 handle reload."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 96.6,
+   "file": "pending/wave43/func_ov011_021c20d8.sonnet.c",
+   "note": "Size matches (0xb0). The only diff left is that the 0x11-halfword copy loop has src and dst pointers in swapped registers: target has src r3 and dst r2, mine has src r2 and dst r3. Declaration order, assignment order and body order did not change it. I used more than the 15 try runs, so I stopped."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021c3fe0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 58.7,
+   "file": "pending/wave43/func_ov011_021c3fe0.haiku.c",
+   "note": "Size matches (0xac) with two-branch structure and separate v1/v2 stack slots, but register allocation differs: target keeps data_0209de9c in r6 and the call result o in r7, while mine has them swapped (r7 = de9c, r6 = o). The 0x104 field offset is also held in r5 rather than computed into r0 as a temp. Declaration order, integer vs pointer typing, and load order did not fix the allocation. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "file": "pending/wave43/func_ov011_021c3fe0.sonnet.c",
+   "matched": false,
+   "best_pct": 58.7,
+   "note": "Compiler hoists the 0x104 offset constant into r5, which swaps r6/r7 (de9c vs o) versus the target; no C form tried (struct, array, int base, volatile, register) stops the hoisting."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov013_021be5b0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 24.4,
+   "file": "pending/wave43/func_ov013_021be5b0.haiku.c",
+   "note": "No match after 4 of 10 tools/try runs (best 24.4%, size 0x9c vs 0xa8). Frame layout is wrong: target keeps the 12-byte object at sp+0x20 and the large object at sp+0x2c, with 5 pushes and sub #0xac. Target also has an odd sp-4 store/load (mov r6,sp; subs r6,#4; strb/ldr) that my C does not reproduce. Loop-invariant ordering and the ternary for the 0-vs-v argument also differ."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021be5b0.sonnet.c",
+   "note": "Matched. The fix was passing func_02009574's third argument as a 1-byte struct by value, and writing the ternary as (k < 3) ? v : 0. f.c also matches."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov013_021be658",
+  "haiku": {
+   "matched": false,
+   "best_pct": 19.6,
+   "file": "pending/wave43/func_ov013_021be658.haiku.c",
+   "note": "No match after 4 of 10 tries. Target frame is 0xac with a 0x80-byte local at sp+0x2c, but mine comes out 0xa8 or 0xb4. The target also computes sp-4 (mov r6,sp; subs r6,#4) for a byte store and word reload, and hoists the 0x108/0x10c/0x110 offsets into registers early. Neither pattern is reproduced yet."
+  },
+  "sonnet": {
+   "file": "pending/wave43/func_ov013_021be658.sonnet.c",
+   "matched": true,
+   "best_pct": 100,
+   "note": "Matched on the second run of tools/try. The fix was to pass the third argument of func_02009574 as a by-value struct { uint8_t v; }."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_0219ad20",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219ad20.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_0219d3d8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 38.3,
+   "file": "pending/wave43/func_ov009_0219d3d8.haiku.c",
+   "note": "No MATCH after 6 of 10 tools/try runs. Best is e.c at 38.3%, size matches (0xc4). Remaining diffs are register allocation: target keeps the data_020ae644 constant in r1 with r0 as the address temp, and the prologue pushes r4-r6 (mine pushes r3-r5, so the member-pointer call setup probably differs). The struct-copy for the 17-halfword array (a+0xc0) and the trailing member-call/func_02035fd0/bic-or sequence are close but not verified."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_0219d3d8.sonnet.c",
+   "note": "MATCH. C++ with pointer-to-member call, a Q object at the 5th pair's vt slot, and a local Frame *pf = &f before the call."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov014_021465e8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 47.9,
+   "file": "pending/wave43/func_ov014_021465e8.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. Size is 0x180 vs 0x170 (one extra 4-instruction block). Register allocation is off by one: target has this in r8, a1 in r7, a2 in r6, mode in r5, zero in r4, but mine puts them in r7..r4. The mode!=2 flag and the mode==0 else-branch layout also differ. Recognised the struct offsets and call shapes (9-word frame to func_ov014_02148a64, 4-arg afc call, 02145300 tail)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 94.8,
+   "file": "pending/wave43/func_ov014_021465e8.sonnet.c",
+   "note": "Size matches (0x170) and the register allocation is correct. The remaining diff is in the join value stored to [r8+0x40]. Target keeps it in r0 and stores it right at the join. Mine puts it in r2 and delays the store past the lsl. The else-branch load order also differs slightly (target loads f5c before fc4). Fixes from the Haiku attempt: afc and 02145300 take only 2 args (a, b) and (p, a), and the join value is a shared local."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b4784",
+  "haiku": {
+   "matched": false,
+   "best_pct": 22.7,
+   "file": "pending/wave43/func_ov006_021b4784.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. Best (d.c, 0xd8 vs 0xdc) has the right semantics (four MMIO halfword stores at 0x4000040/42 and 0x4001040/42 with a<<8&0xff00|c&0xff and b<<8&0xff00|d&0xff) but register allocation and instruction order differ: target keeps mask 0xff00 in r4 across both stores with a temp in r5, loads d before the a1 test, and uses push {r4,r5}. Remaining diff is codegen ordering, not semantics."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 24.1,
+   "file": "pending/wave43/func_ov006_021b4784.sonnet.c",
+   "note": "No MATCH after 6 tools/try runs. Best is d2.c (0xd4 vs 0xdc). The semantics are right, but mwcc hoists the ldrh of p[3] above the first bne and schedules the mask and temp registers differently from the target."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021ba5d4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 43.5,
+   "file": "pending/wave43/func_ov007_021ba5d4.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. Best is e.c (43.5%, size 0xa8 vs 0xaa). Blockers: the target frame is 0x3c with r4-r7 saved, but attempts get 0x50 or 0x44 because the stack temporaries are mis-sized. The target also copies the 16-byte struct at sp+0x2c into a temp (sp-0xc) before loading r1-r3, which I could not reproduce. The sp+4 24-byte local (t1 copy, 10, -5) needs volatile to survive, and the offset 0x13c is held in r7 across calls."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021ba5d4.sonnet.c",
+   "note": "MATCH on the 2nd tools/try run. func_ov005_02195e2c takes (void*, S16 by value, S16 by value, int, int), so there is no S24 local."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov008_02199b24",
+  "haiku": {
+   "matched": false,
+   "best_pct": 20.1,
+   "file": "pending/wave43/func_ov008_02199b24.haiku.c",
+   "note": "No match after 4 tools/try runs (cap 10). Best 20.1% (size 0xa4 vs 0xb8). Control flow and the p->f4 self-subtract are close, but the stack frame differs (target sub sp,#0x24 with a mov r6,sp / sub r6,#4 byte-temp pattern for the func_ov008_0219a878 argument, mine sub sp,#0x10), and the loop-body register/branch layout does not line up. Likely needs the original's local/struct layout to reproduce the 0x24 frame."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 42.4,
+   "file": "pending/wave43/func_ov008_02199b24.sonnet.c",
+   "note": "No match. Best is 42.4% (size 0xb4 vs 0xb8). Frame size 0x24 and the prologue now match. Still wrong: an extra stack slot at sp+4 pushes x to sp+0xc and v to sp+0x10 (target has x at sp+8, v at sp+0xc). The target keeps p+0xf4 in r7 and computes it early; mine does not, and the loop register layout differs."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov008_0219b6f4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_0219b6f4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov010_021be91c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 89.5,
+   "file": "pending/wave43/func_ov010_021be91c.haiku.c",
+   "note": "Size matches (0xdc) and all calls match, but mwcc schedules the two flag-bit sets differently: target keeps `orrs` between the data loads and the stores and writes the flag word last (also the orrs for the second flag block after the 0x30 store). Five tools/try runs used (a, b, c, d, e variants all 89.5%); remaining diff is instruction ordering only."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 89.5,
+   "file": "pending/wave43/func_ov010_021be91c.sonnet.c",
+   "note": "Only scheduling differs: mwcc hoists the flag orrs/str earlier than target in both init-guard blocks; signed types, early f|=1, local temps, pointer variants all stay at 89.5%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov010_021c9630",
+  "haiku": {
+   "matched": false,
+   "best_pct": 95.2,
+   "file": "pending/wave43/func_ov010_021c9630.haiku.c",
+   "note": "Hit the 10-run cap at 95.2%, sizes match (0xbc). Remaining diff is the 20-byte copy loop from r4+0x44 into blk.b: target keeps src in r3, dst in r2, counter in r1 with a single-load/store body, while mine picks r2/r1/r3 and uses a different load/store ordering. The halfword loop and the 0x58 16-byte copy (ldm/stm) now match."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 96.8,
+   "file": "pending/wave43/func_ov010_021c9630.sonnet.c",
+   "note": "Only the 20-byte byte-copy loop differs: target uses src=r3, dst=r2, counter=r1; mine gets src=r1, dst=r2, counter=r3. Declaration-order and variable-reuse variants did not fix it."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov013_021bd36c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021bd36c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov013_021bff04",
+  "haiku": {
+   "matched": false,
+   "best_pct": 19.4,
+   "file": "pending/wave43/func_ov013_021bff04.haiku.c",
+   "note": "No match after 7 of 10 tries. The x-x subtraction on p+0xec is reproduced only with a volatile first load, and the loop/register allocation differs. The target frame is 0x24 bytes with locals at sp+0/4/8/0xc and a sp-4 pointer; my frame is 0x10. Size is 0xa4 against 0xb4."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 48.4,
+   "file": "pending/wave43/func_ov013_021bff04.sonnet.c",
+   "note": "Frame 0x14 vs 0x24 and local slot layout (v/f at sp+8/4) differ, and the counter-increment store is scheduled later than in the target. Passing the flag as a struct {u8} by value and comparing p->cnt directly (not via pc) helped."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_0215488c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 9.9,
+   "file": "pending/wave43/func_ov004_0215488c.haiku.c",
+   "note": "No match after 7 of 10 tools/try runs. Output is 0xd4 bytes vs target 0xc4. Main blocker is stack frame: target allocates 0x68 with the 'v' local at sp+0x60, but my locals give 0x30. Other diffs: register allocation for v (target uses r2) and the order of the data_ov004_021596c4 load. Fixed-point constant is 0x2000 (2<<12), not 0x1000. func_02081210 takes two args."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 48.5,
+   "file": "pending/wave43/func_ov004_0215488c.sonnet.c",
+   "note": "No match after 9 tools/try runs. Output is 0xcc bytes vs 0xc4 target. Two things still differ. First, the \"movs r1,#2; lsls r1,#0xc\" pair is emitted after the pointer-select branch instead of before it. Second, the frame is 0x64 instead of 0x68, with no [sp] spill and different r6/r7 allocation. The 0x2000 constant, the stack layout (via a padded local struct) and the swapped args to func_0206286c are fixed."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov009_021af094",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_021af094.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov005_02197a78",
+  "haiku": {
+   "matched": false,
+   "best_pct": 96.7,
+   "file": "pending/wave43/func_ov005_02197a78.haiku.c",
+   "note": "No MATCH after 11 tools/try runs, one over the 10-run cap (I miscounted and ran one extra; the 11th run, i.c, scored lower at 94.7%). Best is h.c at 96.7%, same size (0x98). Remaining diffs: the callee-arg/guard-pointer register allocation around the cleanup. mwcc wants `add r4,sp,#4` placed after the `ldr` of the guard's first pointer and before the null check, with that pointer kept in r4 across the cleanup calls; my variants put it earlier or moved the pointer into r5. The loop and output-store logic already match. Also the 4-arg func_02019ac8 prototype (r2 = out2 passthrough, r3 = 4th param d) is correct, since frame and push sets match."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 96.7,
+   "file": "pending/wave43/func_ov005_02197a78.sonnet.c",
+   "note": "mwcc hoists `add r4, sp, #4` before `str r1, [r0]`; target has it after `ldr r0, [sp, #8]`. Moving the &g assignment, caching g.p1 in a local, an inline helper and raw uint32_t* access all failed to move it (the last two scored lower)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021af234",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021af234.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b35cc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b35cc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b45b0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 49.1,
+   "file": "pending/wave43/func_ov006_021b45b0.haiku.c",
+   "note": "No MATCH after 9 of 10 tools/try runs. f.c has the right size (0x74) but wrong register allocation and frame layout: target keeps the object pointer in r5 and the flag pointer in r4 with a 0x18 frame, and my build uses r4 for the object pointer and a 0x14 frame. The switch on the kind byte decodes to flags[0]=1 for kinds 0,7; flags[1]=1 for 1,2; flags[0]=-1 for 3,4; flags[1]=-1 for 5,6. The 2-byte copy to a local that is never read needs a volatile array to survive."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 49.1,
+   "file": "pending/wave43/func_ov006_021b45b0.sonnet.c",
+   "note": "No match after 13 of 15 tries. Target has a 0x18 frame. I think the callee takes a 9th arg, a 2-byte struct {u8,u8} by value, stored at [sp,#0x10] (a.c does this and gets the right frame, but scores 41.3% at size 0x7e). In every variant the object pointer lands in r4 and the flags pointer in r5, the reverse of the target. The target also puts the zero in r2 and the flags address in r3, and my builds don't."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021a2d7c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a2d7c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021a4440",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021a4440.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b37b4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b37b4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bb638",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021bb638.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021bcf9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021bcf9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_021a4e30",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a4e30.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov009_021a4828",
+  "haiku": {
+   "matched": false,
+   "best_pct": 17,
+   "file": "pending/wave43/func_ov009_021a4828.haiku.c",
+   "note": "No MATCH after 8 tools/try runs (cap 10). Best is 17% (size 0xac vs 0xb0). Remaining diffs: target loads the first null-check value into r1 (ldr r1,[r0]; cmp r1) while mine reloads into r0; target has a redundant second `beq` after the inner null check (dead branch from flags) that the C structure does not reproduce; that shifts the tail by 2 bytes and drops the trailing mov r8,r8 pad. Variants c-h (c.c through h.c in the same dir) all reach 17% with the same diff."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 98.9,
+   "file": "pending/wave43/func_ov009_021a4828.sonnet.c",
+   "note": "Only diff left is the first null check: the target does `ldr r1,[r0]; cmp r1,#0` and mine does `ldr r0,[r0]; cmp r0,#0`. I tried a separate local, uint32_t, a pointer to the slot and a static inline helper, and none changed it. e2.c and e8.c both score 98.9%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov011_021bff9c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021bff9c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov011_021c201c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 80.9,
+   "file": "pending/wave43/func_ov011_021c201c.haiku.c",
+   "note": "Stack layout and call sequence are right (size matches 0xbc), but register allocation differs: target keeps p1 in r6, the 0x60 local in r7 and the 0x220 offset in r4, while mine puts the local in r4, p1 in r7 and the offset in r6. Reordering declarations, using an int offset variable, and pointer-based struct stores did not fix it or made it worse. Used 7 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021c201c.sonnet.c",
+   "note": "MATCH on 5th try"
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov013_021c0f68",
+  "haiku": {
+   "matched": false,
+   "best_pct": 90.5,
+   "file": "pending/wave43/func_ov013_021c0f68.haiku.c",
+   "note": "Size matches (0xa8). Remaining diff is branch layout in the flag test at 0x24-0x3a: target does `bne` to the 0x8c word-load path with the byte-cnt path as fall-through, while mine emits `beq` to cnt with word-load as fall-through. Also the prologue register allocation diverges from target when the flag is tested as a raw word (i.c, 22.6%). Used 9 of 10 tools/try runs. g.c (swapped if/else) gives the same 90.5%."
+  },
+  "sonnet": {
+   "file": "pending/wave43/func_ov013_021c0f68.sonnet.c",
+   "matched": true,
+   "best_pct": 100,
+   "note": "MATCH. Moving the flag test into a static inline helper that returns early (`if (flag == 0) return cnt; return word;`) fixed the branch layout."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov013_021c2224",
+  "haiku": {
+   "matched": false,
+   "best_pct": 98.2,
+   "file": "pending/wave43/func_ov013_021c2224.haiku.c",
+   "note": "Near match, size is right (0xe4). The only diff is in the last 0xc0/0xc4 block: mwcc loads the two words of data_ov013_021c4e3c in reversed register order (r2 gets [+4], r1 gets [+0]), so the stores are swapped in register terms. Reordering the source loads did not change this. Stopped at the 10-run cap."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021c2224.sonnet.c",
+   "note": "Matched by copying data_ov013_021c4e3c as a Pair struct assignment, the same way as data_ov013_021c4e34."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov013_021c25ec",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov013_021c25ec.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a0d0c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 7.2,
+   "file": "pending/wave43/func_ov006_021a0d0c.haiku.c",
+   "note": "No match after 5 of 10 tools/try runs. Output size is 0xac vs target 0xc2, and register allocation differs. The target spills the r1 argument to [sp,#4] and keeps the b argument in r7 with p in r6. My variants keep the argument in r7 and b in r6 with no stack frame, and the zero-fill register is wrong. The likely cause is the declaration or evaluation order of the parameters and locals."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 12.4,
+   "file": "pending/wave43/func_ov006_021a0d0c.sonnet.c",
+   "note": "No match after 7 of 15 tools/try runs; output is 0xb6 vs target 0xc2. A data=p+6 local reproduced the r1 spill to [sp,#4], and (uint8_t)(x>>8) in the swap gave a small gain. Still wrong are the register assignment (target has p in r6, b in r7, sum/zero in r5, a second copy of p in r4) and the instruction scheduling (target interleaves the zero stores with the byte-swap math)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_0219ee88",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219ee88.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021be7e0",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021be7e0.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov004_021496fc",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov004_021496fc.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a5f24",
+  "haiku": {
+   "matched": false,
+   "best_pct": 32.3,
+   "file": "pending/wave43/func_ov006_021a5f24.haiku.c",
+   "note": "No MATCH after 10 tools/try runs. Best (i.c, 32.3%) gets size 0x74 vs 0x7c. Target reloads the global pointer (ldr r5,=data) at the start of each of loops 2-4 and keeps the loop-1 address in r6 with offset in r5; my variants hoist the address and shift register allocation."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 32.3,
+   "file": "pending/wave43/func_ov006_021a5f24.sonnet.c",
+   "note": "No match. Best is still the Haiku i.c at 32.3%. I tried struct arrays, per-loop local pointers, static inline helpers, do-while loops, volatile, array-extern and cast variants. The most I got from those was 20.2%. mwcc always hoists the &data load across loops 2-4, but the target reloads it before each loop. I could not find what stops that."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021a61a8",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a61a8.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021a91c0",
+  "haiku": {
+   "matched": false,
+   "best_pct": 93.8,
+   "file": "pending/wave43/func_ov006_021a91c0.haiku.c",
+   "note": "Hit the 10-run cap without a MATCH. The size matches (0xc0). The remaining diff is in the first copy loop (25 bytes from data_ov006_021b85dc into the buffer at sp+0x16) and the second copy loop: mwcc puts the destination in r3 and the source in r2, where the target has dst=r2, src=r3, count=r1. Pointer declaration order, unsigned vs int counter, const source, temp variable, and two separate arrays did not flip the allocation. The rest of the body (the calls and the 0x4001008/0x4000008 register updates) appears to match."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a91c0.sonnet.c",
+   "note": "Replaced the manual byte-copy loops with struct assignments (25-byte and 22-byte structs), which gives the target register allocation."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021a9f00",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a9f00.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b42f8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 62.5,
+   "file": "pending/wave43/func_ov006_021b42f8.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Size matches (0xe8). The diff is in the register-select block (0x30-0x5c): mwcc hoists the 0xffbf mask load above the cmp and puts the pointer in r0, while the target keeps the mask in r0 and the pointer in r1, and it does the 0x30<<6 shift at runtime instead of folding it. Variants tried: ternary, if/else, swapped branches, integer address, and a shifted local. None fixed it. The tail (call ordering and literal pool offsets) also differs slightly."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 63.4,
+   "file": "pending/wave43/func_ov006_021b42f8.sonnet.c",
+   "note": "No match after 9 of 15 runs; size matches (0xe8). mwcc loads the 0xffbf mask before the cmp and folds 0x30<<6 to 3<<10, and it hoists the r3 setup and the str r4,[r4,#0x18] store. The target keeps the mask in r0, does the shift at runtime and doesn't hoist. Ternary, if/else, local mask and shift, compound assign and inline-helper variants all failed."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_0219b168",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219b168.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_0219c308",
+  "haiku": {
+   "matched": false,
+   "best_pct": 98.9,
+   "file": "pending/wave43/func_ov007_0219c308.haiku.c",
+   "note": "Only mismatch is the register used for the data-table pointer before the final call: target uses ldr r3,=data; ldm r3!,{r1,r2} (pointer in r3 with writeback), mine uses r2 with plain ldm. Tried 8 of 10 tools/try runs (pointer walk, struct copy, uint64 arg, struct pointer variants); none fixed the register choice."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_0219c308.sonnet.c",
+   "note": "Matched by passing the data table as an 8-byte struct by value (P {x,y}) as args 2-3."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov007_021a2f00",
+  "haiku": {
+   "matched": false,
+   "best_pct": 6,
+   "file": "pending/wave43/func_ov007_021a2f00.haiku.c",
+   "note": "No match after 6 of 10 tries. Every attempt compiles to 0xb4 bytes against the target's 0xb8: the target reserves a 16-byte stack frame (sub sp,#0x10 / add sp,#0x10) that my versions never produce. Unused locals, volatile arrays, an address-taken local struct and a 16-byte buffer all failed to create it. The copies of the 8-byte data blocks into a+0xb8/a+0xbc also need the ldr r2,[r0] then ldr r1,[r0,#4] order and matching struct-copy shape. The branch structure otherwise lines up."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 28.1,
+   "file": "pending/wave43/func_ov007_021a2f00.sonnet.c",
+   "note": "The C++ build (e.c) with a local Pair copy gets the sub sp,#0x10 frame and the ldr r2/r1 order, but it adds dead stores (str r2,[sp,#8]; str r1,[sp,#0xc]) and 8 extra bytes (0xc0 vs 0xb8). Every version without the local copy drops the frame (0xb4). I used 10 of 15 tries."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021b2144",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b2144.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021ba9d8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 97.7,
+   "file": "pending/wave43/func_ov007_021ba9d8.haiku.c",
+   "note": "Code size and all calls match; only the tail is off. The two data words at data_ov007_021c7814 are loaded into r1/r2 in the wrong registers (mwcc gives r2=data[1], target wants r2=data[0]), so the final stores to a+0xb0/a+0xb4 swap. Reordering the loads and stores did not fix it. Used 8 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021ba9d8.sonnet.c",
+   "note": "Matched by ending with a struct copy, *(S *)(a + 0xb0) = *(S *)data_ov007_021c7814, where S is a local struct of two uint32_t."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov008_021a1498",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a1498.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_021a3bc8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 15.3,
+   "file": "pending/wave43/func_ov008_021a3bc8.haiku.c",
+   "note": "No match after 2 of 10 tools/try runs. Target has dead/spilled stores of struct-offset constants (0x120, 0x114, 0x11c) to [sp,#4] and [sp] that the C source does not reproduce, so the output is 0xa6 bytes instead of 0xb0. Field offsets and control flow (loop over 8, two func_0205f2f0 paths with values 0 and 1) look right; the constant-materialization order is the blocker."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a3bc8.sonnet.c",
+   "note": "Matched on the first tools/try run. The fix was to recompute i + (*(uint32_t*)(p+0x114) << 3) inline in the func_ov008_021a3c78 call instead of reusing idx."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov012_021d008c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 17,
+   "file": "pending/wave43/func_ov012_021d008c.haiku.c",
+   "note": "No MATCH in 5 of 10 tools/try runs. Best is a.c (17.0%, size 0xac vs 0xb0). The target keeps loop-invariant offsets (0x339-derived ints, 0x31c/0x2ec/0x2f0/0x2f4/0x324) spilled to the stack and reassigns some slots twice, which mwcc did not reproduce. Loop shape (i<n check at entry, i<lim back-edge, u8 index) appears right; the offset-local declaration pattern is the blocker."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 17,
+   "file": "pending/wave43/func_ov012_021d008c.sonnet.c",
+   "note": "Frame/spill pattern not reproduced: target keeps 0x339 in [sp] and recomputes offsets, with 4 offset spills (one stored twice); my variants (c.c 10.8%, inline helpers, base-int locals) got sp frame 8 and different reg allocation."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021a7c7c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 28.4,
+   "file": "pending/wave43/func_ov007_021a7c7c.haiku.c",
+   "note": "No match after 7 of 10 tools/try runs. Best is c.c (28.4%, size matches 0xcc). Blockers: the local struct address is recomputed instead of kept in r6, so the push set and register choices differ (c.c pushes r3-r7 where the target pushes r4-r6). The zero store uses r4 instead of r1, and the hw/r4 chain is off. A pointer local for &t adds a register, and the 4th vtable call loads obj in a different order."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 99,
+   "file": "pending/wave43/func_ov007_021a7c7c.sonnet.c",
+   "note": "Only the final 8-byte copy differs: the high word loads into r3 instead of r1, and the other variants swapped the r1/r2 loads. 14 of 15 runs used. hw must be int, and tp=&t is assigned just before func_02016b68."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov004_0214980c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 61.5,
+   "file": "pending/wave43/func_ov004_0214980c.haiku.c",
+   "note": "Size is 0xd0 vs 0xcc and register allocation differs: target keeps obj in r4 and the b param in r5 (b is stored to +0x80 then r5 is reused as the data pointer), while mine swaps them and loads the table pointer late. Structure and call sequence otherwise match. Used 9 of 10 tools/try runs; no match found."
+  },
+  "sonnet": {
+   "file": "pending/wave43/func_ov004_0214980c.sonnet.c",
+   "matched": true,
+   "best_pct": 100,
+   "note": "Matched on the 12th tools/try run. Two changes to the Haiku attempt fixed it: the vtable calls that take the table's two words now take a Pair by value, and the last two fields are a single Pair member assigned as a struct."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov004_0214f13c",
+  "haiku": {
+   "matched": false,
+   "best_pct": 56.8,
+   "file": "pending/wave43/func_ov004_0214f13c.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Loop nest (i over 2, j over a+0x100 count, k over a+0xfc count), ptr test and func_01fff010 check are right, but the call block differs: mwcc loads data[12] into r1 before setting r2=k and computes the 0x94 pointer in a different order, and the stack-arg layout (add r0,sp,#0 / str) is not reproduced. Struct-by-value and pointer-cached variants were worse; a 2-byte shortfall in the call block remains."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov004_0214f13c.sonnet.c",
+   "note": "Matched with a typed A struct (pad[0xa0], obj[2], pad2[0x54], nk, nj) and a 4-byte struct S passed by value from data[12], plus an int 0 as the last arg."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov004_02154dd8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 95.9,
+   "file": "pending/wave43/func_ov004_02154dd8.haiku.c",
+   "note": "Stack frame, call sequence and the 0x1c/0x14 argument loads now match. Remaining diffs: in the tt[6] call (0x18) and the final tt[4] call (0x10), mwcc puts the `adds r0,#0xf4` / `adds r4,#0xf4` pointer computation before the stack load of the value, the reverse of target order. Used 8 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 95.9,
+   "file": "pending/wave43/func_ov004_02154dd8.sonnet.c",
+   "note": "In the tt[6] call (0x18) and the final tt[4] call (0x10), mwcc puts the adds #0xf4 before the ldr of the stack value, the reverse of the target. 12 tools/try runs, no fix. Tried inline tt[i]>>12, separate temps, scalar locals instead of the array, v>>=12 and r reuse. Each stayed at 95.9% or dropped to 91.8%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov005_02196658",
+  "haiku": {
+   "matched": false,
+   "best_pct": 49.4,
+   "file": "pending/wave43/func_ov005_02196658.haiku.c",
+   "note": "No match after 4 of 10 tools/try runs. Best is 49.4% (size 0xa4 vs 0xa8). Callee-saved register assignment is swapped: target keeps self in r5 and flag in r4, but mine has self in r4 and flag in r5. The 3-word array init loop and the vtable/flag branch layout also differ slightly. Variants with unsigned/u8 flag and a shared-tail flag branch did not change the register assignment."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 50,
+   "file": "pending/wave43/func_ov005_02196658.sonnet.c",
+   "note": "Self/flag callee-saved registers are swapped (target self=r5, flag=r4; mine self=r4, flag=r5), and the init loop keeps the b pointer in a callee-saved register across the loop instead of using a scratch r3 base; size 0xa4 vs 0xa8."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_0219a9cc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 55.6,
+   "file": "pending/wave43/func_ov006_0219a9cc.haiku.c",
+   "note": "No match after 9 of 10 tools/try runs. Best (f.c, 55.6%, size 0xc4 vs 0xc0) has the right call sequence and branch structure, but mwcc puts a0 in r5 instead of r4 and the loop temp in r4 instead of r5, and it does not cache the data_ov006_021ba160 pointer in r1 the same way. Likely a declaration or copy-order difference in the original source; the register allocation was not resolved."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_0219a9cc.sonnet.c",
+   "note": "MATCH on the 9th tools/try run. Loading the slot value into a local `t` before `if (t == a0)` fixed the cmp operand order."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021a9760",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021a9760.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021ad7ac",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021ad7ac.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021b00bc",
+  "haiku": {
+   "matched": false,
+   "best_pct": 96.6,
+   "file": "pending/wave43/func_ov006_021b00bc.haiku.c",
+   "note": "Size and all calls/branches match; only the 0x78-halfword copy loop differs: mwcc puts the source pointer in r2 and dest in r3 (target has src in r3, dst in r2, with ldrh/adds/strh ordering). Tried do-while with int/uint32 counters, index-based loop, and pointer declaration orders; none fixed the register swap. Used 9 of 10 tools/try runs."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b00bc.sonnet.c",
+   "note": "MATCH. Declare i uninitialised first, then d and s. Assign i = 0x78 just before the do-while, and write the loop body as t = *s; s++; *d = t; d++."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov006_021b415c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov006_021b415c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b2cd8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 40.6,
+   "file": "pending/wave43/func_ov007_021b2cd8.haiku.c",
+   "note": "No MATCH after 7 of 10 tools/try runs (best 40.6%, size 0xd0 vs 0xd4). Stack frame and the Pair-by-value call now match. Remaining diffs: mwcc CSEs the repeated p+0x2d14 literal into r7 where the target reloads it each time (and target uses \"ldr r2,=0x2d14; subs r2,#8\" for the 0x2d0c load); the zero 6th argument is merged into r4 with the flag instead of living in its own r7 register."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 46.3,
+   "file": "pending/wave43/func_ov007_021b2cd8.sonnet.c",
+   "note": "No match. mwcc CSEs the 0x2d14 literal into r7 and merges the zero 6th arg with the flag in r4. Struct-typed, pointer-split and volatile variants did not change this. The 46.3% file, e.c, makes zero volatile, so it is 4 bytes too big. The best clean attempt is g.c at 40.6%."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021b6a2c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b6a2c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov008_021a2860",
+  "haiku": {
+   "matched": false,
+   "best_pct": 27.7,
+   "file": "pending/wave43/func_ov008_021a2860.haiku.c",
+   "note": "No match after 6 of 10 tools/try runs. Blocker: the table index (self[0x13d] & 7, computed as ((x<<29) - (x>>31)) rotated right 29) is compiled as shifts/orrs instead of rors with a live 29 register, and the frame is push {r3,r4,r5,lr} instead of push {r4,r5,r6,lr}. Size is 0xbc vs 0xb8."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov008_021a2860.sonnet.c",
+   "note": "Matched on the first run of tools/try. The table index is written as (int)self[0x13d] % 8."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov009_02199648",
+  "haiku": {
+   "matched": false,
+   "best_pct": 15.8,
+   "file": "pending/wave43/func_ov009_02199648.haiku.c",
+   "note": "No match after 7 of 10 tries. Best is b.c at 15.8% (size 0x98 vs 0xb8). The variadic signature `(uint8_t *self, void *a1, uint32_t a2, uint32_t a3, ...)` is needed to get the push {r0-r3} prologue, but mwcc still spills self, a2, a3 and a1 to the stack (frame 0x14). The target keeps self in r5 with a 0x10 frame, and its loop index sits in r6. The other variants (c, d, e) are stuck at 9.2%."
+  },
+  "sonnet": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov009_02199648.sonnet.c",
+   "note": "MATCH on try 6. Key fixes: struct-by-value param S{a,b} in r2/r3, func_02056c9c declared with 2 args, a typed Self struct with slot[5] indexed by i, and func_0205f2f0 called with func_02064aa8's return value."
+  },
+  "tier": "sonnet"
+ },
+ {
+  "func": "func_ov011_021bfed4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov011_021bfed4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov006_021ae0c4",
+  "haiku": {
+   "matched": false,
+   "best_pct": 64.9,
+   "file": "pending/wave43/func_ov006_021ae0c4.haiku.c",
+   "note": "Size matches (0xd0) but register allocation and ordering differ. The target keeps a constant index 1 live in r7 (movs r7,#1 before the a3bb0 call, then ldrsb [bc7b4, r7] after the four a6540 calls). My int/int8 index variants fold the constant away. Used 6 of 10 tools/try runs; the other variants (c.c, d.c, e.c, f.c) gave the same 64.9%."
+  },
+  "sonnet": {
+   "ax": "x",
+   "matched": false,
+   "best_pct": 64.9,
+   "file": "pending/wave43/func_ov006_021ae0c4.sonnet.c",
+   "note": "mwcc folds the constant index 1 and rematerializes it; target keeps it live in r7 across the a6540 calls and I could not force that (about 13 runs, all 64.9%)."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov006_021b51f8",
+  "haiku": {
+   "matched": false,
+   "best_pct": 17.8,
+   "file": "pending/wave43/func_ov006_021b51f8.haiku.c",
+   "note": "No match in 5 tools/try runs. Target keeps about nine dead stack stores (constant offsets and a dead r5+0xc0 store) in the prologue, which the plain-C attempts optimize away. Volatile-array variants reproduce the stores but change the frame and constant folding (best 7.7%). The non-volatile attempt a.c is closest (17.8%, frame 0x20 with extra push r3, target 0x24)."
+  },
+  "sonnet": {
+   "matched": false,
+   "best_pct": 17.8,
+   "file": "pending/wave43/func_ov006_021b51f8.sonnet.c",
+   "note": "Plain C, struct-based (b.c) and variable-offset (c.c) variants all stay at 17.8%. The compiler drops the target's nine dead prologue stack stores, so the frame is 0x20 with an extra push r3 instead of 0x24."
+  },
+  "tier": "fail"
+ },
+ {
+  "func": "func_ov007_021b05a4",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b05a4.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ },
+ {
+  "func": "func_ov007_021b913c",
+  "haiku": {
+   "matched": true,
+   "best_pct": 100,
+   "file": "pending/wave43/func_ov007_021b913c.haiku.c",
+   "note": ""
+  },
+  "tier": "haiku"
+ }
+]
