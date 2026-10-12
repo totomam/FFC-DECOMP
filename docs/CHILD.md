@@ -13,7 +13,7 @@ FFC matching decomp, child session: waves A, B, C in module group G only. Repo t
 3. For W = A, B, C (NEXT = the following wave; none after C):
    a. I explicitly ask you to use the Workflow tool: run 4 Workflows concurrently,
       {scriptPath: tools/workflows/match_wave.js, args: <JSON array from work/waveW_i.json>}, i = 0..3.
-      Wait for all 4 notifications (no polling).
+      Wait for all 4 notifications (no polling). Afterwards `git checkout -- tools` (workers sometimes edit tools/try).
    b. python3 tools/save_wave.py W <the 4 task output files>.
    c. Wait until no cycle runs: a background Bash `while pgrep -f "^python3 tools/cycle" >/dev/null; do sleep 30; done`.
       Check the previous work/cycle_*.log ends with "pushed"; if it says "integrate failed", run ninja, report, stop.
