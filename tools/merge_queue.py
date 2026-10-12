@@ -111,6 +111,13 @@ def main():
             continue
         m = subprocess.run(["git", "merge", "--no-commit", "--no-ff", ref], cwd=ROOT, capture_output=True, text=True)
         conflicts = set(git("diff", "--name-only", "--diff-filter=U").split())
+        # both sides integrated the same function (our clone pass vs the child's wave): both byte-match, take the
+        # group owner's C
+        own = {p for p in conflicts if p.startswith("src/") and module_of(p) in ffclib.GROUPS[group]}
+        for path in sorted(own):
+            git("checkout", "--theirs", "--", path)
+            git("add", path)
+        conflicts -= own
         if conflicts - {"queue.csv"}:
             git("merge", "--abort", check=False)
             sys.exit(f"{ref}: unexpected conflicts {sorted(conflicts)}: {m.stdout[-300:]}")
