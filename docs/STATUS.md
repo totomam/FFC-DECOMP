@@ -57,6 +57,9 @@
 - ov0-3 47/48/49 = 144/137/73 merged (94ca4daa), ninja 22/22, clone pass +1 (same fn the session-12 orchestrator
   pushed as ada47910). Respawned ov0-3 59/60/61 sonnet (session_01FkoxYjDQJeNUpGE5eZvFUf): **skipped all three -
   ov0-3 Sonnet tier is dry** (24 todo left, all shape-busy or unaligned).
+- ov4-18 53/54/55 = 127/109/34 (+7 clone) merged (9c39b9db), ninja 22/22, clone +0. **ov4-18 Sonnet tier dry too**:
+  263 of 266 sonnet todo share an asm shape with a fail_sonnet fn (mkwave --dedup holds them) -> Opus phase. Not respawned.
+  main: 566 sonnet todo still free; child 56/57/58 running (57 = 99/240).
 
 ## Next phase: Opus tier (planned session 13; not started)
 Remaining (queue at 6f1c47d5): fail_sonnet main 588 / ov0-3 674 / ov4-18 387; opus todo 138 / 177 / 202;
