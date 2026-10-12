@@ -44,7 +44,8 @@ def out_of_scope(ref, group):
     bad = []
     for path in git("diff", "--name-only", base, ref).split():
         if path.startswith(("tools/", "docs/", ".claude/")):
-            bad.append(path)
+            if git("diff", "--name-only", "HEAD", ref, "--", path).strip():  # same as ours (a synced tool) is fine
+                bad.append(path)
         elif path.startswith(("src/", "config/")):
             mod = module_of(path)
             if mod is None or mod not in ffclib.GROUPS[group]:
