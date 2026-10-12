@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**12,965 queue rows done (~67%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**13,544 queue rows done (~70%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 12)
 - Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
@@ -38,6 +38,12 @@
   likely bisecting). tools/integrate now pins breaking functions by a byte diff of build/usa/build/<module>.bin vs
   extract (1a89c9db); falls back to bisect only on a size change. Children were told to sync that one file
   (merge_queue now accepts tools/ files identical to HEAD).
+- Round 4 results: ov0-3 38/40/42 = 156(+37 clone)/180/178; main 44/45 = 24/34, 3/3 (main Haiku exhausted; 46 empty).
+  Merged -> 13,544 done. Remaining todo: sonnet tier (main 1,466, ov0-3 688, ov4-18 1,657), opus 517, and ~320
+  haiku-tier todo whose shapes wait on clone attempts. Plus ~840 fail_sonnet (future: Opus/manual).
+- Running children: ov4-18 39/41/43 sonnet (session_01EcvmuSm59j2zYXb5U7aR1Y, claude/ffc-waves39-ov4-18),
+  ov0-3 47/48/49 sonnet (session_016cF95xmFzrppJdiZGW9mfY, claude/ffc-waves47-ov0-3),
+  main 50/51/52 sonnet (session_01Dcyo9hvbbefrgjCBbc7tQi, claude/ffc-waves50-main). Next free wave numbers: 53+.
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
