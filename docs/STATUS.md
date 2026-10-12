@@ -51,6 +51,25 @@
   sonnet (session_01PcT6CPn5rAbD6mwsbELEzx, claude/ffc-waves56-main). ov0-3 47/48 = 144/137 (49 pending).
   ov4-18 53 = 127 (54/55 pending).
 
+## Done (session 13)
+- Bootstrap note: `tools/fetch_assets.sh` is NOT optional with a symlinked .assets (it assembles rom/baserom_usa.nds).
+  docs/CHILD.md updated (also: final integrate `--bg`; a foreground integrate hit the 600 s tool limit).
+- ov0-3 47/48/49 = 144/137/73 merged (94ca4daa), ninja 22/22, clone pass +1 (same fn the session-12 orchestrator
+  pushed as ada47910). Respawned ov0-3 59/60/61 sonnet (session_01FkoxYjDQJeNUpGE5eZvFUf): **skipped all three -
+  ov0-3 Sonnet tier is dry** (24 todo left, all shape-busy or unaligned).
+
+## Next phase: Opus tier (planned session 13; not started)
+Remaining (queue at 6f1c47d5): fail_sonnet main 588 / ov0-3 674 / ov4-18 387; opus todo 138 / 177 / 202;
+blocked 377; haiku+sonnet todo held back by busy shapes (clear themselves via clone passes).
+1. Tools: `tools/workflows/match_opus.js` - one Opus fn-matcher per function, prompt carries the best prior attempt
+   (best_pct + file from pending/); `mkwave --tier opus` already works, `--status fail_sonnet` exists (add sort by
+   best_pct desc); save_wave/cycle: an Opus miss -> `fail_opus`.
+2. Pilot on ov0-3 (its slot is free): one wave of 60 opus-tier todo, then 60 fail_sonnet with best_pct >= 90.
+   Record match rate and $/match vs the Sonnet waves (child costs: ~$50-75 per 3-wave sonnet child).
+3. Gate: below ~25% matched, stop and ask the human before spending more; else run it in the 3-group child loop
+   as each group's Sonnet tier empties (ov4-18 855 / main 612 sonnet todo left).
+4. blocked 377: read the `note` column, bucket the causes, decide manual vs tooling. Asm stays BIOS-swi-only.
+
 ## OPEN at end of session 12 (orchestrator)
 - Running children (merge each when its final "Wave N:" commit lands or its session is completed):
   ov0-3 claude/ffc-waves47-ov0-3 (final 49), ov4-18 claude/ffc-waves53-ov4-18 (final 55),
