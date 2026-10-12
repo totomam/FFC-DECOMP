@@ -2,7 +2,7 @@
 
 ## Phase
 0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
-**11,921 queue rows done (~61%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
+**12,965 queue rows done (~67%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 12)
 - Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
@@ -28,6 +28,12 @@
   claude/ffc-waves30-ov0-3), 31/34/37 ov4-18 (session_01JiEi2RPdA98jZa6WBTjAMa, claude/ffc-waves31-ov4-18).
   When all show "Wave 35/36/37:": `python3 tools/merge_queue.py origin/claude/ffc-waves29-main:main
   origin/claude/ffc-waves30-ov0-3:ov0-3 origin/claude/ffc-waves31-ov4-18:ov4-18`, ninja, clone pass.
+- Round 3 merged: main 29/32/35 = 204/200/200; ov0-3 30/33/36 = 211/48/6; ov4-18 31/34 = 157/17 (37 skipped:
+  Haiku tier exhausted in overlays). 12,965 done; ninja 22/22 after the ov merges.
+- Round 4 (sonnet tier in overlays; haiku in main): 38/40/42 ov0-3 (session_01HVPYDcvwvdBAaeNjrbE59y,
+  claude/ffc-waves38-ov0-3), 39/41/43 ov4-18 (session_01EcvmuSm59j2zYXb5U7aR1Y, claude/ffc-waves39-ov4-18),
+  44/45/46 main (session_01LcjAusF7Kg6GUuYWfyCRgs, claude/ffc-waves44-main). Merge each as it finishes
+  (`merge_queue.py origin/<branch>:<group>`), ninja, clone pass; respawn that group (next free wave numbers: 47+).
 
 ## Done (session 11)
 - Bootstrap OK (22/22). **Cycle 19 "all modules fail" root cause found + fixed** (commit "strip_weak: ignore $d mapping symbols"): a weak C++
