@@ -117,6 +117,32 @@ def build_ok():
     return ok, bad
 
 
+def built_bin(mod):
+    b = ROOT / "build" / "usa" / "build"
+    return b / ("arm9.bin" if mod == "main" else f"{mod}.bin" if mod in ("itcm", "dtcm") else f"arm9_{mod}.bin")
+
+
+def culprits(items, bad):
+    """Items whose bytes differ in the failing modules' built binaries, or None when the diff can't be pinned on
+    batch items (size change / shift, or a byte outside every item): then bisect."""
+    found = set()
+    for mod in bad:
+        try:
+            got, want = built_bin(mod).read_bytes(), ffclib.module_bin(mod).read_bytes()
+        except OSError:
+            return None
+        if len(got) != len(want):
+            return None
+        start = ffclib.module_ranges()[mod][0]
+        ranges = [(it[2].addr - start, tu_end(it[2]) - start, it) for it in items if it[2].module == mod]
+        for off in (i for i in range(len(got)) if got[i] != want[i]):
+            hit = next((it for lo, hi, it in ranges if lo <= off < hi), None)
+            if hit is None:
+                return None
+            found.add(hit[0])
+    return found or None
+
+
 def try_batch(items):
     if not items:
         return []
@@ -124,7 +150,12 @@ def try_batch(items):
     ok, bad = build_ok()
     if ok:
         return items
+    sus = culprits(items, bad) if bad and len(items) > 1 else None
     revert(items, undo)
+    if sus and len(sus) < len(items):  # pinned by a byte diff: drop them, retry the rest (no bisect)
+        for func in sorted(sus):
+            log(f"REVERT {func}: breaks build (byte diff)")
+        return try_batch([it for it in items if it[0] not in sus])
     if len(items) == 1:
         log(f"REVERT {items[0][0]}: breaks build")
         return []
