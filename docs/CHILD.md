@@ -7,7 +7,8 @@ outcome_branch BRANCH).
 FFC matching decomp, child session: waves A, B, C in module group G only. Repo totomam/ffc-decomp.
 1. git checkout -B BRANCH origin/claude/ffc-matching-decomp-wave7-mt7q4y. Attach totomam/ffc-assets (add_repo,
    read), clone it to /home/user/ffc-assets, ln -sfn /home/user/ffc-assets .assets, then run the "Fresh-session
-   bootstrap" in docs/STATUS.md (skip fetch_assets' clone). ninja must end with 22/22 modules OK.
+   bootstrap" in docs/STATUS.md (skip fetch_assets' clone but DO run tools/fetch_assets.sh: it assembles
+   rom/baserom_usa.nds). ninja must end with 22/22 modules OK.
 2. python3 tools/cycle.py A-1 --next 240 --next-n A --group G --tier T   (mkwave only: work/waveA_{0..3}.json)
    git add queue.csv; commit "Queue wave A (G)"; git push -u origin BRANCH.
 3. For W = A, B, C (NEXT = the following wave; none after C):
@@ -20,7 +21,8 @@ FFC matching decomp, child session: waves A, B, C in module group G only. Repo t
    d. git add pending queue.csv; commit "Save wave W (G)"; push.
    e. W < C: python3 tools/cycle.py W pending/waveW/result.json --next 240 --next-n NEXT --group G --tier T --bg
       (integrates W in the background while you go straight on to a. for NEXT).
-      W = C: same with --next 0 and no --bg (foreground). If mkwave yields 0 names, skip the remaining waves.
+      W = C: same with --next 0 and --bg too (a foreground integrate can exceed the 600 s tool limit), then wait
+      with the pgrep loop from c. If mkwave yields 0 names, skip the remaining waves.
 4. Reply with the three "Wave N:" summary lines and the final commit hash. Done.
 Rules: only queue.csv, pending/, src/ and config/ of group G may change — never tools/, docs/, .claude/.
 No git commits while a cycle runs (it commits itself). No rebase/force-push/merges. Asm only for BIOS swi stubs.
