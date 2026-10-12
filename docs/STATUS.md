@@ -1,7 +1,7 @@
 # Status / Handoff
 
 ## Phase
-0 done → 2/4 starting. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
+0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 12)
@@ -59,7 +59,9 @@
   ov0-3 Sonnet tier is dry** (24 todo left, all shape-busy or unaligned).
 - ov4-18 53/54/55 = 127/109/34 (+7 clone) merged (9c39b9db), ninja 22/22, clone +0. **ov4-18 Sonnet tier dry too**:
   263 of 266 sonnet todo share an asm shape with a fail_sonnet fn (mkwave --dedup holds them) -> Opus phase. Not respawned.
-  main: 566 sonnet todo still free; child 56/57/58 running (57 = 99/240).
+- main 56/57/58 = 115/99/28 merged (0973033b), ninja 22/22, clone +0. **Sonnet tier now dry in all 3 groups**
+  (mkwave --dedup picks 0 sonnet / 2 haiku in main). Queue: 15,571 done (~80%), 2,289 fail_sonnet, 1,163 todo,
+  377 blocked. No children running. Next: Opus phase below - waits on the human's go-ahead (cost).
 
 ## Next phase: Opus tier (planned session 13; not started)
 Remaining (queue at 6f1c47d5): fail_sonnet main 588 / ov0-3 674 / ov4-18 387; opus todo 138 / 177 / 202;
