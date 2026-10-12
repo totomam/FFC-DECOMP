@@ -1,0 +1,16 @@
+#include "ffc/types.h"
+typedef struct { void *d; uint32_t c; uint32_t e; } S12;
+typedef struct { uint32_t pad[5]; uint32_t out; uint32_t pad2[3]; } L24;
+extern void func_02068580(void *self, void *p);
+extern void *func_02081210(uint32_t v, void *obj);
+void func_02068514(void *self, S12 s)
+{
+    L24 l;
+    void *p = 0;
+    if (s.d != p) {
+        void **obj = *(void ***)((uint8_t *)self + 0x20);
+        ((void (*)(uint32_t *, void **))((void **)*obj)[1])(&l.out, obj);
+        p = func_02081210(l.out << 12, s.d);
+    }
+    func_02068580(self, p);
+}
