@@ -38,7 +38,7 @@ func_02005178,main,0x2c,24,done,haiku,1,100,matched by haiku
 func_020051a4,main,0x64,74,fail_sonnet,sonnet,2,87,e.c reaches 87% but reuses the p4->f18 load and misses the target's reload plus the b L002e after the fc load. The restructurings with the right branc
 func_02005208,main,0x6c,80,fail_sonnet,sonnet,2,91.7,"n0.c and o0.c (91.7%, size 0x6c) use an inline getter with `Mid * volatile f4` and an `if (A) { r=f10; if(!r) r=fc; } else r=fc;` shape. Those two dif"
 func_02005274,main,0x8e,105,fail_sonnet,sonnet,2,90.8,"Stuck at 90.8% in 11 runs. mwcc CSEs the constant 1 into r4 before the func_020583cc call, so -1 becomes `subs r3,r4,#2` instead of `subs r3,r2,#1`. T"
-func_02005304,main,0x120,184,queued,sonnet,0,,
+func_02005304,main,0x120,184,done,sonnet,2,100,matched by sonnet
 func_02005424,main,0x54,67,fail_sonnet,haiku,2,95.2,"Only diff is register choice on the two null checks. Target loads into r1 (ldr r1,[r0]; cmp r1,#0) but mwcc emits ldr r0,[r0]. Tried 5 variants: point"
 func_02005478,main,0x58,71,fail_sonnet,haiku,2,95.5,"Only diff left: the null checks on s+0x94 and s+0x90 load into r0 instead of r1; tried local pointer, value variable, inline helpers, C++ mode, and in"
 func_020054d0,main,0x30,24,done,haiku,1,100,matched by haiku
@@ -47,7 +47,7 @@ func_02005560,main,0x44,42,done,haiku,1,100,matched by haiku
 func_020055a4,main,0x4c,48,done,haiku,1,100,matched by haiku
 func_020055f0,main,0x4a,47,done,haiku,1,100,matched by haiku
 func_0200563c,main,0xd0,152,fail_sonnet,sonnet,2,91.3,"Size and structure match. The remaining diff is the compiler's own soft-float helpers (_fls, _fflt, _fmul, _fadd, _fgr) emitted as bl to local labels."
-func_0200570c,main,0x14c,232,queued,sonnet,0,,
+func_0200570c,main,0x14c,232,fail_sonnet,sonnet,2,85.5,"Float compares emit an _fgr helper call instead of func_0209a2e0. mwcc CSEs data_020b3ac0 into r6, so the code is 0x148 bytes against the target's 0x1"
 func_02005858,main,0x40,38,done,haiku,1,100,matched by haiku
 func_02005898,main,0x28,27,done,haiku,1,100,matched by haiku
 func_020058c0,main,0x30,33,done,haiku,1,100,matched by haiku
@@ -58,8 +58,8 @@ func_02005968,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02005974,main,0x12,13,done,haiku,1,100,matched by haiku
 func_02005988,main,0x44,52,done,haiku,1,100,matched by haiku
 func_020059cc,main,0x16,15,done,haiku,0,,
-func_020059e4,main,0x110,190,queued,sonnet,0,,
-func_02005af4,main,0x204,354,todo,sonnet,0,,
+func_020059e4,main,0x110,190,fail_sonnet,sonnet,2,77.2,"Cap of 15 tools/try runs reached with no MATCH. Best is 77.2% (q.c; r.c ties), size 0x10c vs 0x110. The first-allocation failure path still branches d"
+func_02005af4,main,0x204,354,queued,sonnet,0,,
 func_02005cf8,main,0x2e,29,done,haiku,1,100,matched by haiku
 func_02005d28,main,0x14,14,done,haiku,1,100,matched by haiku
 func_02005d3c,main,0x30,24,done,haiku,0,,
@@ -100,7 +100,7 @@ func_020061b0,main,0x1e,21,done,haiku,1,100,matched by haiku
 func_020061d0,main,0x14,8,done,haiku,1,100,matched by haiku
 func_020061e4,main,0x10,6,done,haiku,1,100,matched by haiku
 func_020061f4,main,0x10,6,done,haiku,1,100,matched by haiku
-func_02006204,main,0x130,262,queued,sonnet,0,,jumptable
+func_02006204,main,0x130,262,done,sonnet,2,100,matched by sonnet
 func_02006334,main,0x28,22,done,haiku,1,100,matched by haiku
 func_0200635c,main,0x24,20,done,haiku,1,100,matched by haiku
 func_02006380,main,0x1c,16,done,haiku,1,100,matched by haiku
@@ -288,12 +288,12 @@ func_02007c44,main,0x10,10,done,haiku,2,100,matched manually (Opus): 5-arg passt
 func_02007c54,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02007c60,main,0x8,4,done,haiku,0,100,cloned
 func_02007c68,main,0x14,16,done,haiku,1,100,matched by haiku
-func_02007c7c,main,0xb4,194,queued,sonnet,0,,jumptable
+func_02007c7c,main,0xb4,194,done,sonnet,1,100,matched by haiku
 func_02007d30,main,0x8,4,done,haiku,0,100,cloned
 func_02007d38,main,0x96,101,fail_sonnet,sonnet,2,88,"Size is correct (0x96). The loop register allocation differs: the target keeps cnt+1 in r1 and loads into r0, but mwcc picks r0 for cnt+1 and r1 for t"
-func_02007dd0,main,0xd4,178,queued,sonnet,0,,jumptable
+func_02007dd0,main,0xd4,178,done,sonnet,1,100,matched by haiku
 func_02007ea4,main,0x16,13,done,haiku,1,100,matched by haiku
-func_02007ebc,main,0x212,403,todo,sonnet,0,,jumptable
+func_02007ebc,main,0x212,403,queued,sonnet,0,,jumptable
 func_020080d0,main,0xba,157,done,sonnet,1,100,matched by haiku
 func_0200818c,main,0x2c,30,done,haiku,1,100,matched by haiku
 func_020081b8,main,0x8,4,done,haiku,0,100,cloned
@@ -396,7 +396,7 @@ func_02008b24,main,0x16,13,done,haiku,0,100,cloned from func_020088d4
 func_02008b3c,main,0x12,11,done,haiku,0,100,cloned
 func_02008b50,main,0x28,23,done,haiku,1,100,matched by haiku
 func_02008b78,main,0x38,28,done,haiku,1,100,matched by haiku
-func_02008bb0,main,0x114,184,queued,sonnet,0,,
+func_02008bb0,main,0x114,184,done,sonnet,2,100,matched by sonnet
 func_02008cc4,main,0x24,18,done,haiku,1,100,matched by haiku
 func_02008ce8,main,0x24,18,done,haiku,0,100,cloned from func_02008cc4
 func_02008d0c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
@@ -405,15 +405,15 @@ func_02008d2c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02008d38,main,0x12,13,done,haiku,0,100,cloned
 func_02008d4c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02008d58,main,0x12,13,done,haiku,0,100,cloned
-func_02008d6c,main,0x1c0,292,todo,sonnet,0,,
+func_02008d6c,main,0x1c0,292,queued,sonnet,0,,
 func_02008f2c,main,0xa,7,done,haiku,1,100,matched by haiku
 func_02008f38,main,0x34,34,done,haiku,1,100,matched by haiku
 func_02008f6c,main,0x3c,40,done,haiku,1,100,matched by haiku
 func_02008fa8,main,0x20,23,done,haiku,2,100,matched by sonnet
-func_02008fc8,main,0x168,228,queued,sonnet,0,,
+func_02008fc8,main,0x168,228,fail_sonnet,sonnet,2,61.5,"Stack frame (0x44, guard at sp+0x24) now matches, but the output is 4 bytes too big (0x16c vs 0x168). mwcc shares the constant 1 in r6, so 0x100 becom"
 func_02009130,main,0x72,81,fail_sonnet,sonnet,2,48.2,"Register allocation still differs: the target has arr in r4 and src in r5, and reuses r5 for len2 (src dead); mine has src in r4, arr in r5, and spill"
-func_020091a4,main,0x198,242,queued,sonnet,0,,
-func_0200933c,main,0x158,211,queued,sonnet,0,,
+func_020091a4,main,0x198,242,fail_sonnet,sonnet,2,31.1,No match after 11 of 15 tries. j.c has the exact 0xa0 frame and local layout (29.3%) but is 8 bytes too large; f.c scores 31.1% but its frame is small
+func_0200933c,main,0x158,211,fail_sonnet,sonnet,2,46.8,"No match after 8 of 15 runs. The target frame is 0x7c and mine is 0x4c. That is 6 more 8-byte Pair slots, about 13 in total against my 7. I couldn't m"
 func_02009494,main,0xe0,132,fail_sonnet,sonnet,2,13.8,"Not matched; the 15-run cap is used up. o.c (C++ RAII lock) gets the frame and stack layout right, but two diffs remain. First, flag access is sp+0x2c"
 func_02009574,main,0x18,16,done,haiku,0,,
 func_0200958c,main,0x2a,27,fail_sonnet,haiku,2,23.8,"No match after 8 of 15 runs. By-value 1-byte struct (f.c) gives the right body at 6.5% and size 0x2e, but mwcc emits an extra 'sub sp,#4' frame and ke"
@@ -443,12 +443,12 @@ func_02009ba8,main,0x6c,62,done,sonnet,1,100,matched by haiku
 func_02009c14,main,0x20,23,done,haiku,0,100,cloned
 func_02009c34,main,0x60,65,done,sonnet,2,100,matched by sonnet
 func_02009c94,main,0x60,65,done,sonnet,1,100,matched by haiku
-func_02009cf4,main,0x138,212,queued,sonnet,0,,
+func_02009cf4,main,0x138,212,fail_sonnet,sonnet,2,27.8,"Best attempt is e.c: func(self, Q{a,b,c,d} by value) with no vt local. Its size is 0x13c against the target 0x138. It gets the push {r0-r3} prologue b"
 func_02009e2c,main,0xa,8,done,haiku,1,100,matched by haiku
 func_02009e38,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02009e3c,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02009e48,main,0x2a0,463,todo,opus,0,,jumptable
-func_0200a0e8,main,0x15c,230,queued,sonnet,0,,
+func_0200a0e8,main,0x15c,230,done,sonnet,2,100,matched by sonnet
 func_0200a244,main,0x26,29,done,haiku,1,100,matched by haiku
 func_0200a26c,main,0x20,24,done,haiku,1,100,matched by haiku
 func_0200a28c,main,0x1e,19,done,haiku,1,100,matched by haiku
@@ -456,10 +456,10 @@ func_0200a2ac,main,0x32e,722,todo,opus,0,,jumptable
 func_0200a5dc,main,0x54,62,done,haiku,2,100,matched by sonnet
 func_0200a630,main,0x46,53,done,haiku,2,100,matched by sonnet
 func_0200a678,main,0x16,15,done,haiku,0,,
-func_0200a690,main,0x120,198,queued,sonnet,0,,
+func_0200a690,main,0x120,198,fail_sonnet,sonnet,2,83,"I hit the cap of 15 runs at 83.0% with the size equal (0x120). The only diff left is the final heap-path store. The target does `adds r1,r2,#0; ands r"
 func_0200a7b0,main,0x46,49,done,haiku,2,100,matched by sonnet
 func_0200a7f8,main,0x32,31,done,haiku,1,100,matched by haiku
-func_0200a82c,main,0x21c,366,todo,sonnet,0,,
+func_0200a82c,main,0x21c,366,queued,sonnet,0,,
 func_0200aa48,main,0x2e,29,done,haiku,0,100,cloned from func_02005cf8
 func_0200aa78,main,0x14,14,done,haiku,1,100,matched by haiku
 func_0200aa8c,main,0x1a,19,done,haiku,1,100,matched by haiku
@@ -472,16 +472,16 @@ func_0200ab78,main,0x54,52,done,haiku,1,100,matched by haiku
 func_0200abcc,main,0x58,56,done,haiku,1,100,matched by haiku
 func_0200ac24,main,0x40,38,done,haiku,2,100,matched by sonnet
 func_0200ac64,main,0x54,48,fail_sonnet,sonnet,2,78.6,"Size matches (0x54), but the instruction order inside the if block still differs. The prototype is (uint8_t *p, uint32_t a, S s /* {u32,u32} by value "
-func_0200acb8,main,0xf0,190,queued,sonnet,0,,
+func_0200acb8,main,0xf0,190,fail_sonnet,sonnet,2,15,"No match after 3 runs of my own. k.c scores 15.0%, using i.c with func_0200b574 returning Elem* and assigned to last. Still wrong: the target's 'adds "
 func_0200ada8,main,0x3c,34,fail_sonnet,haiku,2,48.3,C struct-by-value gives the sp-4 copy and the right size (0x3c) but moves range to r2 (30%). C++ keeps start in r4 but folds the temp and copy away (0
 func_0200ade4,main,0x8,6,done,haiku,1,100,matched by haiku
 func_0200adec,main,0x20,23,done,haiku,0,100,cloned
 func_0200ae0c,main,0x70,62,done,sonnet,2,100,matched by sonnet
 func_0200ae7c,main,0x38,34,done,haiku,1,100,matched by haiku
-func_0200aeb4,main,0x144,218,queued,sonnet,0,,
+func_0200aeb4,main,0x144,218,fail_sonnet,sonnet,2,18.5,Size now matches (0x144). Passing func_0200b4e8's 3rd arg as a 1-byte struct by value gives the sp-4 byte store/reload. Still blocked on register allo
 func_0200aff8,main,0x84,70,done,sonnet,1,100,matched by haiku
-func_0200b07c,main,0xf8,163,queued,sonnet,0,,
-func_0200b174,main,0x1d8,310,todo,sonnet,0,,
+func_0200b07c,main,0xf8,163,done,sonnet,1,100,matched by haiku
+func_0200b174,main,0x1d8,310,queued,sonnet,0,,
 func_0200b34c,main,0x12,11,done,haiku,1,100,matched by haiku
 func_0200b360,main,0xe,9,done,haiku,1,100,matched by haiku
 func_0200b370,main,0x98,88,done,sonnet,2,100,matched by sonnet
@@ -523,7 +523,7 @@ func_0200bd18,main,0xa,7,done,haiku,0,100,cloned from func_02008f2c
 func_0200bd24,main,0x20,20,fail_sonnet,haiku,2,55.6,"Best (j.c, n.c, o.c) is 0x24 bytes vs 0x20. mwcc recomputes p+0xb4 into r1 before the bl instead of reusing the store address register. Pointer-local "
 func_0200bd44,main,0x20,20,todo,haiku,0,,
 func_0200bd64,main,0x90,80,fail_sonnet,sonnet,2,22.2,"No match. The zero x-offset that the target keeps live in r6 is always folded away. The C and C++ variants I tried scored 17.4% or lower, and the Num "
-func_0200bdf4,main,0x126,236,queued,sonnet,0,,
+func_0200bdf4,main,0x126,236,fail_sonnet,sonnet,2,46.6,"Not matched after 9 of 15 tries. a.c reaches 46.3%, c.c 46.6%. The prologue through the compare and subtract now match. The two init loops still diffe"
 func_0200bf1c,main,0x98,86,fail_sonnet,sonnet,2,30.9,"Callee takes two 2-word structs by value ({Y,X}, {Y,X+0x60}) plus 0x14, 2. Stack layout matches with `P c, a, b;`. The remaining diff is register allo"
 func_0200bfb4,main,0x64c,1066,todo,opus,0,,
 func_0200c600,main,0x3a,43,done,haiku,1,100,matched by haiku
@@ -542,10 +542,10 @@ func_0200c810,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
 func_0200c818,main,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
 func_0200c820,main,0x52,55,fail_sonnet,haiku,2,23.2,"mwcc folds every zero-valued local to cmp r0,#0, so the target's movs r6,#0 / cmp r0,r6 is missing and the output is 0x50 bytes against 0x52. I tried "
 func_0200c874,main,0x38,40,done,haiku,2,100,matched by sonnet
-func_0200c8ac,main,0x134,181,queued,sonnet,0,,
+func_0200c8ac,main,0x134,181,fail_sonnet,sonnet,2,99,"Hit the 15-run cap at 99.0%, same size 0x134. The only remaining diff is the 0x94 vtable call. Target builds self+0x94 in r1 and then sp in r0. Mine b"
 func_0200c9e0,main,0xec,151,fail_sonnet,sonnet,2,38.6,"No match after about 11 tries/runs. Best i.c has the correct 0xcc reload (int32_t test, then -=1) but keeps self in r4 and the count in r5, where the "
 func_0200cacc,main,0x24,20,done,haiku,1,100,matched by haiku
-func_0200caf0,main,0x1ea,338,todo,sonnet,0,,
+func_0200caf0,main,0x1ea,338,queued,sonnet,0,,
 func_0200ccdc,main,0x16,15,done,haiku,1,100,matched by haiku
 func_0200ccf4,main,0x1a,19,done,haiku,0,100,cloned
 func_0200cd10,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -565,7 +565,7 @@ func_0200cfd8,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0200cfe4,main,0x6a,89,done,sonnet,1,100,matched by haiku
 func_0200d050,main,0xe8,134,done,sonnet,2,100,matched by sonnet
 func_0200d138,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
-func_0200d13c,main,0xe8,134,todo,sonnet,0,,
+func_0200d13c,main,0xe8,134,queued,sonnet,0,,
 func_0200d224,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0200d228,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0200d22c,main,0x12,11,done,haiku,1,100,matched by haiku
@@ -1074,8 +1074,8 @@ func_02011568,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_0201156c,main,0x14,10,done,haiku,0,100,cloned
 func_02011580,main,0xc,6,done,haiku,0,100,cloned
 func_0201158c,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
-func_02011590,main,0x6c,68,todo,sonnet,0,,
-func_020115fc,main,0x64,64,todo,sonnet,0,,
+func_02011590,main,0x6c,68,queued,sonnet,0,,
+func_020115fc,main,0x64,64,queued,sonnet,0,,
 func_02011660,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_02011664,main,0x20,20,done,haiku,0,100,cloned
 func_02011684,main,0x1c,18,done,haiku,0,100,cloned
@@ -1239,7 +1239,7 @@ func_02012660,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_02012664,main,0x14,10,done,haiku,0,100,cloned
 func_02012678,main,0xc,6,done,haiku,0,100,cloned
 func_02012684,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
-func_02012688,main,0x5e,59,todo,sonnet,0,,
+func_02012688,main,0x5e,59,queued,sonnet,0,,
 func_020126e8,main,0x56,55,done,haiku,1,100,matched by haiku
 func_02012740,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_02012744,main,0x20,20,done,haiku,0,100,cloned from func_02010420
@@ -1305,8 +1305,8 @@ func_02012e64,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_02012e68,main,0x58,56,done,haiku,0,100,cloned from func_020102d8
 func_02012ec0,main,0x54,54,done,haiku,0,100,cloned from func_02010330
 func_02012f14,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
-func_02012f18,main,0x7a,77,todo,sonnet,0,,
-func_02012f94,main,0x72,73,todo,sonnet,0,,
+func_02012f18,main,0x7a,77,queued,sonnet,0,,
+func_02012f94,main,0x72,73,queued,sonnet,0,,
 func_02013008,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_0201300c,main,0x14,10,done,haiku,0,100,cloned
 func_02013020,main,0xc,6,done,haiku,0,100,cloned
@@ -1807,7 +1807,7 @@ func_02015a38,main,0x10,8,done,haiku,0,,
 func_02015a48,main,0x10,8,done,haiku,0,100,cloned from func_02015a38
 func_02015a58,main,0x14,10,done,haiku,1,100,matched by haiku
 func_02015a6c,main,0x38,52,done,haiku,1,100,matched by haiku
-func_02015aa4,main,0x100,224,queued,sonnet,0,,jumptable
+func_02015aa4,main,0x100,224,done,sonnet,2,100,matched by sonnet
 func_02015ba4,main,0x20,16,done,haiku,0,,
 func_02015bc4,main,0x28,24,done,haiku,0,100,cloned from func_020161cc
 func_02015bec,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
@@ -1892,7 +1892,7 @@ func_02017aa4,main,0xb4,132,fail_sonnet,sonnet,2,98.3,"Only diff is the float co
 func_02017b58,main,0x30,30,done,haiku,2,100,matched by sonnet
 func_02017b88,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
 func_02017c34,main,0x14,8,done,haiku,0,100,cloned from func_02017700
-func_02017c48,main,0xe4,166,queued,sonnet,0,,
+func_02017c48,main,0xe4,166,done,sonnet,2,100,matched by sonnet
 func_02017d2c,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
 func_02017dd8,main,0x3c,38,done,haiku,1,100,matched by haiku
 func_02017e14,main,0x24,20,done,haiku,1,100,matched by haiku
@@ -2003,7 +2003,7 @@ func_02019e1c,main,0x36,81,done,sonnet,1,100,matched by haiku
 func_02019e54,main,0x12,13,done,haiku,0,100,cloned from func_02019df0
 func_02019e68,main,0xe,13,done,haiku,1,100,matched by haiku
 func_02019e78,main,0x22,21,done,haiku,1,100,matched by haiku
-func_02019e9c,main,0xf4,220,queued,sonnet,0,,
+func_02019e9c,main,0xf4,220,fail_sonnet,sonnet,2,36.5,"No match; I used 12 of 15 tools/try runs. mwcc loads the key straight into r1 (ldrh r1,[r0,#0x10]). The target copies the call result first (adds r1,r"
 func_02019f90,main,0x4e,61,done,haiku,2,100,matched by sonnet
 func_02019fe0,main,0x10,14,done,haiku,1,100,matched by haiku
 func_02019ff0,main,0x14,18,done,haiku,1,100,matched by haiku
@@ -2034,8 +2034,8 @@ func_0201ab3c,main,0x36,36,done,haiku,1,100,matched by haiku
 func_0201ab74,main,0x10,10,done,haiku,1,100,matched by haiku
 func_0201ab84,main,0xb4,112,fail_sonnet,sonnet,2,97.2,"Only the prologue register choice differs: target puts the flag constant 1 in r2 and the sp address in r1, mine uses r1 and r0. Declaring data_020ad4f"
 func_0201ac38,main,0x1a,23,done,haiku,1,100,matched by haiku
-func_0201ac54,main,0x110,192,queued,sonnet,0,,
-func_0201ad64,main,0x1d0,346,todo,sonnet,0,,
+func_0201ac54,main,0x110,192,done,sonnet,2,100,matched by sonnet
+func_0201ad64,main,0x1d0,346,queued,sonnet,0,,
 func_0201af34,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_0201af38,main,0x4,4,done,haiku,0,100,cloned from func_0203645c
 func_0201af3c,main,0x3e,45,fail_sonnet,haiku,2,19.4,"No match. I went past the 15-run cap and stopped. The 8-byte struct copies at +0x1c and +0x24 compile to ldr/str pairs, but the target uses ldm/stm wi"
@@ -2075,12 +2075,12 @@ func_0201b904,main,0xa,7,done,haiku,1,100,matched by haiku
 func_0201b910,main,0x12,11,done,haiku,1,100,matched by haiku
 func_0201b924,main,0xa,7,done,haiku,0,100,cloned from func_0201b894
 func_0201b930,main,0xe4,150,fail_sonnet,sonnet,2,41.7,Frame 0x70 now matches (pad array before the out struct) and size is 0xe4. Still wrong: the compiler hoists the 1<<12 constant and the third func_0208
-func_0201ba14,main,0x240,516,todo,sonnet,0,,jumptable
+func_0201ba14,main,0x240,516,queued,sonnet,0,,jumptable
 func_0201bc54,main,0xe,9,done,haiku,1,100,matched by haiku
 func_0201bc64,main,0x5a,53,done,sonnet,2,100,matched by sonnet
 func_0201bcc0,main,0x32,33,done,haiku,1,100,matched by haiku
 func_0201bcf4,main,0x90,98,done,sonnet,2,100,matched by sonnet
-func_0201bd84,main,0x1d8,422,todo,sonnet,0,,jumptable
+func_0201bd84,main,0x1d8,422,queued,sonnet,0,,jumptable
 func_0201bf5c,main,0x10,10,done,haiku,2,100,matched by sonnet
 func_0201bf6c,main,0xc,6,done,haiku,1,100,matched by haiku
 func_0201bf78,main,0x10,10,done,haiku,0,100,cloned from func_0201bf5c
@@ -2110,7 +2110,7 @@ func_0201c1f0,main,0x1e,23,done,haiku,1,100,matched by haiku
 func_0201c210,main,0x8,6,done,haiku,1,100,matched by haiku
 func_0201c218,main,0x8,6,done,haiku,1,100,matched by haiku
 func_0201c220,main,0x69c,962,todo,opus,0,,jumptable
-func_0201c8bc,main,0xf0,238,queued,sonnet,0,,jumptable
+func_0201c8bc,main,0xf0,238,fail_sonnet,sonnet,2,26.7,"Run cap reached. The switch is on kind-0x12 with cases 1..9 as the checks. Index 0 and the default share the count++ block, which sits after case 9. n"
 func_0201c9ac,main,0x43c,648,todo,opus,0,,jumptable
 func_0201cde8,main,0x1a,17,done,haiku,1,100,matched by haiku
 func_0201ce04,main,0x1a,17,done,haiku,1,100,matched by haiku
@@ -2136,17 +2136,17 @@ func_0201d28c,main,0xb6,127,fail_sonnet,sonnet,2,23.7,"No match, and I went past
 func_0201d344,main,0x62,61,done,sonnet,2,100,matched by sonnet
 func_0201d3a8,main,0x23c,398,todo,opus,0,,
 func_0201d5e4,main,0x2fa,539,todo,opus,0,,
-func_0201d8e0,main,0xd6,179,queued,sonnet,0,,
-func_0201d9b8,main,0xbe,165,queued,sonnet,0,,
-func_0201da78,main,0xbe,165,queued,sonnet,0,,
-func_0201db38,main,0x1d4,382,todo,sonnet,0,,
+func_0201d8e0,main,0xd6,179,done,sonnet,2,100,matched by sonnet
+func_0201d9b8,main,0xbe,165,done,sonnet,1,100,matched by haiku
+func_0201da78,main,0xbe,165,done,sonnet,1,100,matched by haiku
+func_0201db38,main,0x1d4,382,queued,sonnet,0,,
 func_0201dd0c,main,0xa,7,fail_sonnet,haiku,2,0,"Target is a bare epilogue fragment (add sp,#0x24; pop {r4-r7}; pop {r3}; add sp,#0x10; bx r3) from the middle of a larger function. Any compiled C fun"
-func_0201dd18,main,0x15a,279,todo,sonnet,0,,
-func_0201de74,main,0x16e,289,todo,sonnet,0,,
+func_0201dd18,main,0x15a,279,queued,sonnet,0,,
+func_0201de74,main,0x16e,289,queued,sonnet,0,,
 func_0201dfe4,main,0x2e2,511,todo,opus,0,,
 func_0201e2c8,main,0x280,460,todo,opus,0,,
-func_0201e548,main,0x1f2,377,todo,sonnet,0,,
-func_0201e73c,main,0x1a4,362,todo,sonnet,0,,
+func_0201e548,main,0x1f2,377,queued,sonnet,0,,
+func_0201e73c,main,0x1a4,362,queued,sonnet,0,,
 func_0201e8e0,main,0x40,46,done,haiku,1,100,matched by haiku
 func_0201e920,main,0xa,7,done,haiku,0,,
 func_0201e92c,main,0x28,22,done,haiku,1,100,matched by haiku
@@ -2177,7 +2177,7 @@ func_0201ed80,main,0x1c,16,done,haiku,0,100,cloned from func_0201ed64
 func_0201ed9c,main,0x1c,16,done,haiku,0,100,cloned from func_0201ed64
 func_0201edb8,main,0x1c,16,done,haiku,0,100,cloned from func_0201ed64
 func_0201edd4,main,0x1c,16,done,haiku,0,100,cloned from func_0201ed64
-func_0201edf0,main,0x1cc,360,todo,sonnet,0,,
+func_0201edf0,main,0x1cc,360,queued,sonnet,0,,
 func_0201efbc,main,0x48,58,done,haiku,1,100,matched by haiku
 func_0201f004,main,0x38,38,done,haiku,1,100,matched by haiku
 func_0201f03c,main,0x1e,21,done,haiku,1,100,matched by haiku
@@ -2224,7 +2224,7 @@ func_0201f9a8,main,0x300,570,todo,opus,0,,
 func_0201fca8,main,0x78,104,done,sonnet,1,100,matched by haiku
 func_0201fd20,main,0x18,14,done,haiku,1,100,matched by haiku
 func_0201fd38,main,0x18,14,done,haiku,1,100,matched by haiku
-func_0201fd50,main,0x18e,261,queued,sonnet,0,,
+func_0201fd50,main,0x18e,261,done,sonnet,2,100,matched by sonnet
 func_0201fee0,main,0xc0,122,done,sonnet,2,100,matched by sonnet
 func_0201ffa0,main,0x18,14,done,haiku,0,100,cloned from func_0201fd20
 func_0201ffb8,main,0x18,14,done,haiku,0,100,cloned from func_0201fd38
@@ -2249,17 +2249,17 @@ func_0202044c,main,0x94,80,fail_sonnet,sonnet,2,74.3,"No match; I used about 17 
 func_020204e0,main,0x5e,49,fail_sonnet,sonnet,2,81.9,"No match after 9 tools/try runs. s.c has the right size and frame layout. It uses volatile Q t and arr, a plain Q z passed by value, and volatile load"
 func_02020540,main,0x20c,284,todo,opus,0,,
 func_0202074c,main,0x64,60,done,sonnet,2,100,matched by sonnet
-func_020207b0,main,0x1f6,269,queued,sonnet,0,,
-func_020209a8,main,0x1b0,296,todo,sonnet,0,,
-func_02020b58,main,0x19e,279,todo,sonnet,0,,
-func_02020cf8,main,0x1ca,307,todo,sonnet,0,,
+func_020207b0,main,0x1f6,269,fail_sonnet,sonnet,2,27,"Not matched after about 13 of 15 tries. The signature is (ctx, Vec2 pos, Rect R) with R passed by value across r3 and the stack, and rects 1-4 are cor"
+func_020209a8,main,0x1b0,296,queued,sonnet,0,,
+func_02020b58,main,0x19e,279,queued,sonnet,0,,
+func_02020cf8,main,0x1ca,307,queued,sonnet,0,,
 func_02020ec4,main,0x7c,120,fail_sonnet,sonnet,2,87.9,"Cases 3, 4 and 6 schedule differently: target shifts in[1] into r3, loads in[0], then stores out[1]. mwcc gives either store-before-load or the load i"
 func_02020f40,main,0x2a,23,done,haiku,1,100,matched by haiku
 func_02020f6c,main,0x12,11,done,haiku,1,100,matched by haiku
 func_02020f80,main,0xa,7,done,haiku,1,100,matched by haiku
 func_02020f8c,main,0x6a,67,fail_sonnet,sonnet,2,71.3,"No match; best is still d.c at 71.3%. mwcc puts a0 in r5 and a1 in r6 (target has the reverse). It also hoists the vtable load, where the target loads"
 func_02020ff8,main,0x30,30,done,haiku,1,100,matched by haiku
-func_02021028,main,0xf4,176,queued,sonnet,0,,
+func_02021028,main,0xf4,176,fail_sonnet,sonnet,2,98,"Only diff left: target does an unconditional `movs r5,#0` after `movs r0,#0x2c` as the 5th arg of func_0203b884; mine puts the movs inside the dtor br"
 func_0202111c,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02021120,main,0xb4,114,fail_sonnet,sonnet,2,97.2,"Only register allocation of the stack flag differs: target puts the constant 1 in r2 and the stack address in r1, mwcc uses r1 and r0. Size is correct"
 func_020211d4,main,0x6c,70,done,sonnet,1,100,matched by haiku
@@ -2315,7 +2315,7 @@ func_02021868,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-gene
 func_02021884,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-generated; comes from C++ class TU)
 func_020218a0,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-generated; comes from C++ class TU)
 func_020218bc,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
-func_020218c8,main,0x1a4,242,queued,sonnet,0,,
+func_020218c8,main,0x1a4,242,done,sonnet,2,100,matched by sonnet
 func_02021a6c,main,0x18,12,done,haiku,1,100,matched by haiku
 func_02021a84,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
 func_02021b30,main,0x18,12,done,haiku,1,100,matched by haiku
@@ -2356,7 +2356,7 @@ func_020228a8,main,0x7c,72,done,sonnet,1,100,matched by haiku
 func_02022924,main,0x88,78,done,sonnet,2,100,matched by sonnet
 func_020229ac,main,0x58,57,done,haiku,1,100,matched by haiku
 func_02022a04,main,0x5c,61,done,haiku,2,100,matched by sonnet
-func_02022a60,main,0x18c,238,queued,sonnet,0,,
+func_02022a60,main,0x18c,238,fail_sonnet,sonnet,2,62.1,"mwcc keeps 0x1e in r6 and rebuilds 0xfffff000 from it (lsls r3,r6,#0xb) instead of a pool load. The prologue order of adds r5,r0 and the 0xfffff6c3 co"
 func_02022bec,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02022bf8,main,0xac,100,fail_sonnet,sonnet,2,80.8,mwcc hoists the 0x1000 constant (movs/lsls r6) above the p[7] load and stack stores. The target materializes it after the store of p[7] to [sp]. Four 
 func_02022ca4,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
@@ -2390,8 +2390,8 @@ func_02023080,main,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
 func_02023088,main,0x68,56,done,sonnet,2,100,matched by sonnet
 func_020230f0,main,0xe4,124,fail_sonnet,sonnet,2,87.7,"Size and control flow match, but mwcc swaps r1 and r2: the target puts the flag-load temp in r1 and the doit flag in r2, and every variant I tried doe"
 func_020231d4,main,0xc8,112,fail_sonnet,sonnet,2,40.5,"Size matches (0xc8) but register allocation differs: the compiler hoists the p+0x22 base into r7 before the loop, whereas the target keeps it in lr an"
-func_0202329c,main,0x11c,184,queued,sonnet,0,,
-func_020233b8,main,0x158,250,queued,sonnet,0,,
+func_0202329c,main,0x11c,184,done,sonnet,1,100,matched by haiku
+func_020233b8,main,0x158,250,done,sonnet,2,100,matched by sonnet
 func_02023510,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02023514,main,0x5c,58,fail_sonnet,haiku,2,38,"C++ holder with destructor gets 38%; still missing the 0x18 frame with the dead r5+4 spill at [sp,#0x10], the r3 push, and the r4+8 store through [r4]"
 func_02023570,main,0x2a,23,done,haiku,1,100,matched by haiku
@@ -2440,7 +2440,7 @@ func_02024134,main,0x8,6,done,haiku,1,100,matched by haiku
 func_0202413c,main,0xb0,116,done,sonnet,1,100,matched by haiku
 func_020241ec,main,0x68,70,done,sonnet,2,100,matched by sonnet
 func_02024254,main,0x32,33,done,haiku,1,100,matched by haiku
-func_02024288,main,0x134,198,queued,sonnet,0,,
+func_02024288,main,0x134,198,done,sonnet,1,100,matched by haiku
 func_020243bc,main,0xa4,98,done,sonnet,1,100,matched by haiku
 func_02024460,main,0x1c,14,done,haiku,1,100,matched by haiku
 func_0202447c,main,0x490,776,todo,opus,0,,jumptable
@@ -2451,11 +2451,11 @@ func_020249f4,main,0x22,21,done,haiku,1,100,matched by haiku
 func_02024a18,main,0x68,76,done,sonnet,1,100,matched by haiku
 func_02024a80,main,0x3c,38,done,haiku,2,100,matched by sonnet
 func_02024abc,main,0x64,68,done,sonnet,1,100,matched by haiku
-func_02024b20,main,0x100,164,queued,sonnet,0,,
+func_02024b20,main,0x100,164,done,sonnet,1,100,matched by haiku
 func_02024c20,main,0x58,64,fail_sonnet,sonnet,2,86.4,Only the first-block register allocation differs: target keeps the loaded ctx pointer in r0 and uses r1/r2 for the field loads; mwcc puts it in r1. Th
 func_02024c78,main,0x6,5,done,haiku,0,100,cloned from func_02069320
 func_02024c80,main,0x20,23,done,haiku,2,100,matched by sonnet
-func_02024ca0,main,0xb8,172,queued,sonnet,0,,jumptable
+func_02024ca0,main,0xb8,172,fail_sonnet,sonnet,2,95.7,"No MATCH after the 15-run cap; best is l.c at 95.7%. Two diffs remain. (1) mwcc merges case 0 and case 1, so the jump-table entry for case 1 points at"
 func_02024d58,main,0x16,15,done,haiku,2,100,matched by sonnet
 func_02024d70,main,0x16,15,fail_sonnet,haiku,2,68.2,"The best attempt, a.c in the same directory, scored 68.2%. It has the right call layout (bne to an out-of-line call block). mwcc still puts the 0x178 "
 func_02024d88,main,0x28,24,done,haiku,1,100,matched by haiku
@@ -2469,22 +2469,22 @@ func_02024f00,main,0x2c,28,done,haiku,1,100,matched by haiku
 func_02024f2c,main,0x1c,34,done,haiku,1,100,matched by haiku
 func_02024f48,main,0x84,92,done,sonnet,2,100,matched by sonnet
 func_02024fcc,main,0x52,53,done,haiku,1,100,matched by haiku
-func_02025020,main,0x20c,348,todo,sonnet,0,,
+func_02025020,main,0x20c,348,queued,sonnet,0,,
 func_0202522c,main,0x46,43,fail_sonnet,haiku,2,81.4,"Used all 15 runs. Best is a.c at 81.4%: size and prologue match, but mask/shift scheduling differs. Target does mask a, mask b, then shift a and shift"
-func_02025274,main,0x116,191,queued,sonnet,0,,
+func_02025274,main,0x116,191,fail_sonnet,sonnet,2,88.8,"Size now matches (0x116). Remaining diff is that the target keeps ret=0 in r0 (movs r0,#0 right after the count load) and loads type into r1. Mine loa"
 func_0202538c,main,0x78,72,done,sonnet,1,100,matched by haiku
 func_02025404,main,0x30,44,done,haiku,1,100,matched by haiku
 func_02025434,main,0xdc,148,done,sonnet,2,100,matched by sonnet
 func_02025510,main,0x8,4,done,haiku,0,100,cloned from func_0207caac
 func_02025518,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_0202551c,main,0x9a,77,fail_sonnet,sonnet,2,92.9,m.c reaches 92.9% (size matches). The remaining diff is instruction order: the target does all three a[] loads before the first store (str r1 comes af
-func_020255b8,main,0x14c,170,queued,sonnet,0,,
+func_020255b8,main,0x14c,170,fail_sonnet,sonnet,2,28.9,"No match after 9 runs; best 28.9%, size 0x144 vs 0x14c. The target saves r7 and keeps 0xBB<<2 in r3 as a base register across the body, and my variant"
 func_02025704,main,0x60,56,done,sonnet,1,100,matched by haiku
 func_02025764,main,0x90,98,fail_sonnet,sonnet,2,89.6,"Frame and size now match (0x18, 0x90) using a 6-word local struct with volatile members. Two diffs remain: the str r3,[sp] spill is scheduled after th"
 func_020257f4,main,0x12,13,done,haiku,1,100,matched by haiku
 func_02025808,main,0x98,102,fail_sonnet,sonnet,2,52.6,"Frame layout (0x1c, r2/r3 spilled via a struct local with pad plus hdr/tmp slots) now matches. The 5th arg (r7) is still reloaded from [sp,#0x30] at i"
 func_020258a0,main,0x12,13,done,haiku,0,100,cloned from func_020257f4
-func_020258b4,main,0x182,265,queued,sonnet,0,,
+func_020258b4,main,0x182,265,fail_sonnet,sonnet,2,20.5,"Signature (Node *n, Ctx ctx) with Ctx *pc=&ctx fixes the r4/r5 roles, but mwcc keeps an extra spilled constant-1 slot (frame 0x58 vs 0x54) and merges "
 func_02025a38,main,0x50,50,done,haiku,1,100,matched by haiku
 func_02025a88,main,0x50,50,done,haiku,1,100,matched by haiku
 func_02025ad8,main,0x3c,50,done,haiku,0,100,cloned from func_02024e74
@@ -2502,7 +2502,7 @@ func_02025c7c,main,0xd10,2320,todo,opus,0,,jumptable
 func_0202698c,main,0x2f8,500,todo,opus,0,,
 func_02026c84,main,0x362,573,todo,opus,0,,
 func_02026fe8,main,0x374,546,todo,opus,0,,
-func_0202735c,main,0x17c,250,queued,sonnet,0,,
+func_0202735c,main,0x17c,250,fail_sonnet,sonnet,2,24.2,"No MATCH after 13 tries. Best is u.c: size is 0x17c (matches) but frame is 0x24 vs 0x1c, the 0x171717 sentinel is not stored at sp+8 at entry, and the"
 func_020274d8,main,0x18,16,done,haiku,0,100,cloned from func_02009574
 func_020274f0,main,0x1c,18,done,opus,0,100,cloned from func_0200d5ec
 func_0202750c,main,0x18,16,done,haiku,0,100,cloned from func_02009574
@@ -2525,12 +2525,12 @@ func_02027b00,main,0x70,120,done,sonnet,1,100,matched by haiku
 func_02027b70,main,0x6c,64,fail_sonnet,sonnet,2,95.4,"Size and control flow match. mwcc still puts the constant 1 in r1 and the frame address in r0, while the target uses r2 for the constant and r1 for th"
 func_02027bdc,main,0xc0,110,fail_sonnet,sonnet,2,69.3,"No match. Second call func_02052d98 args are scheduled differently: mwcc hoists the p->tbl/p->idx loads above the `adds r4, r0` copy, while the target"
 func_02027c9c,main,0x6c,64,todo,sonnet,0,,
-func_02027d08,main,0x194,260,queued,sonnet,0,,
-func_02027e9c,main,0xd6,221,queued,sonnet,0,,
-func_02027f74,main,0xc2,229,queued,sonnet,0,,
-func_02028038,main,0x154,302,todo,sonnet,0,,
-func_0202818c,main,0xf0,252,queued,sonnet,0,,
-func_0202827c,main,0x1d8,472,todo,sonnet,0,,
+func_02027d08,main,0x194,260,fail_sonnet,sonnet,2,51.2,Not matched. I ran about 7 more tries and none beat c.c. Accessing the word fields as F.L.x (sp-relative) with byte flags through an L pointer (l.c) f
+func_02027e9c,main,0xd6,221,fail_sonnet,sonnet,2,54.2,"Registers and the key compare now match, but the branch layout does not (0xd2 vs 0xd6 bytes). The target uses a long `beq; b` after the first and seco"
+func_02027f74,main,0xc2,229,done,sonnet,2,100,matched by sonnet
+func_02028038,main,0x154,302,queued,sonnet,0,,
+func_0202818c,main,0xf0,252,fail_sonnet,sonnet,2,13.3,"No MATCH in 9 of 15 tries; size 0xe6 vs 0xf0. Still differs: prologue and frame (push {r4-r7,lr} with 0xc frame vs target r3-r7 with 8), extra key+0xc"
+func_0202827c,main,0x1d8,472,queued,sonnet,0,,
 func_02028454,main,0x440,770,todo,opus,0,,
 func_02028894,main,0x30,32,done,haiku,1,100,matched by haiku
 func_020288c4,main,0x64,86,fail_sonnet,sonnet,2,24,Size matches (0x64) but the register allocation differs. The target flips the flag in place in r5 and loads the character into r7; mine puts the flipp
@@ -2540,7 +2540,7 @@ func_02028a7c,main,0x6c,64,todo,sonnet,0,,
 func_02028ae8,main,0x2c,28,done,haiku,1,100,matched by haiku
 func_02028b14,main,0x20,21,done,haiku,1,100,matched by haiku
 func_02028b34,main,0xc8,148,done,sonnet,2,100,matched by sonnet
-func_02028bfc,main,0x118,186,queued,sonnet,0,,
+func_02028bfc,main,0x118,186,done,sonnet,2,100,matched by sonnet
 func_02028d14,main,0x12,11,done,haiku,1,100,matched by haiku
 func_02028d28,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
 func_02028dd4,main,0x24,18,done,haiku,1,100,matched by haiku
@@ -2558,12 +2558,12 @@ func_020297fc,main,0x12,11,done,haiku,0,100,cloned from func_02028d14
 func_02029810,main,0x12,11,done,haiku,0,100,cloned from func_02028d14
 func_02029824,main,0x12,11,done,haiku,0,100,cloned from func_02028d14
 func_02029838,main,0x12,11,done,haiku,0,100,cloned from func_02028d14
-func_0202984c,main,0xdc,168,queued,sonnet,0,,
-func_02029928,main,0xe4,174,queued,sonnet,0,,
-func_02029a0c,main,0x1a2,303,todo,sonnet,0,,
+func_0202984c,main,0xdc,168,done,sonnet,1,100,matched by haiku
+func_02029928,main,0xe4,174,done,sonnet,1,100,matched by haiku
+func_02029a0c,main,0x1a2,303,queued,sonnet,0,,
 func_02029bb0,main,0x454,818,todo,opus,0,,
 func_0202a004,main,0x3ba,673,todo,opus,0,,
-func_0202a3c0,main,0x220,419,todo,sonnet,0,,
+func_0202a3c0,main,0x220,419,queued,sonnet,0,,
 func_0202a5e0,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_0202a5e4,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_0202a5e8,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
@@ -2573,7 +2573,7 @@ func_0202a5f4,main,0x6,5,done,haiku,0,100,cloned from func_020696e8
 func_0202a5fc,main,0x4,4,done,haiku,0,100,cloned from func_0203645c
 func_0202a600,main,0x6,5,done,haiku,0,100,cloned from func_02069320
 func_0202a608,main,0x4,4,done,haiku,0,100,cloned from func_02036380
-func_0202a60c,main,0xe8,158,queued,sonnet,0,,
+func_0202a60c,main,0xe8,158,fail_sonnet,sonnet,2,97.8,"Only diff left: after the guard setup, target does `movs r1,#1` before `str r0,[sp,#4]` and uses r1 for the strb/ldrb. Mine does `movs r0,#1` after th"
 func_0202a6f4,main,0x5c,66,done,haiku,1,100,matched by haiku
 func_0202a750,main,0xc8,134,fail_sonnet,sonnet,2,91,"Size and frame now match (0xc8, sub sp #0x1c). That needed C++ with a Guard local that has a destructor calling func_02056844, plus a placement-new co"
 func_0202a818,main,0x48,76,done,haiku,1,100,matched by haiku
@@ -2594,7 +2594,7 @@ func_0202ae44,main,0x58,59,fail_sonnet,haiku,2,94.3,"Only the first block differ
 func_0202ae9c,main,0x50,53,todo,haiku,0,,
 func_0202aeec,main,0xc8,110,done,sonnet,1,100,matched by haiku
 func_0202afb4,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
-func_0202afc0,main,0x1cc,311,todo,sonnet,0,,
+func_0202afc0,main,0x1cc,311,queued,sonnet,0,,
 func_0202b18c,main,0x80,89,done,sonnet,1,100,matched by haiku
 func_0202b20c,main,0x16,14,done,haiku,1,100,matched by haiku
 func_0202b224,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -2619,8 +2619,8 @@ func_0202b3a8,main,0x1e,17,done,haiku,1,100,matched by haiku
 func_0202b3c8,main,0x4a,41,fail_sonnet,haiku,2,39.2,"C++ with a one-byte Flag struct passed by value gives the right size and frame, but the compiler emits the zero byte store (movs/add/strb) right after"
 func_0202b414,main,0x8,6,done,haiku,0,100,cloned from func_ov002_021aac10
 func_0202b41c,main,0x10,8,done,haiku,1,100,matched by haiku
-func_0202b42c,main,0xe4,160,queued,sonnet,0,,
-func_0202b510,main,0x1a0,254,queued,sonnet,0,,
+func_0202b42c,main,0xe4,160,done,sonnet,1,100,matched by haiku
+func_0202b510,main,0x1a0,254,fail_sonnet,sonnet,2,16.6,"Not matched; I used about 14 of the 15 tools/try runs. Remaining diffs: (1) idx/n/i are in the wrong registers (mine r7/r6/r2, target r6/r7/r1). (2) T"
 func_0202b6b0,main,0x54,64,done,sonnet,1,100,matched by haiku
 func_0202b704,main,0xc8,126,fail_sonnet,sonnet,2,51.4,"No match after 14 more runs, so I stopped. The prologue and the setup before the loop match. In the loop body mwcc always emits the lo multiply first,"
 func_0202b7cc,main,0x30,32,done,haiku,1,100,matched by haiku
@@ -2639,7 +2639,7 @@ func_0202be9c,main,0x7c,86,fail_sonnet,sonnet,2,34.7,"Best is 34.7% (size got 0x
 func_0202bf18,main,0x5c,71,fail_sonnet,sonnet,2,37,"No match. Register allocation is off (p lands in r6, not r5, and the element address is held in r5 instead of recomputing p+i*4 after the call). The t"
 func_0202bf74,main,0x60,75,fail_sonnet,sonnet,2,36.5,"No match after 10 runs (cap not reached by me, stopped). Using inline helpers for the count pointer (cnt) and slot(s,i) reproduces the target's stack "
 func_0202bfd4,main,0x2e,39,done,haiku,1,100,matched by haiku
-func_0202c004,main,0xdc,162,queued,sonnet,0,,
+func_0202c004,main,0xdc,162,fail_sonnet,sonnet,2,55.5,"Not matched after 7 more tries. The remaining diff is that the target keeps t (-1 or the func_0202c0e0 result) in the outgoing-arg slot [sp], so its f"
 func_0202c0e0,main,0x34c,536,todo,opus,0,,
 func_0202c42c,main,0x72,65,done,sonnet,1,100,matched by haiku
 func_0202c4a0,main,0x5a,63,done,sonnet,1,100,matched by haiku
@@ -2714,7 +2714,7 @@ func_0202df08,main,0xe,9,done,haiku,1,100,matched by haiku
 func_0202df18,main,0xa8,130,fail_sonnet,sonnet,2,94.6,"Code is structurally identical (size 0xa8). The only diffs are 3 compare calls, where the compiler emits `bl _fgr` for `x > 0.0f` and the tool can't r"
 func_0202dfc0,main,0xe,9,done,haiku,1,100,matched by haiku
 func_0202dfd0,main,0x8,6,done,haiku,1,100,matched by haiku
-func_0202dfd8,main,0xf0,162,queued,sonnet,0,,
+func_0202dfd8,main,0xf0,162,done,sonnet,2,100,matched by sonnet
 func_0202e0c8,main,0x28,18,fail_sonnet,haiku,2,87.5,"Target keeps the flags value in callee-saved r5 across the bl (push {r3,r4,r5,lr}), but every variant allocates it to scratch r1 (push {r4,lr}). Varia"
 func_0202e0f0,main,0xc,6,done,haiku,0,100,cloned
 func_0202e0fc,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -2732,11 +2732,11 @@ func_0202e348,main,0xc0,110,done,sonnet,1,100,matched by haiku
 func_0202e408,main,0xb4,100,done,sonnet,1,100,matched by haiku
 func_0202e4bc,main,0x58,53,done,haiku,1,100,matched by haiku
 func_0202e514,main,0x5c,57,done,haiku,1,100,matched by haiku
-func_0202e570,main,0x160,199,queued,sonnet,0,,
+func_0202e570,main,0x160,199,fail_sonnet,sonnet,2,49.1,"The try cap is used up, so this is not a match. a.c is C++ with two RAII structs: a lock/counter guard (base, lock, cnt) and a mutex-guard (ptr, flag)"
 func_0202e6d0,main,0xa2,117,fail_sonnet,sonnet,2,46.9,"Stack layout matches, but mwcc folds the (len+1)*1 alloc size (target has movs #1/muls), so the output is 4 bytes short (0x9e vs 0xa2) and branch labe"
-func_0202e774,main,0x15c,232,queued,sonnet,0,,
+func_0202e774,main,0x15c,232,done,sonnet,2,100,matched by sonnet
 func_0202e8d0,main,0x18,14,done,haiku,1,100,matched by haiku
-func_0202e8e8,main,0x1ac,290,todo,sonnet,0,,
+func_0202e8e8,main,0x1ac,290,queued,sonnet,0,,
 func_0202ea94,main,0x94,106,done,sonnet,1,100,matched by haiku
 func_0202eb28,main,0x7c,82,done,sonnet,1,100,matched by haiku
 func_0202eba4,main,0x24,20,done,haiku,2,100,matched by sonnet
@@ -2775,14 +2775,14 @@ func_0202fd44,main,0x428,702,todo,opus,0,,
 func_0203016c,main,0xe,13,done,haiku,1,100,matched by haiku
 func_0203017c,main,0xd4,134,done,sonnet,2,100,matched by sonnet
 func_02030250,main,0x20,18,done,haiku,1,100,matched by haiku
-func_02030270,main,0x1cc,295,todo,sonnet,0,,
+func_02030270,main,0x1cc,295,queued,sonnet,0,,
 func_0203043c,main,0xbc,118,done,sonnet,1,100,matched by haiku
-func_020304f8,main,0x160,228,queued,sonnet,0,,
+func_020304f8,main,0x160,228,fail_sonnet,sonnet,2,98.9,"Only the copy loop setup differs. Target loads the src pool address into r3 before loading dst from [sp,#4] into r2. Mine swaps their order. Declarati"
 func_02030658,main,0x88,78,done,sonnet,1,100,matched by haiku
 func_020306e0,main,0x94,82,done,sonnet,2,100,matched by sonnet
 func_02030774,main,0x74,68,done,sonnet,1,100,matched by haiku
-func_020307e8,main,0x138,224,queued,sonnet,0,,
-func_02030920,main,0xd4,168,queued,sonnet,0,,
+func_020307e8,main,0x138,224,done,sonnet,2,100,matched by sonnet
+func_02030920,main,0xd4,168,done,sonnet,1,100,matched by haiku
 func_020309f4,main,0x280,432,todo,opus,0,,jumptable
 func_02030c74,main,0xbc,140,done,sonnet,2,100,matched by sonnet
 func_02030d30,main,0x8c,110,fail_sonnet,sonnet,2,74.3,"No MATCH. I ran tools/try 11 times and none beat b.c. Every variant either folds away the dead `movs r0,#0; bne` or adds a `cmp r0,#0` or a shared exi"
@@ -2808,7 +2808,7 @@ func_020312dc,main,0x34,34,done,haiku,0,100,cloned
 func_02031310,main,0x2a,27,todo,haiku,0,,
 func_0203133c,main,0x22,33,done,haiku,0,100,cloned from func_02030e68
 func_02031360,main,0x4c,45,done,haiku,1,100,matched by haiku
-func_020313ac,main,0x1a8,268,queued,sonnet,0,,
+func_020313ac,main,0x1a8,268,fail_sonnet,sonnet,2,46.7,"Locals now sit at the right offsets (w1/w2 at 0x10/0x18, u at 0x20, z at 0x28, o4c, and the Pair-by-value calls), but the frame is 4 bytes short (0x60"
 func_02031554,main,0x10,12,done,haiku,1,100,matched by haiku
 func_02031564,main,0x10,12,done,haiku,0,100,cloned from func_02031554
 func_02031574,main,0x38,36,done,haiku,1,100,matched by haiku
@@ -2823,14 +2823,14 @@ func_02031de0,main,0xc,9,done,haiku,1,100,matched by haiku
 func_02031dec,main,0x72,77,done,sonnet,2,100,matched by sonnet
 func_02031e60,main,0x22,19,done,haiku,1,100,matched by haiku
 func_02031e84,main,0x48,44,done,haiku,1,100,matched by haiku
-func_02031ecc,main,0x15a,228,queued,sonnet,0,,
+func_02031ecc,main,0x15a,228,fail_sonnet,sonnet,2,37.9,"No match after 12 runs. Best is C++ with virtual-method classes and an empty ~Pair() (37.9%, size 0x158 vs 0x15a). Remaining gaps: node lands in r4 in"
 func_02032028,main,0xc,9,done,haiku,1,100,matched by haiku
 func_02032034,main,0xc,9,done,haiku,1,100,matched by haiku
 func_02032040,main,0x40,37,done,haiku,2,100,matched by sonnet
 func_02032080,main,0xa,7,done,haiku,1,100,matched by haiku
 func_0203208c,main,0xc,8,done,haiku,1,100,matched by haiku
 func_02032098,main,0x14,12,done,haiku,1,100,matched by haiku
-func_020320ac,main,0x180,256,queued,sonnet,0,,
+func_020320ac,main,0x180,256,fail_sonnet,sonnet,2,57.3,"No MATCH after 6 runs; remaining diffs are first-loop register allocation (n in r1, element in r3), the x+0xac copy sequence in the allocated-object i"
 func_0203222c,main,0xb0,104,fail_sonnet,sonnet,2,97.2,"No match. I ran 3 more variants (k.c, l.c, m.c) and none beat j.c. The remaining diff is in the 0xe0/0xf8/0x104 block, where the target re-adds the ba"
 func_020322dc,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020322e0,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -2865,13 +2865,13 @@ func_02032640,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
 func_02032648,main,0x434,716,todo,opus,0,,
 func_02032a7c,main,0xc8,128,done,sonnet,2,100,matched by sonnet
 func_02032b44,main,0x40,38,done,haiku,0,100,cloned from func_020315ac
-func_02032b84,main,0x128,192,queued,sonnet,0,,
+func_02032b84,main,0x128,192,done,sonnet,2,100,matched by sonnet
 func_02032cac,main,0x40,38,done,haiku,0,100,cloned from func_020315ac
 func_02032cec,main,0x38,34,done,haiku,0,100,cloned from func_0200ae7c
 func_02032d24,main,0x58,64,done,haiku,2,100,matched by sonnet
 func_02032d7c,main,0x54,62,done,haiku,2,100,matched by sonnet
 func_02032dd0,main,0x56,47,done,sonnet,0,,
-func_02032e28,main,0x1ec,328,todo,sonnet,0,,
+func_02032e28,main,0x1ec,328,queued,sonnet,0,,
 func_02033014,main,0x80,90,done,sonnet,1,100,matched by haiku
 func_02033094,main,0x5c,50,done,sonnet,1,100,matched by haiku
 func_020330f0,main,0xe0,146,done,sonnet,1,100,matched by haiku
@@ -2893,11 +2893,11 @@ func_020333ac,main,0x74,66,done,sonnet,1,100,matched by haiku
 func_02033420,main,0x18,16,done,haiku,1,100,matched by haiku
 func_02033438,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
 func_02033440,main,0x14,12,done,haiku,1,100,matched by haiku
-func_02033454,main,0x128,192,queued,sonnet,0,,
+func_02033454,main,0x128,192,done,sonnet,1,100,matched by haiku
 func_0203357c,main,0x88,88,done,sonnet,1,100,matched by haiku
 func_02033604,main,0x24,24,done,haiku,1,100,matched by haiku
 func_02033628,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
-func_02033630,main,0x144,212,queued,sonnet,0,,
+func_02033630,main,0x144,212,done,sonnet,2,100,matched by sonnet
 func_02033774,main,0x24,26,done,haiku,1,100,matched by haiku
 func_02033798,main,0x2a,31,done,haiku,1,100,matched by haiku
 func_020337c4,main,0x2c,32,done,haiku,1,100,matched by haiku
@@ -2909,7 +2909,7 @@ func_020338d4,main,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
 func_020338dc,main,0x42,49,done,haiku,1,100,matched by haiku
 func_02033920,main,0x20,23,done,haiku,1,100,matched by haiku
 func_02033940,main,0x3c,34,done,haiku,1,100,matched by haiku
-func_0203397c,main,0x20c,352,todo,sonnet,0,,
+func_0203397c,main,0x20c,352,queued,sonnet,0,,
 func_02033b88,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02033b8c,main,0x48,52,done,haiku,1,100,matched by haiku
 func_02033bd4,main,0xa,7,done,haiku,1,100,matched by haiku
@@ -2919,7 +2919,7 @@ func_02033c00,main,0x14,14,done,haiku,0,100,cloned
 func_02033c14,main,0x1a,19,done,haiku,0,100,cloned
 func_02033c30,main,0x80,82,fail_sonnet,sonnet,2,7,"Could not reproduce the 0x68-byte stack frame, so the output is 0x74-0x78 bytes against 0x80 wanted. Dead, volatile, C++-destructor and escaped local "
 func_02033cb0,main,0x94,108,fail_sonnet,sonnet,2,78.4,"mwcc hoists the 0xFA<<14 call constant and derives 1000 from it (lsrs #0xc) instead of separate movs/lsls; expression-form, type, do-while and static-"
-func_02033d44,main,0xc0,166,queued,sonnet,0,,jumptable
+func_02033d44,main,0xc0,166,fail_sonnet,sonnet,2,67.7,"No match. i.c is the best attempt at 67.7% with the right size (0xc0), but the branch layout differs. mwcc emits the `ty==3` branch to a trailing `mov"
 func_02033e04,main,0x1e,29,done,haiku,1,100,matched by haiku
 func_02033e24,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02033e28,main,0x18,14,done,haiku,1,100,matched by haiku
@@ -2934,7 +2934,7 @@ func_020340b8,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
 func_020340c0,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020340c4,main,0x4,4,done,haiku,0,100,cloned from func_02036380
 func_020340c8,main,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
-func_020340d0,main,0x1f8,332,todo,sonnet,0,,
+func_020340d0,main,0x1f8,332,queued,sonnet,0,,
 func_020342c8,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_020342cc,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_020342d8,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
@@ -2971,12 +2971,12 @@ func_02034834,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-gene
 func_02034850,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-generated; comes from C++ class TU)
 func_0203486c,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-generated; comes from C++ class TU)
 func_02034888,main,0x1c,10,blocked,haiku,0,,C++ this-adjust thunk (compiler-generated; comes from C++ class TU)
-func_020348a4,main,0x13c,188,queued,sonnet,0,,
-func_020349e0,main,0x190,249,queued,sonnet,0,,
+func_020348a4,main,0x13c,188,fail_sonnet,sonnet,2,57.3,"Frame size now matches (0x18) via volatile L[5] spill array, but pool loads for data_021394fc/data_020ae394 use r6/r7 instead of r0/r1, and r7=self+i*"
+func_020349e0,main,0x190,249,fail_sonnet,sonnet,2,49.8,Prologue and the first part now match (size 0x17c vs 0x190). The loop still differs: i should be in r7 and the slot pointer in r4. The list pointer se
 func_02034b70,main,0x20,18,done,haiku,1,100,matched by haiku
 func_02034b90,main,0x28,24,done,haiku,1,100,matched by haiku
 func_02034bb8,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
-func_02034bbc,main,0x114,168,queued,sonnet,0,,
+func_02034bbc,main,0x114,168,done,sonnet,2,100,matched by sonnet
 func_02034cd0,main,0x34,44,done,haiku,2,100,matched by sonnet
 func_02034d04,main,0x28,36,done,haiku,1,100,matched by haiku
 func_02034d2c,main,0x2e,39,done,haiku,1,100,matched by haiku
@@ -2984,7 +2984,7 @@ func_02034d5c,main,0x9e,107,fail_sonnet,sonnet,2,17.7,"No match after 14 runs. T
 func_02034dfc,main,0x2a,38,done,haiku,1,100,matched by haiku
 func_02034e28,main,0x2a,38,done,haiku,1,100,matched by haiku
 func_02034e54,main,0x8,6,done,haiku,1,100,matched by haiku
-func_02034e5c,main,0x142,275,todo,sonnet,0,,
+func_02034e5c,main,0x142,275,queued,sonnet,0,,
 func_02034fa0,main,0x10,8,done,haiku,1,100,matched by haiku
 func_02034fb0,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_02034fb4,main,0x98,116,done,sonnet,2,100,matched by sonnet
@@ -2993,10 +2993,10 @@ func_020350f4,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02035100,main,0x1a,19,done,haiku,1,100,matched by haiku
 func_0203511c,main,0x30,42,done,haiku,1,100,matched by haiku
 func_0203514c,main,0x4e,68,done,haiku,1,100,matched by haiku
-func_0203519c,main,0xd2,174,queued,sonnet,0,,
+func_0203519c,main,0xd2,174,done,sonnet,2,100,matched by sonnet
 func_02035270,main,0x28,20,done,haiku,1,100,matched by haiku
 func_02035298,main,0x20,16,fail_sonnet,haiku,2,75,"mwcc puts the object pointer in r4 and the value param c in r5, the reverse of the target (r5 = object, r4 = c). Local copies, word stores, type chang"
-func_020352b8,main,0x220,480,todo,sonnet,0,,jumptable
+func_020352b8,main,0x220,480,queued,sonnet,0,,jumptable
 func_020354d8,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_020354e4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020354e8,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -3004,10 +3004,10 @@ func_020354ec,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_020354f8,main,0x14,10,done,haiku,0,100,cloned from func_0202c8b4
 func_0203550c,main,0x7c,86,done,sonnet,1,100,matched by haiku
 func_02035588,main,0x50,58,done,haiku,1,100,matched by haiku
-func_020355d8,main,0xec,174,queued,sonnet,0,,jumptable
+func_020355d8,main,0xec,174,fail_sonnet,sonnet,2,19.5,"No match. The target loads every stored constant from the literal pool (ldr r0,=imm, even for 0 and 1). Every form I tried emits movs #imm instead, in"
 func_020356c4,main,0x12,13,done,haiku,0,100,cloned
 func_020356d8,main,0x24,18,done,haiku,1,100,matched by haiku
-func_020356fc,main,0xc8,158,queued,sonnet,0,,
+func_020356fc,main,0xc8,158,fail_sonnet,sonnet,2,26,"Size 0xc6 vs 0xc8. The compiler hoists the arr address into r4 before the zeroing loop and puts idx in r6 (target: idx in r4, scratch r2 in the loop)."
 func_020357c4,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
 func_02035870,main,0x26,29,done,haiku,0,100,cloned from func_0200a244
 func_02035898,main,0x2e,33,fail_sonnet,haiku,2,84.8,"12 runs, none matched. Every variant still puts s->f4 in r1 and s->f8 in r0, where the target has r0 and r1. The variants were: statement order, local"
@@ -3073,7 +3073,7 @@ func_02036134,main,0x20,16,done,haiku,0,,
 func_02036154,main,0x20,32,done,haiku,1,100,matched by haiku
 func_02036174,main,0x7c,94,fail_sonnet,sonnet,2,95.2,"Only diff: target emits `movs r3,#0` right after the bl to func_020340b8 (before r0/r1/r2 setup); ours emits it last, after `movs r2,#0`. Tried 4th-pa"
 func_020361f0,main,0x50,64,done,haiku,1,100,matched by haiku
-func_02036240,main,0xd4,170,queued,sonnet,0,,
+func_02036240,main,0xd4,170,done,sonnet,2,100,matched by sonnet
 func_02036314,main,0x2e,43,done,haiku,1,100,matched by haiku
 func_02036344,main,0xc,10,done,haiku,1,100,matched by haiku
 func_02036350,main,0x10,14,done,haiku,1,100,matched by haiku
@@ -3203,12 +3203,12 @@ func_02036f1c,main,0x12,15,done,haiku,1,100,matched by haiku
 func_02036f30,main,0x8,6,done,haiku,1,100,matched by haiku
 func_02036f38,main,0x14,10,done,haiku,0,100,cloned from func_02036c58
 func_02036f4c,main,0x20,18,done,haiku,1,100,matched by haiku
-func_02036f6c,main,0x150,168,queued,sonnet,0,,
+func_02036f6c,main,0x150,168,fail_sonnet,sonnet,2,80.4,"k.c reaches 80.4% but is 0x148 bytes against the 0x150 target. The target clears dst word4 as two separate fields (13 bits, then 10 bits) and word5 as"
 func_020370bc,main,0x40,62,fail_sonnet,haiku,2,34.4,"No match after 7 runs. a.c has a while loop with break, which shares the return, but it is 0x3e bytes against the 0x40 target. The target copies the b"
 func_020370fc,main,0x10,12,done,haiku,1,100,matched by haiku
-func_0203710c,main,0xd0,174,queued,sonnet,0,,
-func_020371dc,main,0x194,318,todo,sonnet,0,,
-func_02037370,main,0x190,295,todo,sonnet,0,,
+func_0203710c,main,0xd0,174,fail_sonnet,sonnet,2,46.2,"Zero-init loop codegen differs (the target spills r0 after the counter init and uses counter r3 with base r2). About 10 loop variants (pointer alias, "
+func_020371dc,main,0x194,318,queued,sonnet,0,,
+func_02037370,main,0x190,295,queued,sonnet,0,,
 func_02037500,main,0x36,35,done,haiku,1,100,matched by haiku
 func_02037538,main,0xc,6,done,haiku,0,100,cloned
 func_02037544,main,0xc,6,done,haiku,0,100,cloned
@@ -3234,7 +3234,7 @@ func_02037700,main,0x28,26,done,haiku,2,100,matched by haiku
 func_02037728,main,0x20,21,done,haiku,0,100,cloned from func_02028b14
 func_02037748,main,0x14,14,done,haiku,0,,
 func_0203775c,main,0x360,572,todo,opus,0,,
-func_02037abc,main,0xd4,168,queued,sonnet,0,,
+func_02037abc,main,0xd4,168,fail_sonnet,sonnet,2,89.6,"Size now matches (0xd4). Two register-allocation diffs remain. In the halfword copy loop, mwcc puts the source pointer in r3 and the destination in r6"
 func_02037b90,main,0x20,18,done,haiku,1,100,matched by haiku
 func_02037bb0,main,0x390,606,todo,opus,0,,
 func_02037f40,main,0x1c,14,done,haiku,0,,
@@ -3266,7 +3266,7 @@ func_02039184,main,0x18,12,done,haiku,1,100,matched by haiku
 func_0203919c,main,0x50,54,done,haiku,1,100,matched by haiku
 func_020391ec,main,0x58,60,done,haiku,2,100,matched by sonnet
 func_02039244,main,0x68,78,done,sonnet,1,100,matched by haiku
-func_020392ac,main,0xfa,237,queued,sonnet,0,,
+func_020392ac,main,0xfa,237,fail_sonnet,sonnet,2,43.7,"k.c is the best at 43.7%, size 0xfc against 0xfa, after 14 of 15 tools/try runs. The zero-fill loop is now a rotated do-while that stores a copy of th"
 func_020393a8,main,0x42,47,done,haiku,1,100,matched by haiku
 func_020393ec,main,0x32,35,done,haiku,1,100,matched by haiku
 func_02039420,main,0x1c,16,done,haiku,1,100,matched by haiku
@@ -3299,7 +3299,7 @@ func_020398b4,main,0xb0,122,done,sonnet,1,100,matched by haiku
 func_02039964,main,0x2b0,404,todo,opus,0,,
 func_02039c14,main,0x1c,14,done,haiku,1,100,matched by haiku
 func_02039c30,main,0x70,82,done,sonnet,1,100,matched by haiku
-func_02039ca0,main,0x140,220,queued,sonnet,0,,
+func_02039ca0,main,0x140,220,done,sonnet,2,100,matched by sonnet
 func_02039de0,main,0x6,5,done,haiku,1,100,matched by haiku
 func_02039de8,main,0x68,78,done,haiku,1,100,matched by haiku
 func_02039e50,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
@@ -3316,25 +3316,25 @@ func_0203a28c,main,0x3c,32,fail_sonnet,haiku,2,86.7,"Only diff is register order
 func_0203a2c8,main,0x80,90,done,sonnet,1,100,matched by haiku
 func_0203a348,main,0x20,18,done,haiku,1,100,matched by haiku
 func_0203a368,main,0x60,48,done,sonnet,1,100,matched by haiku
-func_0203a3c8,main,0xe0,158,queued,sonnet,0,,
+func_0203a3c8,main,0xe0,158,done,sonnet,2,100,matched by sonnet
 func_0203a4a8,main,0xe0,140,done,sonnet,2,100,matched by sonnet
 func_0203a588,main,0x34,26,done,haiku,2,100,matched by haiku
 func_0203a5bc,main,0x48,44,done,haiku,1,100,matched by haiku
 func_0203a604,main,0x100,150,fail_sonnet,sonnet,2,34.4,"No match after 11 tries. d.c is c.c with the callee renamed to func_ov011_021bd180, which fixes the unresolved bl. It gets the right size (0x100) and "
 func_0203a704,main,0x20,23,done,haiku,0,100,cloned
 func_0203a724,main,0x34,28,done,haiku,2,100,matched by sonnet
-func_0203a758,main,0xe4,162,queued,sonnet,0,,
+func_0203a758,main,0xe4,162,fail_sonnet,sonnet,2,98.2,"Only the final copy from data_020aea54 differs. The target has lo in r2, hi in r1, and stores 0x80 before 0x84. Each variant fixes either the load reg"
 func_0203a83c,main,0x7c,80,done,sonnet,1,100,matched by haiku
-func_0203a8b8,main,0x180,242,queued,sonnet,0,,
+func_0203a8b8,main,0x180,242,done,sonnet,1,100,matched by haiku
 func_0203aa38,main,0x38,40,done,haiku,1,100,matched by haiku
 func_0203aa70,main,0x26,25,done,haiku,2,100,matched by haiku
 func_0203aa98,main,0x26,27,done,haiku,1,100,matched by haiku
 func_0203aac0,main,0x26,27,done,haiku,0,100,cloned from func_0203aa98
-func_0203aae8,main,0xe8,162,queued,sonnet,0,,
+func_0203aae8,main,0xe8,162,done,sonnet,1,100,matched by haiku
 func_0203abd0,main,0x44,40,done,haiku,1,100,matched by haiku
-func_0203ac14,main,0x15c,232,queued,sonnet,0,,
+func_0203ac14,main,0x15c,232,done,sonnet,1,100,matched by haiku
 func_0203ad70,main,0x58,50,done,haiku,1,100,matched by haiku
-func_0203adc8,main,0x11c,172,queued,sonnet,0,,
+func_0203adc8,main,0x11c,172,fail_sonnet,sonnet,2,78.5,"Size matches (0x11c). The two 17-halfword copy loops use the wrong registers: the target has r6 as source, r5 as dest and r3 as counter, with the sour"
 func_0203aee4,main,0x90,82,done,sonnet,1,100,matched by haiku
 func_0203af74,main,0x5c,54,done,haiku,1,100,matched by haiku
 func_0203afd0,main,0x5c,54,fail_sonnet,sonnet,2,68.5,"Register/scheduling mismatch in arg setup for func_0203adc8: target loads struct byte into r1 and moves x into r1 last, keeping the struct pointer in "
@@ -3367,7 +3367,7 @@ func_0203b34c,main,0x12,13,done,haiku,0,100,cloned
 func_0203b360,main,0x14,14,done,haiku,0,100,cloned
 func_0203b374,main,0x1a,19,done,haiku,0,100,cloned
 func_0203b390,main,0x80,84,done,sonnet,0,100,cloned from func_ov002_0219f9b8
-func_0203b410,main,0xfe,157,queued,sonnet,0,,
+func_0203b410,main,0xfe,157,fail_sonnet,sonnet,2,5.5,"No match after 2 tools/try runs. Target looks like unoptimized inlined C++ (this/src spilled to [sp]/[sp+4], a self+8 pointer at [sp+0x1c], a byte fla"
 func_0203b510,main,0x24,34,done,haiku,0,100,cloned from func_02009888
 func_0203b534,main,0x34,34,done,haiku,0,100,cloned
 func_0203b568,main,0x34,44,done,haiku,0,100,cloned from func_020098ac
@@ -3499,10 +3499,10 @@ func_0203c454,main,0x20,30,done,haiku,1,100,matched by haiku
 func_0203c474,main,0x4c,50,done,haiku,1,100,matched by haiku
 func_0203c4c0,main,0x3c,40,done,haiku,1,100,matched by haiku
 func_0203c4fc,main,0x18,14,done,haiku,1,100,matched by haiku
-func_0203c514,main,0x120,190,queued,sonnet,0,,
+func_0203c514,main,0x120,190,done,sonnet,1,100,matched by haiku
 func_0203c634,main,0xdc,136,fail_sonnet,sonnet,2,75.5,"No match after 4 tries. The p3[0] load is not hoisted before the vtable store, and the second zero-fill loop does not reuse the zero register left by "
-func_0203c710,main,0x138,208,queued,sonnet,0,,
-func_0203c848,main,0x1e8,330,todo,sonnet,0,,
+func_0203c710,main,0x138,208,done,sonnet,1,100,matched by haiku
+func_0203c848,main,0x1e8,330,queued,sonnet,0,,
 func_0203ca30,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_0203ca50,main,0x70,62,done,sonnet,1,100,matched by haiku
 func_0203cac0,main,0x84,94,done,sonnet,1,100,matched by haiku
@@ -3511,14 +3511,14 @@ func_0203cb88,main,0x38,30,done,haiku,1,100,matched by haiku
 func_0203cbc0,main,0x500,862,todo,opus,0,,
 func_0203d0c0,main,0x5c,48,done,sonnet,1,100,matched by haiku
 func_0203d11c,main,0x54,44,done,haiku,2,100,matched by sonnet
-func_0203d170,main,0xee,191,queued,sonnet,0,,
+func_0203d170,main,0xee,191,fail_sonnet,sonnet,2,0,"No MATCH in 5 runs; percentages not captured (output tailed). Remaining diffs: the adds r6,r4,#0 copy before the min() block, and the flag byte stored"
 func_0203d260,main,0x3c,32,done,haiku,1,100,matched by haiku
 func_0203d29c,main,0x54,46,done,haiku,1,100,matched by haiku
 func_0203d2f0,main,0x44,44,done,haiku,1,100,matched by haiku
 func_0203d334,main,0x4c,48,done,haiku,1,100,matched by haiku
 func_0203d380,main,0x34,36,done,haiku,1,100,matched by haiku
 func_0203d3b4,main,0x1a,19,done,haiku,0,100,cloned from func_0200aa8c
-func_0203d3d0,main,0x12c,236,queued,sonnet,0,,jumptable
+func_0203d3d0,main,0x12c,236,done,sonnet,2,100,matched by sonnet
 func_0203d4fc,main,0x14,14,done,haiku,0,100,cloned from func_0200aa78
 func_0203d510,main,0x66,63,done,sonnet,2,100,matched by sonnet
 func_0203d578,main,0x52,65,done,haiku,1,100,matched by haiku
@@ -3527,18 +3527,18 @@ func_0203d61c,main,0x3e,47,done,haiku,1,100,matched by haiku
 func_0203d65c,main,0x44,52,done,haiku,1,100,matched by haiku
 func_0203d6a0,main,0x14,14,done,haiku,0,100,cloned from func_0200aa78
 func_0203d6b4,main,0x1a,19,done,haiku,0,100,cloned from func_0200aa8c
-func_0203d6d0,main,0x148,202,queued,sonnet,0,,
+func_0203d6d0,main,0x148,202,done,sonnet,2,100,matched by sonnet
 func_0203d818,main,0x6c,78,done,sonnet,1,100,matched by haiku
 func_0203d884,main,0x74,84,done,sonnet,1,100,matched by haiku
 func_0203d8f8,main,0x40,40,done,haiku,1,100,matched by haiku
 func_0203d938,main,0x34,30,done,haiku,1,100,matched by haiku
 func_0203d96c,main,0xd2,143,fail_sonnet,sonnet,2,95.7,"Control flow, frame layout and tail now match. Remaining diffs are the entry pointer and offset registers (r6/r7 swapped), the add operand order after"
-func_0203da40,main,0x200,368,todo,sonnet,0,,
-func_0203dc40,main,0x11c,226,queued,sonnet,0,,jumptable
-func_0203dd5c,main,0x122,197,queued,sonnet,0,,
+func_0203da40,main,0x200,368,queued,sonnet,0,,
+func_0203dc40,main,0x11c,226,done,sonnet,1,100,matched by haiku
+func_0203dd5c,main,0x122,197,fail_sonnet,sonnet,2,28.6,"Not matched. The frame is 0x6c or 0x70 against the target 0x80. The target's byte-argument pattern (sub r4,sp,#4; strb; ldr r3,[r4]) never appeared. V"
 func_0203de80,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_0203dea0,main,0x278,426,todo,opus,0,,
-func_0203e118,main,0x21c,348,todo,sonnet,0,,
+func_0203e118,main,0x21c,348,queued,sonnet,0,,
 func_0203e334,main,0x60,52,done,haiku,1,100,matched by haiku
 func_0203e394,main,0x38,30,done,haiku,1,100,matched by haiku
 func_0203e3cc,main,0x58,54,done,haiku,1,100,matched by haiku
@@ -3552,14 +3552,14 @@ func_0203e990,main,0x38,30,done,haiku,1,100,matched by haiku
 func_0203e9c8,main,0xe4,144,done,sonnet,2,100,matched by sonnet
 func_0203eaac,main,0x50,46,todo,haiku,0,,
 func_0203eafc,main,0x48,42,done,haiku,0,100,cloned from func_0203e904
-func_0203eb44,main,0x1a8,282,todo,sonnet,0,,
+func_0203eb44,main,0x1a8,282,queued,sonnet,0,,
 func_0203ecec,main,0x2dc,496,todo,opus,0,,
 func_0203efc8,main,0x40,38,done,haiku,0,100,cloned from func_020315ac
 func_0203f008,main,0x6c,68,done,sonnet,2,100,matched by sonnet
 func_0203f074,main,0x3c,28,done,haiku,1,100,matched by haiku
 func_0203f0b0,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_0203f0d0,main,0x88,82,fail_sonnet,sonnet,2,98.5,"No MATCH. Only the tail differs: the word loaded from [0] lands in r1 instead of r2, or the stores come out swapped. My variants (l, m, n, o) scored 9"
-func_0203f158,main,0x118,182,queued,sonnet,0,,
+func_0203f158,main,0x118,182,done,sonnet,1,100,matched by haiku
 func_0203f270,main,0x44,40,done,haiku,1,100,matched by haiku
 func_0203f2b4,main,0x60,55,done,sonnet,2,100,matched by sonnet
 func_0203f314,main,0x3e,38,fail_sonnet,haiku,2,77.4,"Not matched. Size and instruction sequence match. The remaining diff is register allocation: the target keeps &m in r2 and the adj>>1 offset in r0, wh"
@@ -3581,8 +3581,8 @@ func_0203f4d8,main,0x12,13,done,haiku,0,100,cloned from func_02005974
 func_0203f4ec,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0203f4f8,main,0x12,13,done,haiku,0,100,cloned from func_02005974
 func_0203f50c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
-func_0203f518,main,0x138,196,queued,sonnet,0,,
-func_0203f650,main,0x134,192,queued,sonnet,0,,
+func_0203f518,main,0x138,196,done,sonnet,2,100,matched by sonnet
+func_0203f650,main,0x134,192,fail_sonnet,sonnet,2,96.1,"Size and stack layout now match. The only diff is the tail, where the target loads both data_020af270 words into r2/r1 before computing the self+0x80 "
 func_0203f784,main,0x64,68,done,sonnet,1,100,matched by haiku
 func_0203f7e8,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_0203f808,main,0xf8c,2868,todo,opus,0,,jumptable
@@ -3596,13 +3596,13 @@ func_02040cc0,main,0x94,84,done,sonnet,1,100,matched by haiku
 func_02040d54,main,0x6c,66,done,sonnet,1,100,matched by haiku
 func_02040dc0,main,0x74,62,done,sonnet,1,100,matched by haiku
 func_02040e34,main,0x5c,50,done,haiku,1,100,matched by haiku
-func_02040e90,main,0x124,206,queued,sonnet,0,,jumptable
-func_02040fb4,main,0x184,224,queued,sonnet,0,,
+func_02040e90,main,0x124,206,done,sonnet,1,100,matched by haiku
+func_02040fb4,main,0x184,224,fail_sonnet,sonnet,2,39.7,"Typed-struct version (Obj/Blk) keeps r7 in a register and is 0x180 vs 0x184, but the register allocation still differs. Target uses r6 for the block p"
 func_02041138,main,0xcc,122,fail_sonnet,sonnet,2,50.5,"No match after 7 runs of tools/try; best stays at 50.5%. The offset register is wrong: the target uses r1 for 0x1c0 and r2 for the loaded value, ours "
-func_02041204,main,0x1a0,290,todo,sonnet,0,,
+func_02041204,main,0x1a0,290,queued,sonnet,0,,
 func_020413a4,main,0xb8,148,done,sonnet,1,100,matched by haiku
 func_0204145c,main,0x318,478,todo,opus,0,,
-func_02041774,main,0x190,258,queued,sonnet,0,,
+func_02041774,main,0x190,258,done,sonnet,1,100,matched by haiku
 func_02041904,main,0xbc,124,done,sonnet,1,100,matched by haiku
 func_020419c0,main,0xb0,110,done,sonnet,1,100,matched by haiku
 func_02041a70,main,0x18,18,done,haiku,1,100,matched by haiku
@@ -3625,13 +3625,13 @@ func_02041d28,main,0x1c,20,done,haiku,0,100,cloned from func_02032440
 func_02041d44,main,0x22,25,done,haiku,0,100,cloned from func_0203245c
 func_02041d68,main,0x20,16,done,haiku,1,100,matched by haiku
 func_02041d88,main,0x2c,33,done,haiku,2,100,matched by sonnet
-func_02041db4,main,0x168,198,queued,sonnet,0,,
+func_02041db4,main,0x168,198,done,sonnet,1,100,matched by haiku
 func_02041f1c,main,0x2d8,494,todo,opus,0,,
 func_020421f4,main,0x2e0,500,todo,opus,0,,
 func_020424d4,main,0xc,10,done,haiku,1,100,matched by haiku
 func_020424e0,main,0x6,5,done,haiku,0,100,cloned from func_020696e8
 func_020424e8,main,0xa,7,done,haiku,0,100,cloned from func_ov011_021c9818
-func_020424f4,main,0x16c,262,queued,sonnet,0,,
+func_020424f4,main,0x16c,262,fail_sonnet,sonnet,2,21.7,"No match. Register allocation still differs and the code is 8 bytes too small (0x164 vs 0x16c). The target keeps 0x124 in r4, A in r6, B in r7 and rec"
 func_02042660,main,0xd0,146,fail_sonnet,sonnet,2,42.8,"No match after 7 runs, stuck at 42.8%. Param a and b still get r5 and r4, the reverse of the target's r4 and r5. The target reuses r5 for b and then &"
 func_02042730,main,0x3c,50,done,haiku,1,100,matched by haiku
 func_0204276c,main,0x14,14,done,haiku,1,100,matched by haiku
@@ -3642,22 +3642,22 @@ func_020427f4,main,0x40,52,done,haiku,1,100,matched by haiku
 func_02042834,main,0xc,6,done,haiku,0,100,cloned from func_02007850
 func_02042840,main,0x2a0,452,todo,opus,0,,
 func_02042ae0,main,0x38,30,done,haiku,1,100,matched by haiku
-func_02042b18,main,0x14c,228,queued,sonnet,0,,
+func_02042b18,main,0x14c,228,fail_sonnet,sonnet,2,66.6,"Size now matches (0x14c) after nesting `if (obj) { if (obj) vcall; store 0 }`, which reproduces the beq/beq pattern. Register allocation still differs"
 func_02042c64,main,0x98,95,done,sonnet,1,100,matched by haiku
 func_02042cfc,main,0x5c,60,done,sonnet,1,100,matched by haiku
 func_02042d58,main,0x1e,21,done,haiku,1,100,matched by haiku
 func_02042d78,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_02042d98,main,0x24,24,done,haiku,2,100,matched by sonnet
-func_02042dbc,main,0x188,264,queued,sonnet,0,,
+func_02042dbc,main,0x188,264,fail_sonnet,sonnet,2,96.4,Size now matches (0x188). The only diff is the order of the data_020b8e44 address load and the (*pp)[3] load before func_02018d18. Target loads the da
 func_02042f44,main,0x1e,17,done,haiku,1,100,matched by haiku
-func_02042f64,main,0x1fc,319,todo,sonnet,0,,
+func_02042f64,main,0x1fc,319,queued,sonnet,0,,
 func_02043160,main,0x60,54,fail_sonnet,sonnet,2,54.2,"No match in 9 tries (6 and 7 scalars, 4-word struct plus scalars, 3-word struct plus scalars, pair plus scalars, S4+S3, S2+S3). The target keeps only "
 func_020431c0,main,0x348,546,todo,opus,0,,
 func_02043508,main,0x40,38,done,haiku,0,100,cloned from func_020315ac
 func_02043548,main,0xe,13,done,haiku,1,100,matched by haiku
 func_02043558,main,0xb0,140,done,sonnet,1,100,matched by haiku
-func_02043608,main,0xf0,182,queued,sonnet,0,,
-func_020436f8,main,0x10c,210,queued,sonnet,0,,
+func_02043608,main,0xf0,182,fail_sonnet,sonnet,2,97.9,"Size matches (0xf0). Only difference left is r2/r3 swapped in the inner loop: the target puts the count n in r3 and the sub-table base in r2, and ever"
+func_020436f8,main,0x10c,210,done,sonnet,2,100,matched by sonnet
 func_02043804,main,0x36,45,done,haiku,1,100,matched by haiku
 func_0204383c,main,0x26,29,done,haiku,1,100,matched by haiku
 func_02043864,main,0x7a,93,done,sonnet,1,100,matched by haiku
@@ -3678,7 +3678,7 @@ func_02043f20,main,0x20,16,done,haiku,2,100,matched by sonnet
 func_02043f40,main,0x38,34,fail_sonnet,haiku,2,82.1,"Size and prologue/epilogue match using a variadic-style signature and (&b)[0], (&b)[1] reads; the remaining diff is scheduling, since the target hoist"
 func_02043f78,main,0x8,6,done,haiku,1,100,matched by haiku
 func_02043f80,main,0x24,22,done,haiku,1,100,matched by haiku
-func_02043fa4,main,0x170,274,queued,sonnet,0,,jumptable
+func_02043fa4,main,0x170,274,done,sonnet,2,100,matched by sonnet
 func_02044114,main,0x4c,58,done,haiku,1,100,matched by haiku
 func_02044160,main,0x20,18,done,haiku,1,100,matched by haiku
 func_02044180,main,0x5a,65,done,haiku,1,100,matched by haiku
@@ -3703,11 +3703,11 @@ func_020444a8,main,0x20,20,done,haiku,0,100,cloned from func_0200b6c0
 func_020444c8,main,0x22,24,todo,haiku,0,,
 func_020444ec,main,0x80,68,done,sonnet,1,100,matched by haiku
 func_0204456c,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
-func_0204458c,main,0xcc,164,queued,sonnet,0,,
+func_0204458c,main,0xcc,164,done,sonnet,1,100,matched by haiku
 func_02044658,main,0x68,68,done,sonnet,2,100,matched by sonnet
 func_020446c0,main,0x24,18,done,haiku,1,100,matched by haiku
 func_020446e4,main,0xa4,140,done,sonnet,1,100,matched by haiku
-func_02044788,main,0x23c,410,todo,sonnet,0,,
+func_02044788,main,0x23c,410,queued,sonnet,0,,
 func_020449c4,main,0x28,20,done,haiku,2,100,matched by sonnet
 func_020449ec,main,0x14,14,done,haiku,1,100,matched by haiku
 func_02044a00,main,0x50,44,done,haiku,1,100,matched by haiku
@@ -3724,7 +3724,7 @@ func_02044d54,main,0x538,918,todo,opus,0,,
 func_0204528c,main,0x58,50,done,haiku,1,100,matched by haiku
 func_020452e4,main,0x28,20,done,haiku,0,100,cloned from func_020449c4
 func_0204530c,main,0x14,14,done,haiku,0,100,cloned from func_020449ec
-func_02045320,main,0x1ac,268,queued,sonnet,0,,
+func_02045320,main,0x1ac,268,fail_sonnet,sonnet,2,32.5,"Size nearly right (0x1a8 vs 0x1ac). Remaining: the data_020afbc8/bd0 select compiles to a hoisted literal load plus beq instead of bne with a join, an"
 func_020454cc,main,0x68,62,done,haiku,1,100,matched by haiku
 func_02045534,main,0x70,68,done,sonnet,1,100,matched by haiku
 func_020455a4,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
@@ -3745,13 +3745,13 @@ func_020469b4,main,0x48,46,done,haiku,1,100,matched by haiku
 func_020469fc,main,0x308,646,todo,opus,0,,jumptable
 func_02046d04,main,0x1c,14,done,haiku,1,100,matched by haiku
 func_02046d20,main,0x48,36,done,haiku,1,100,matched by haiku
-func_02046d68,main,0x1c0,347,todo,sonnet,0,,jumptable
+func_02046d68,main,0x1c0,347,queued,sonnet,0,,jumptable
 func_02046f28,main,0x30,24,done,haiku,1,100,matched by haiku
 func_02046f58,main,0x20,18,done,haiku,0,100,cloned from func_02044160
 func_02046f78,main,0x24,22,done,haiku,0,100,cloned from func_02043f80
 func_02046f9c,main,0x20,18,done,haiku,0,100,cloned from func_02044160
 func_02046fbc,main,0x76,130,fail_sonnet,sonnet,2,96.6,"Only mismatch is scheduling after the switch. Target does `adds r0,r4,#0; ldr r1,[r0]` and mine emits `ldr r1,[r4]` first. Struct-typed self, a local "
-func_02047034,main,0x168,276,todo,sonnet,0,,jumptable
+func_02047034,main,0x168,276,queued,sonnet,0,,jumptable
 func_0204719c,main,0x38,34,done,haiku,0,100,cloned from func_0200ae7c
 func_020471d4,main,0x24,18,done,haiku,1,100,matched by haiku
 func_020471f8,main,0x44,46,done,haiku,2,100,matched by sonnet
@@ -3777,20 +3777,20 @@ func_02047650,main,0xc8,138,done,sonnet,2,100,matched by sonnet
 func_02047718,main,0x64,52,done,sonnet,1,100,matched by haiku
 func_0204777c,main,0x10,8,done,haiku,1,100,matched by haiku
 func_0204778c,main,0x3c,50,done,haiku,1,100,matched by haiku
-func_020477c8,main,0x158,276,todo,sonnet,0,,jumptable
+func_020477c8,main,0x158,276,queued,sonnet,0,,jumptable
 func_02047920,main,0x38,28,done,haiku,1,100,matched by haiku
 func_02047958,main,0x20,18,done,haiku,0,100,cloned from func_02044160
 func_02047978,main,0x24,22,done,haiku,0,100,cloned from func_02043f80
-func_0204799c,main,0x1c8,324,todo,sonnet,0,,
+func_0204799c,main,0x1c8,324,queued,sonnet,0,,
 func_02047b64,main,0x80,80,done,sonnet,1,100,matched by haiku
 func_02047be4,main,0x2bc,482,todo,opus,0,,
 func_02047ea0,main,0x34,24,done,haiku,2,100,matched by sonnet
 func_02047ed4,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02047ee0,main,0x12,13,done,haiku,0,100,cloned from func_02005974
 func_02047ef4,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
-func_02047f14,main,0x158,256,queued,sonnet,0,,
+func_02047f14,main,0x158,256,fail_sonnet,sonnet,2,97.7,"Remaining diff is register allocation in the swap block: ptr goes to r1 and extra to r0, where the target has ptr in r0 and extra in r1. Locals for pt"
 func_0204806c,main,0xa4,104,done,sonnet,1,100,matched by haiku
-func_02048110,main,0x104,166,queued,sonnet,0,,
+func_02048110,main,0x104,166,fail_sonnet,sonnet,2,39,"Size is 0x108 against a target of 0x104. Registers differ: the target has self in r4, Rec pointer in r5, angle in r6 and zero in r7, while mine has se"
 func_02048214,main,0x9c,96,fail_sonnet,sonnet,2,97.4,"Passing the Pair by value as args 3-4 gives the ldm. The one remaining diff is that `str r7,[sp,#8]` is scheduled before `add r6,sp,#0xc`, but the tar"
 func_020482b0,main,0xe,9,done,haiku,1,100,matched by haiku
 func_020482c0,main,0x70,54,fail_sonnet,sonnet,2,96.4,"Only diff is the final two loads and stores. mwcc loads data_020afcd8[1] first into r2, then [0] into r1. The target loads [0] into r2 and [1] into r1"
@@ -3799,7 +3799,7 @@ func_0204835c,main,0x30,30,done,haiku,1,100,matched by haiku
 func_0204838c,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_020483ac,main,0x54,66,done,haiku,1,100,matched by haiku
 func_02048400,main,0x44,40,done,haiku,1,100,matched by haiku
-func_02048444,main,0x190,270,queued,sonnet,0,,
+func_02048444,main,0x190,270,fail_sonnet,sonnet,2,6,"No match after 3 runs. Best attempt b.c (do-while loop, local struct, switch on state) is 0x15c bytes against 0x190. Still missing: the dispatch shape"
 func_020485d4,main,0x24,18,done,haiku,0,100,cloned from func_020446c0
 func_020485f8,main,0x2c,26,done,haiku,2,100,matched by haiku
 func_02048624,main,0xd4,138,fail_sonnet,sonnet,2,31.2,No match. g.c (30.2%) is the cleanest and has the right 0xc4 frame; m.c scored 31.2% but its size is 0xe0 and its stack layout is wrong. Still wrong: 
@@ -3809,7 +3809,7 @@ func_02048790,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0204879c,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020487a0,main,0x2e,25,done,haiku,0,,
 func_020487d0,main,0x36,37,done,haiku,1,100,matched by haiku
-func_02048808,main,0x1a4,280,todo,sonnet,0,,
+func_02048808,main,0x1a4,280,queued,sonnet,0,,
 func_020489ac,main,0x2c,30,done,haiku,1,100,matched by haiku
 func_020489d8,main,0x90,100,done,sonnet,2,100,matched by sonnet
 func_02048a68,main,0x1c,16,done,haiku,0,100,cloned from func_0200b6a4
@@ -3866,7 +3866,7 @@ func_02049340,main,0x5c,64,done,haiku,0,100,cloned from func_02048f90
 func_0204939c,main,0x7a,87,done,sonnet,1,100,matched by haiku
 func_02049418,main,0xac,100,done,sonnet,2,100,matched by sonnet
 func_020494c4,main,0x28,26,done,haiku,0,100,cloned from func_02014f98
-func_020494ec,main,0x198,309,todo,sonnet,0,,
+func_020494ec,main,0x198,309,queued,sonnet,0,,
 func_02049684,main,0x58,69,done,haiku,1,100,matched by haiku
 func_020496dc,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_020496e4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -3875,7 +3875,7 @@ func_020496f4,main,0x50,36,done,haiku,2,100,matched by sonnet
 func_02049744,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02049750,main,0x12,13,done,haiku,0,100,cloned from func_02005974
 func_02049764,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
-func_02049784,main,0x140,228,queued,sonnet,0,,
+func_02049784,main,0x140,228,fail_sonnet,sonnet,2,98.8,"Only the final 8-byte copy from data_020aff1c differs: mwcc loads [4] into r2 and [0] into r1, target loads [0] into r2 and [4] into r1. Tried about 1"
 func_020498c4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020498c8,main,0x70,76,done,sonnet,1,100,matched by haiku
 func_02049938,main,0x64,64,done,sonnet,2,100,matched by sonnet
@@ -3884,16 +3884,16 @@ func_020499fc,main,0x34,24,done,haiku,1,100,matched by haiku
 func_02049a30,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_02049a50,main,0x90,94,done,sonnet,1,100,matched by haiku
 func_02049ae0,main,0x90,96,done,sonnet,1,100,matched by haiku
-func_02049b70,main,0x184,228,queued,sonnet,0,,
+func_02049b70,main,0x184,228,done,sonnet,1,100,matched by haiku
 func_02049cf4,main,0x10,10,done,haiku,1,100,matched by haiku
 func_02049d04,main,0x48,42,done,haiku,0,100,cloned from func_0203e904
 func_02049d4c,main,0x38,34,done,haiku,0,100,cloned from func_0200ae7c
 func_02049d84,main,0x68,68,done,haiku,1,100,matched by haiku
-func_02049dec,main,0x178,234,queued,sonnet,0,,jumptable
+func_02049dec,main,0x178,234,done,sonnet,1,100,matched by haiku
 func_02049f64,main,0xa8,104,fail_sonnet,sonnet,2,97.6,"Only the tail stores differ: target loads w1 into r1 and w0 into r2, stores w1 to [r5] (a+0x84) and w0 to [r0] (a+0x80). mwcc swaps which register hol"
 func_0204a00c,main,0xc,6,done,haiku,0,100,cloned from func_02007c54
 func_0204a018,main,0xc,6,done,haiku,0,100,cloned from func_02007c54
-func_0204a024,main,0x118,173,queued,sonnet,0,,
+func_0204a024,main,0x118,173,done,sonnet,1,100,matched by haiku
 func_0204a13c,main,0xac,110,done,sonnet,2,100,matched by sonnet
 func_0204a1e8,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0204a1ec,main,0x38,30,done,haiku,1,100,matched by haiku
@@ -3903,7 +3903,7 @@ func_0204a23c,main,0x78,94,done,sonnet,1,100,matched by haiku
 func_0204a2b4,main,0x34,28,done,haiku,1,100,matched by haiku
 func_0204a2e8,main,0x34,28,done,haiku,0,100,cloned from func_0204a2b4
 func_0204a31c,main,0x44,42,done,haiku,2,100,matched by sonnet
-func_0204a360,main,0x14c,220,queued,sonnet,0,,
+func_0204a360,main,0x14c,220,fail_sonnet,sonnet,2,32.1,"No match after 8 tools/try runs. Compiling as C++ with a virtual-method object (slots 8 and 10) raised the score from 27.1% to 31.5%, and g.c reached "
 func_0204a4ac,main,0xbc,134,done,sonnet,1,100,matched by haiku
 func_0204a568,main,0x38,32,done,haiku,1,100,matched by haiku
 func_0204a5a0,main,0x20,16,done,haiku,1,100,matched by haiku
@@ -4011,28 +4011,28 @@ func_0204bea0,main,0x64,74,done,sonnet,1,100,matched by haiku
 func_0204bf04,main,0x7a,87,fail_sonnet,sonnet,2,7.4,"No match after 13 tools/try runs. mwcc puts len in r6 and n in r4, but the target has len in r4 and n in r6. The target also has an extra `adds r0,r4,"
 func_0204bf80,main,0x52,71,done,haiku,1,100,matched by haiku
 func_0204bfd4,main,0x82,113,done,sonnet,1,100,matched by haiku
-func_0204c058,main,0xee,213,queued,sonnet,0,,
+func_0204c058,main,0xee,213,fail_sonnet,sonnet,2,61.8,"Initializing off=0 before the func_0204dc5c call and declaring off before v fixed the stack slots (8.8% to 61.8%). Still unmatched: &tmp, count and i "
 func_0204c148,main,0x54,68,fail_sonnet,haiku,2,82.1,"Passing r as 2nd arg to func_0204dd14 removed the extra cmp. Still 0x50 vs 0x54: the target's shared ret=1 tail (bne end; b one; bne end at 0x4c, reus"
 func_0204c19c,main,0x64,66,done,sonnet,1,100,matched by haiku
 func_0204c200,main,0x58,58,done,haiku,1,100,matched by haiku
 func_0204c258,main,0x58,58,done,haiku,1,100,matched by haiku
-func_0204c2b0,main,0x14c,224,queued,sonnet,0,,
-func_0204c3fc,main,0x15c,270,queued,sonnet,0,,
+func_0204c2b0,main,0x14c,224,fail_sonnet,sonnet,2,67.8,"Not matched. The block is the constant 2 that target keeps live in r7 (movs r7,#2 after movs r2,#2). mwcc constant-propagates it in every variant I tr"
+func_0204c3fc,main,0x15c,270,fail_sonnet,sonnet,2,43.7,"No match. o.c fixes the prologue (flag=0 set once before the L003a label, n in r6, buf passed as an int8_t*) but the scan loop still differs. With the"
 func_0204c558,main,0x80,104,done,sonnet,1,100,matched by haiku
 func_0204c5d8,main,0xe8,156,fail_sonnet,sonnet,2,72.8,"No match; I went past the 15-run cap (about 25 tools/try runs). Best is o.c at 72.8%, and size now matches at 0xe8. The register allocation is still w"
-func_0204c6c0,main,0x21c,394,todo,sonnet,0,,
-func_0204c8dc,main,0x1b8,338,todo,sonnet,0,,
+func_0204c6c0,main,0x21c,394,queued,sonnet,0,,
+func_0204c8dc,main,0x1b8,338,queued,sonnet,0,,
 func_0204ca94,main,0x50,44,done,haiku,1,100,matched by haiku
-func_0204cae4,main,0xfa,175,queued,sonnet,0,,
+func_0204cae4,main,0xfa,175,done,sonnet,2,100,matched by sonnet
 func_0204cbe0,main,0x54,66,done,haiku,1,100,matched by haiku
 func_0204cc34,main,0xdc,144,done,sonnet,1,100,matched by haiku
-func_0204cd10,main,0x11e,189,queued,sonnet,0,,
+func_0204cd10,main,0x11e,189,done,sonnet,2,100,matched by sonnet
 func_0204ce30,main,0xb4,128,done,sonnet,1,100,matched by haiku
-func_0204cee4,main,0x234,428,todo,sonnet,0,,
-func_0204d118,main,0x188,250,queued,sonnet,0,,
-func_0204d2a0,main,0x218,334,todo,sonnet,0,,
+func_0204cee4,main,0x234,428,queued,sonnet,0,,
+func_0204d118,main,0x188,250,fail_sonnet,sonnet,2,36.2,"No match. Stack slot numbering for the spilled 0x304-based offsets differs from target (g2.c at 36.2%, same as f.c). Splitting the offsets into separa"
+func_0204d2a0,main,0x218,334,queued,sonnet,0,,
 func_0204d4b8,main,0x430,780,todo,opus,0,,
-func_0204d8e8,main,0xde,247,queued,sonnet,0,,jumptable
+func_0204d8e8,main,0xde,247,fail_sonnet,sonnet,2,54.5,Hit the 15-run cap without a match. Best is p.c at 54.5% (size 0xd0 vs 0xde). p.c wraps the loop body in a static inline void step(). It uses `{ func_
 func_0204d9c8,main,0x24,26,done,haiku,2,100,matched by haiku
 func_0204d9ec,main,0x10,12,done,haiku,1,100,matched by haiku
 func_0204d9fc,main,0x20,24,done,haiku,1,100,matched by haiku
@@ -4045,7 +4045,7 @@ func_0204db08,main,0x2c,28,done,haiku,2,100,matched by sonnet
 func_0204db34,main,0x28,20,done,haiku,1,100,matched by haiku
 func_0204db5c,main,0x20,34,done,haiku,1,100,matched by haiku
 func_0204db7c,main,0x14,14,done,haiku,1,100,matched by haiku
-func_0204db90,main,0x88,164,queued,sonnet,0,,jumptable
+func_0204db90,main,0x88,164,fail_sonnet,sonnet,2,80.9,"Not matched. t.c is closest (80.9%, size 0x84 vs 0x88). The compiler merges the two loads of &data_02139d6c, where the target does ldr r1,=data; ldr r"
 func_0204dc18,main,0x16,17,done,haiku,1,100,matched by haiku
 func_0204dc30,main,0x16,17,done,haiku,0,100,cloned from func_0204dc18
 func_0204dc48,main,0x12,13,done,haiku,1,100,matched by haiku
@@ -4086,25 +4086,25 @@ func_0204e128,main,0x20,24,done,haiku,1,100,matched by haiku
 func_0204e148,main,0x3e,43,done,haiku,2,100,matched by sonnet
 func_0204e188,main,0x34,36,done,haiku,2,100,matched by sonnet
 func_0204e1bc,main,0x20,24,done,haiku,1,100,matched by haiku
-func_0204e1dc,main,0x20c,235,queued,sonnet,0,,
+func_0204e1dc,main,0x20c,235,done,sonnet,1,100,matched by haiku
 func_0204e3e8,main,0xd8,84,done,sonnet,1,100,matched by haiku
 func_0204e4c0,main,0xd0,79,done,sonnet,1,100,matched by haiku
 func_0204e590,main,0x4,3,done,haiku,0,100,cloned from AutoloadCallback
 func_0204e594,main,0x44,20,done,haiku,1,100,matched by haiku
 func_0204e5d8,main,0x2c,28,done,haiku,1,100,matched by haiku
-func_0204e604,main,0x134,220,queued,sonnet,0,,
+func_0204e604,main,0x134,220,done,sonnet,2,100,matched by sonnet
 func_0204e738,main,0x38,38,done,haiku,2,100,matched by sonnet
 func_0204e770,main,0x3c,42,done,haiku,1,100,matched by haiku
 func_0204e7ac,main,0x48,50,done,haiku,2,100,matched by sonnet
 func_0204e7f4,main,0x58,52,todo,sonnet,0,,
 func_0204e84c,main,0x4e,59,fail_sonnet,haiku,2,25.6,"a.c is 0x4a bytes against 0x4e. The prologue differs: the target is push {r4-r7,lr} with a sub sp,#0x1c frame, and mine pushes r3 as well. The loop is"
 func_0204e89c,main,0x1a,15,done,haiku,1,100,matched by haiku
-func_0204e8b8,main,0x230,369,todo,sonnet,0,,
+func_0204e8b8,main,0x230,369,queued,sonnet,0,,
 func_0204eae8,main,0xcc,152,done,sonnet,1,100,matched by haiku
 func_0204ebb4,main,0x68,75,done,sonnet,1,100,matched by haiku
 func_0204ec1c,main,0x68,75,done,sonnet,1,100,matched by haiku
-func_0204ec84,main,0x120,186,queued,sonnet,0,,
-func_0204eda4,main,0x168,231,queued,sonnet,0,,
+func_0204ec84,main,0x120,186,done,sonnet,1,100,matched by haiku
+func_0204eda4,main,0x168,231,done,sonnet,2,100,matched by sonnet
 func_0204ef0c,main,0xd4,132,done,sonnet,2,100,matched by sonnet
 func_0204efe0,main,0x4c,46,done,haiku,2,100,matched by sonnet
 func_0204f02c,main,0x4c,46,done,haiku,0,100,cloned from func_0204efe0
@@ -4148,7 +4148,7 @@ func_0204f584,main,0xc0,118,fail_sonnet,sonnet,2,61.7,"Loop now matches by using
 func_0204f644,main,0x8,6,done,haiku,1,100,matched by haiku
 func_0204f64c,main,0x40,36,done,haiku,1,100,matched by haiku
 func_0204f68c,main,0x22,21,done,haiku,1,100,matched by haiku
-func_0204f6b0,main,0xbe,159,queued,sonnet,0,,
+func_0204f6b0,main,0xbe,159,fail_sonnet,sonnet,2,97.9,"Only diff is scheduling: target emits `ldr r3,[sp,#8]` (hi) before `str r5,[r0,#4]` (out[n+1]=nib); mine stores first. Variants tried (temp copy of hi"
 func_0204f770,main,0x26,35,done,haiku,1,100,matched by haiku
 func_0204f798,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
 func_0204f7a0,main,0x6,5,done,haiku,0,,
@@ -4181,7 +4181,7 @@ func_0204fb70,main,0xb0,100,fail_sonnet,sonnet,2,15.6,"No match; the run cap is 
 func_0204fc20,main,0x90,86,done,sonnet,1,100,matched by haiku
 func_0204fcb0,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0204fcbc,main,0x12,13,done,haiku,0,100,cloned from func_02005974
-func_0204fcd0,main,0x17c,206,queued,sonnet,0,,
+func_0204fcd0,main,0x17c,206,fail_sonnet,sonnet,2,97.9,"Same size (0x17c). The only diff is that the `ldr r1,[r5,#0x2c]` (f2c) load is scheduled 2 instructions earlier than the target, before `str r4,[r5,#0"
 func_0204fe4c,main,0x8f8,1808,todo,opus,0,,
 func_02050744,main,0x25c,586,todo,opus,0,,
 func_020509a0,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -4213,7 +4213,7 @@ func_02050dcc,main,0x10,10,done,haiku,0,100,cloned from func_0200d750
 func_02050ddc,main,0x34,34,done,haiku,0,100,cloned from func_020098f4
 func_02050e10,main,0x1c,18,done,opus,0,100,cloned from func_0200d5ec
 func_02050e2c,main,0x78,78,done,sonnet,2,100,matched by sonnet
-func_02050ea4,main,0x156,249,queued,sonnet,0,,
+func_02050ea4,main,0x156,249,fail_sonnet,sonnet,2,24.3,No match. I made one new attempt (j.c) and it scored the same 24.3%. Diffs left: c is stored to [sp] at entry in the target but later in ours. The len
 func_02050ffc,main,0x56,75,done,sonnet,1,100,matched by haiku
 func_02051054,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02051060,main,0x60,76,done,haiku,1,100,matched by haiku
@@ -4232,7 +4232,7 @@ func_0205140c,main,0x3c,38,done,haiku,0,100,cloned from func_02051388
 func_02051448,main,0x10,8,done,haiku,1,100,matched by haiku
 func_02051458,main,0x48,38,done,haiku,1,100,matched by haiku
 func_020514a0,main,0x48,44,done,haiku,1,100,matched by haiku
-func_020514e8,main,0x116,191,queued,sonnet,0,,
+func_020514e8,main,0x116,191,fail_sonnet,sonnet,2,54.3,"Used all 15 runs. Best is m.c (C++ mode, 54.3%, size 0x110 vs 0x116). Its signature takes cur as a one-pointer struct by value, plus tmp[2] to get the"
 func_02051600,main,0x1a,17,done,haiku,1,100,matched by haiku
 func_0205161c,main,0x90,98,fail_sonnet,sonnet,2,90.3,"Size matches (0x90). Remaining diffs: str r3,[sp] is emitted after the r6/r7 moves instead of before them, and the head pointer stays in r1 (adds r1,r"
 func_020516ac,main,0x24,48,done,haiku,0,100,cloned from func_02025b34
@@ -4257,10 +4257,10 @@ func_02051adc,main,0xc,6,done,haiku,0,100,cloned from func_02051054
 func_02051ae8,main,0x22,23,done,haiku,1,100,matched by haiku
 func_02051b0c,main,0xb4,120,fail_sonnet,sonnet,2,97.2,"Only the guard flag register allocation differs: target uses r2 for the value and r1 for the address, mine uses r1 and r0. Compiled as C++ with an RAI"
 func_02051bc0,main,0x2a,27,done,haiku,1,100,matched by haiku
-func_02051bec,main,0x1c8,320,todo,sonnet,0,,
+func_02051bec,main,0x1c8,320,queued,sonnet,0,,
 func_02051db4,main,0x3a,43,done,haiku,0,100,cloned from func_0200c600
 func_02051df0,main,0x7c,88,done,sonnet,2,100,matched by sonnet
-func_02051e6c,main,0x194,288,todo,sonnet,0,,
+func_02051e6c,main,0x194,288,queued,sonnet,0,,
 func_02052000,main,0x24,24,done,haiku,1,100,matched by haiku
 func_02052024,main,0x18,14,done,haiku,0,,
 func_0205203c,main,0x14,10,done,haiku,1,100,matched by haiku
@@ -4270,7 +4270,7 @@ func_0205208c,main,0x14,10,done,haiku,0,,
 func_020520a0,main,0x1c,16,done,haiku,0,100,cloned from func_0200b6a4
 func_020520bc,main,0x14,10,done,haiku,0,100,cloned from func_0205208c
 func_020520d0,main,0x3a,43,done,haiku,1,100,matched by haiku
-func_0205210c,main,0xfc,180,queued,sonnet,0,,
+func_0205210c,main,0xfc,180,fail_sonnet,sonnet,2,31.3,"Same size (0xfc), but s.b is cached in r4 and self lands in r5 (target: self in r4, struct re-read from the stack). Flag-struct setup (movs r2 / add r"
 func_02052208,main,0x3e,39,done,haiku,1,100,matched by haiku
 func_02052248,main,0x10,8,done,haiku,1,100,matched by haiku
 func_02052258,main,0x50,52,done,haiku,1,100,matched by haiku
@@ -4339,7 +4339,7 @@ func_0205359c,main,0x14,12,done,haiku,1,100,matched by haiku
 func_020535b0,main,0x5c,56,fail_sonnet,sonnet,2,95.7,"Only the stack frame differs: mine is push {r4,lr}/sub sp,#8, target is push {r3,r4,lr}/sub sp,#4. The by-value byte Tag temp should sit below sp, not"
 func_0205360c,main,0x36,29,fail_sonnet,haiku,2,70.4,"The 4th arg is a one-byte struct passed by value, which fixes the stack frame and the sp-4 round trip. The remaining diff is scheduling: the target do"
 func_02053644,main,0x2a,25,fail_sonnet,haiku,2,78.6,"s.c is size-exact at 0x2a. It declares `Flag fl; Flag *p=&fl;` at function top, sets `p->f=0` after computing b and e, then passes `*p`. The only diff"
-func_02053670,main,0xe2,175,queued,sonnet,0,,
+func_02053670,main,0xe2,175,fail_sonnet,sonnet,2,22.6,"Uses the min(&size,&n) idiom for the [sp,#4] slot. mwcc still spills end to [sp] and puts the flag in r6, where the target keeps end in r6 and the fla"
 func_02053754,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_02053758,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02053770,main,0x5a,55,fail_sonnet,sonnet,2,37.8,"Not matched, 37.8% after 9 tries/try runs. Passing the flag as a 1-byte struct by value (struct Fl{uint8_t b;}) reproduces the strb/ldrb/sp-4 copy. Th"
@@ -4360,7 +4360,7 @@ func_02053e28,main,0xd8,146,fail_sonnet,sonnet,2,14.4,No match after 7 tries. Be
 func_02053f00,main,0x10,10,done,haiku,0,,
 func_02053f10,main,0x34,34,done,haiku,0,100,cloned from func_0200b704
 func_02053f44,main,0x1c,18,done,opus,0,100,cloned from func_0200d5ec
-func_02053f60,main,0x1b4,246,queued,sonnet,0,,
+func_02053f60,main,0x1b4,246,fail_sonnet,sonnet,2,98.2,"Only the literal-pool order differs (target 0b68, 0213e01c, 0b54; mine 0b68, 0b54, 0213e01c, so r6 and r7 are swapped). Reordering externs, a struct o"
 func_02054114,main,0x30,24,done,haiku,1,100,matched by haiku
 func_02054144,main,0x30,24,done,haiku,0,100,cloned from func_02054114
 func_02054174,main,0x10,8,done,haiku,1,100,matched by haiku
@@ -4432,7 +4432,7 @@ func_020550c8,main,0x46,48,fail_sonnet,haiku,2,45.7,"Flag byte is staged through
 func_02055110,main,0x3c,40,done,haiku,1,100,matched by haiku
 func_0205514c,main,0x46,48,done,haiku,2,100,matched by sonnet
 func_02055194,main,0x8,6,done,haiku,0,100,cloned from func_ov002_02198694
-func_0205519c,main,0x18c,300,todo,sonnet,0,,
+func_0205519c,main,0x18c,300,queued,sonnet,0,,
 func_02055328,main,0x14,14,done,haiku,0,100,cloned from func_0200aa78
 func_0205533c,main,0xe,9,done,haiku,0,100,cloned from func_02013728
 func_0205534c,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -4698,7 +4698,7 @@ func_02056f50,main,0x28,22,done,haiku,1,100,matched by haiku
 func_02056f78,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02056f7c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02056f88,main,0x12,11,done,haiku,1,100,matched by haiku
-func_02056f9c,main,0x1ac,374,todo,sonnet,0,,
+func_02056f9c,main,0x1ac,374,queued,sonnet,0,,
 func_02057148,main,0x48,38,fail_sonnet,haiku,2,87.5,"Only store order differs: mwcc hoists `str r1,[r5,#0x30]` (w30=0, used to derive -1 via `p->w30 - 1`) ahead of the strb/vtable stores; target stores i"
 func_02057190,main,0xc,8,done,haiku,1,100,matched by haiku
 func_0205719c,main,0x34,26,fail_sonnet,haiku,4,16.1,"I couldn't get mwcc to emit ""movs r3,#0; subs r1,r3,#1"" without adding stack frame bytes. Plain C and const-ref Num helpers fold it to ""movs; mvns"", a"
@@ -4730,7 +4730,7 @@ func_020576c8,main,0xa,7,done,haiku,0,,
 func_020576d4,main,0x36,37,fail_sonnet,haiku,2,96.3,"Only the first two loads are in the wrong order: the target loads [r0,#4] before [r1,#4], and mwcc emits them the other way round. Reordering temps, i"
 func_0205770c,main,0xa,7,done,haiku,0,100,cloned from func_020203f0
 func_02057718,main,0x6,5,done,haiku,0,100,cloned from func_020696e0
-func_02057720,main,0xc0,162,queued,sonnet,0,,
+func_02057720,main,0xc0,162,fail_sonnet,sonnet,2,97.4,Only the opening flag store differs. The target keeps the constant 1 in r2 and the stack base in r1; mine puts the constant in r1 and the base in r0. 
 func_020577e0,main,0x68,80,fail_sonnet,sonnet,2,95.2,"Size and control flow match (0x68 bytes). The entry block still differs: the flag constant goes in r1 instead of r2, and the stack address in r0 inste"
 func_02057848,main,0x58,54,done,sonnet,1,100,matched by haiku
 func_020578a0,main,0xc,6,done,haiku,1,100,matched by haiku
@@ -4767,7 +4767,7 @@ func_02057db4,main,0x26,25,done,haiku,4,100,matched by sonnet
 func_02057ddc,main,0xc,6,done,haiku,0,100,cloned from func_0202041c
 func_02057de8,main,0xe,11,done,haiku,1,100,matched by haiku
 func_02057df8,main,0x250,386,todo,opus,0,,
-func_02058048,main,0x124,256,queued,sonnet,0,,
+func_02058048,main,0x124,256,fail_sonnet,sonnet,2,63.7,"No match. f.c scored 62.3%. A C++ lock-guard variant scored 63.7% but I did not save it. Stack slots stay swapped, with an 8-byte frame instead of 0x1"
 func_0205816c,main,0x1a,15,done,haiku,0,,
 func_02058188,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02058194,main,0x6,5,done,haiku,0,,
@@ -4786,18 +4786,18 @@ func_020583cc,main,0xb0,128,done,sonnet,1,100,matched by haiku
 func_0205847c,main,0x50,56,done,haiku,1,100,matched by haiku
 func_020584cc,main,0x94,88,fail_sonnet,sonnet,2,14.2,"Right size and op sequence, but mwcc picks sub sp,#8 and keeps the red temp in a register; target uses sub sp,#0x10, spills it to [sp+0xc], and holds "
 func_02058560,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
-func_02058564,main,0x184,270,queued,sonnet,0,,
+func_02058564,main,0x184,270,fail_sonnet,sonnet,2,37.6,"No match. d.c has the correct branch order and frame. j.c (34.8%) also matches the nonzero-path bitfield setup, which d.c doesn't. Two blockers remain"
 func_020586e8,main,0x3c,32,fail_sonnet,haiku,2,71.7,"Only the 5th-arg byte store differs. Target copies the object pointer (adds r1,r0,#0; adds r1,#0x24; strb r2,[r1]), but mwcc folds it to adds r0,#0x24"
 func_02058724,main,0x88,76,fail_sonnet,sonnet,2,21.4,"-1 always folds to mvns instead of target's subs r1,r0,#1. Tried literal -1, other zero types, and C++ Num helpers by const and non-const reference. O"
 func_020587ac,main,0x48,56,done,haiku,1,100,matched by haiku
 func_020587f4,main,0x4c,60,done,haiku,1,100,matched by haiku
 func_02058840,main,0x58,50,fail_sonnet,sonnet,2,20.5,No match after 5 of 15 tries/runs. The target looks like an inlined vector push_back that takes the element by pointer. mwcc keeps the Elem at sp+4 an
 func_02058898,main,0x58,50,fail_sonnet,sonnet,2,72.7,"Size and structure match (0x58). Remaining diffs are register allocation: the target keeps zero in r2, count in r5, cap in r3, and p in r0 for the els"
-func_020588f0,main,0x118,170,queued,sonnet,0,,
+func_020588f0,main,0x118,170,fail_sonnet,sonnet,2,9.6,"No match after 7 more runs (17 in total across both workers, so the cap is exceeded). Best is n.c at 4.3%, below the 9.6% from the earlier i.c. The fi"
 func_02058a08,main,0x62,55,fail_sonnet,sonnet,2,37,"No MATCH after 9 of 15 tries; best is h.c at 37.0% (size 0x64 vs 0x62). The target keeps the zero byte in r5 across the branch with push {r3,r4,r5,lr}"
 func_02058a6c,main,0x6,5,done,haiku,1,100,matched by haiku
 func_02058a74,main,0x29e,417,todo,opus,0,,
-func_02058d14,main,0x184,270,queued,sonnet,0,,
+func_02058d14,main,0x184,270,fail_sonnet,sonnet,2,38.7,"k2.c gets the frame right (push r3 / sub 0x18, buf[5] offsets) and the branch layout. It stays 0xc bytes short (0x178 vs 0x184) for two reasons. (1) m"
 func_02058e98,main,0x18,16,done,haiku,0,100,cloned from func_02009574
 func_02058eb0,main,0x1c,18,done,opus,0,100,cloned from func_0200d5ec
 func_02058ecc,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -4807,7 +4807,7 @@ func_02058f5c,main,0xd0,140,fail_sonnet,sonnet,2,46.2,"No match after 9 of 15 ru
 func_0205902c,main,0x10,10,done,haiku,0,100,cloned from func_0200d750
 func_0205903c,main,0x34,34,done,haiku,0,100,cloned from func_0200b704
 func_02059070,main,0x1c,18,done,opus,0,100,cloned from func_0200d5ec
-func_0205908c,main,0xc4,168,queued,sonnet,0,,
+func_0205908c,main,0xc4,168,done,sonnet,1,100,matched by haiku
 func_02059150,main,0x50,71,done,haiku,1,100,matched by haiku
 func_020591a0,main,0x54,75,done,haiku,1,100,matched by haiku
 func_020591f4,main,0x240,422,todo,opus,0,,
@@ -4864,14 +4864,14 @@ func_02059ecc,main,0xa8,94,fail_sonnet,sonnet,2,21.4,"No match after 13 tools/tr
 func_02059f74,main,0xb4,100,fail_sonnet,sonnet,2,53.9,"Size and frame match (0xb4). Register allocation differs: the target has o in r6, p in r7 and d/e in r4/r5, while mine uses fewer saved registers. The"
 func_0205a028,main,0x8c,82,done,sonnet,1,100,matched by haiku
 func_0205a0b4,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
-func_0205a0c0,main,0x19e,233,queued,sonnet,0,,
+func_0205a0c0,main,0x19e,233,fail_sonnet,sonnet,2,26.2,"No match. Best is still a.c (26.2%), which has an extra r3 push and a 0x58 frame. Declaring the locals in other orders gave the right 0x54 frame, but "
 func_0205a260,main,0x942,1809,todo,opus,0,,
 func_0205aba4,main,0x29c,614,todo,opus,0,,
 func_0205ae40,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0205ae44,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0205ae50,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0205ae54,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
-func_0205ae60,main,0x1ec,348,todo,sonnet,0,,jumptable
+func_0205ae60,main,0x1ec,348,queued,sonnet,0,,jumptable
 func_0205b04c,main,0x14,12,done,haiku,2,100,matched by sonnet
 func_0205b060,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0205b06c,main,0x6c,75,done,haiku,1,100,matched by haiku
@@ -4903,7 +4903,7 @@ func_0205bd48,main,0xf8,146,fail_sonnet,sonnet,2,33.5,"Not matched. The best att
 func_0205be40,main,0xa8,108,fail_sonnet,sonnet,2,97,d.c (97.0%) has correct semantics. The remaining diff is that the count loads into r2 instead of r0 and the r4-r5 difference is in r2 instead of r0. T
 func_0205bee8,main,0x14,12,done,haiku,0,100,cloned from func_020098e0
 func_0205befc,main,0x388,536,todo,opus,0,,
-func_0205c284,main,0x10c,176,queued,sonnet,0,,
+func_0205c284,main,0x10c,176,fail_sonnet,sonnet,2,16,"No match after 3 tools/try runs. func_0205c820 takes (iter*, m). Register assignment (target a=r4, c=r7) and frame size (0x78 vs 0x70) still differ."
 func_0205c390,main,0xe6,155,fail_sonnet,sonnet,2,90.4,"Not matched; I ran past the 15-run cap and stopped. x.c is C++ with an inline min returning a const int32_t& and (b<a)?b:a swapped to (a<b)?a:b, which"
 func_0205c478,main,0xce,141,fail_sonnet,sonnet,2,93.2,"Size matches (0xce). Remaining diff is register allocation and scheduling: flag in r6 and ac in r2 (mine differ), b->cur load order, and the temp regi"
 func_0205c548,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -4995,7 +4995,7 @@ func_0205dc80,main,0x5c,52,done,haiku,2,100,matched by sonnet
 func_0205dcdc,main,0x54,50,done,haiku,1,100,matched by haiku
 func_0205dd30,main,0xf0,154,fail_sonnet,sonnet,2,96.7,"Only the tail scheduling differs: target loads [sp] into r2 after the data_0213df20 load and the ldrb, but mine hoists it. func_02052be0 takes the fie"
 func_0205de20,main,0xe8,152,fail_sonnet,sonnet,2,88.4,Size and call sequence match. The four copy-pair-plus-flag blocks still differ in load order and register choice: mwcc puts the tested value in r1 and
-func_0205df08,main,0x216,369,todo,sonnet,0,,
+func_0205df08,main,0x216,369,queued,sonnet,0,,
 func_0205e120,main,0x3c,38,done,haiku,1,100,matched by haiku
 func_0205e15c,main,0x40,42,done,haiku,1,100,matched by haiku
 func_0205e19c,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -5044,7 +5044,7 @@ func_0205ed8c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0205ed98,main,0x88,80,fail_sonnet,sonnet,2,11.4,"No match. Best is still Haiku's f.c at 11.4%; my 6 attempts (a, b, c, d, e, g, f2.c) scored 5.9-10.3%. b.c (Vec2 a as r2/r3, plain int c,d,e,f, u8 g,h"
 func_0205ee20,main,0x88,80,fail_sonnet,sonnet,2,80.1,"No MATCH after 12 tools/try runs; best is j.c at 80.1% with the correct 0x88 size and 0x3c frame. The signature is (p, V2 pos, V2 size, e, f, u8 g, u8"
 func_0205eea8,main,0x68,64,done,sonnet,1,100,matched by haiku
-func_0205ef10,main,0x1c0,305,todo,sonnet,0,,
+func_0205ef10,main,0x1c0,305,queued,sonnet,0,,
 func_0205f0d0,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0205f0d4,main,0xa4,102,fail_sonnet,sonnet,2,51.8,Fast path keeps end in r0 instead of r1 and doesn't reload v->size; frame is 0x10 with an extra r3 push instead of 0xc; the sp-4 byte-temp store isn't
 func_0205f178,main,0x66,59,done,sonnet,2,100,matched by sonnet
@@ -5076,7 +5076,7 @@ func_0205f52c,main,0x48,50,fail_sonnet,haiku,2,45.8,No match after 15 runs. w.c 
 func_0205f574,main,0x50,40,done,haiku,1,100,matched by haiku
 func_0205f5c4,main,0x48,38,done,haiku,1,100,matched by haiku
 func_0205f60c,main,0x48,38,done,haiku,0,100,cloned from func_0205f5c4
-func_0205f654,main,0xf8,158,queued,sonnet,0,,
+func_0205f654,main,0xf8,158,fail_sonnet,sonnet,2,45.6,"No match after 8 tries of my own (plus the Haiku worker's 9). The compiler folds `0 & 0xfffffcff` and `0xfffffcff>>22` whatever I do (locals, static i"
 func_0205f74c,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0205f750,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0205f754,main,0x40,39,done,haiku,1,100,matched by haiku
@@ -5126,12 +5126,12 @@ func_0205ff60,main,0x24,24,done,haiku,0,100,cloned from func_02058380
 func_0205ff84,main,0x28,28,done,haiku,0,100,cloned from func_020583a4
 func_0205ffac,main,0x24,20,done,haiku,0,,
 func_0205ffd0,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
-func_0205ffd8,main,0xdc,198,queued,sonnet,0,,jumptable
+func_0205ffd8,main,0xdc,198,done,sonnet,2,100,matched by sonnet
 func_020600b4,main,0x4a,64,done,haiku,1,100,matched by haiku
 func_02060100,main,0x90,88,fail_sonnet,sonnet,2,26.4,"n1.c fixes the load order (declare r4,r5,bit up front, assign hi, lo, then bit). Still differs on the OR/constant-materialization order in the (r4|r5|"
 func_02060190,main,0xc,6,done,haiku,1,100,matched by haiku
 func_0206019c,main,0xc,6,done,haiku,0,100,cloned from func_02060190
-func_020601a8,main,0x1a0,312,todo,sonnet,0,,
+func_020601a8,main,0x1a0,312,queued,sonnet,0,,
 func_02060348,main,0xe0,154,fail_sonnet,sonnet,2,42.4,"Path A register allocation differs: the target keeps a/b in r2/r3 and src/dst in r5/r1, while mine uses r1/r2 and r4/r5, and the src/dst/size loads ar"
 func_02060428,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0206042c,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
@@ -5155,7 +5155,7 @@ func_02060610,main,0x24,20,done,haiku,0,100,cloned from func_02056b10
 func_02060634,main,0x50,50,done,haiku,1,100,matched by haiku
 func_02060684,main,0x6c,64,done,sonnet,2,100,matched by sonnet
 func_020606f0,main,0xc0,114,done,sonnet,1,100,matched by haiku
-func_020607b0,main,0xc0,114,todo,sonnet,0,,
+func_020607b0,main,0xc0,114,queued,sonnet,0,,
 func_02060870,main,0xc8,118,done,sonnet,1,100,matched by haiku
 func_02060938,main,0x14,12,done,haiku,1,100,matched by haiku
 func_0206094c,main,0x30,32,fail_sonnet,haiku,2,83.3,"Two diffs remain. The flags read-modify-write uses r1 where the target uses r2. The final call loads r0=[0x54] before r1/r2=[0x34]/[0x38], but the tar"
@@ -5229,7 +5229,7 @@ func_02060ecc,main,0x2c,24,done,haiku,1,100,matched by haiku
 func_02060ef8,main,0x24,20,done,haiku,0,100,cloned from func_02056b10
 func_02060f1c,main,0x50,50,done,haiku,1,100,matched by haiku
 func_02060f6c,main,0x94,84,done,sonnet,1,100,matched by haiku
-func_02061000,main,0x94,84,todo,sonnet,0,,
+func_02061000,main,0x94,84,queued,sonnet,0,,
 func_02061094,main,0x94,84,done,sonnet,0,100,cloned from func_02060f6c
 func_02061128,main,0x94,84,todo,sonnet,0,,
 func_020611bc,main,0xb8,104,done,sonnet,1,100,matched by haiku
@@ -5257,7 +5257,7 @@ func_02061370,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_02061374,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_02061378,main,0x24,27,done,haiku,1,100,matched by haiku
 func_0206139c,main,0x46,48,done,haiku,2,100,matched by sonnet
-func_020613e4,main,0x120,209,queued,sonnet,0,,
+func_020613e4,main,0x120,209,fail_sonnet,sonnet,2,95.1,Same size (0x120). Remaining diffs are register allocation only: the target keeps the loop char in r2 and the vtable fn pointer in r3 (r2 holds the su
 func_02061504,main,0x20,16,done,haiku,0,,
 func_02061524,main,0x6,5,done,haiku,0,100,cloned from func_0204f0bc
 func_0206152c,main,0xc,8,done,haiku,1,100,matched by haiku
@@ -5289,7 +5289,7 @@ func_02061a7c,main,0x30,43,done,haiku,1,100,matched by haiku
 func_02061aac,main,0x30,43,done,haiku,1,100,matched by haiku
 func_02061adc,main,0x38,50,done,haiku,1,100,matched by haiku
 func_02061b14,main,0x70,82,fail_sonnet,sonnet,2,25,"Only 4-byte-or-larger by-value structs, with different splits tried, reproduce the push {r0-r3} prologue and the f24 stack-copy sequence. With `e` cac"
-func_02061b84,main,0xec,178,queued,sonnet,0,,
+func_02061b84,main,0xec,178,done,sonnet,2,100,matched by sonnet
 func_02061c70,main,0xac,128,done,sonnet,0,100,cloned from func_02014fc0
 func_02061d1c,main,0x30,36,done,haiku,1,100,matched by haiku
 func_02061d4c,main,0x36,41,done,haiku,1,100,matched by haiku
@@ -5348,8 +5348,8 @@ func_02062c44,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_02062c50,main,0x396,665,todo,opus,0,,
 func_02062fe8,main,0x8,6,done,haiku,1,100,matched by haiku
 func_02062ff0,main,0x4c,58,done,haiku,1,100,matched by haiku
-func_0206303c,main,0xc8,166,queued,sonnet,0,,
-func_02063104,main,0xf0,164,queued,sonnet,0,,
+func_0206303c,main,0xc8,166,done,sonnet,1,100,matched by haiku
+func_02063104,main,0xf0,164,fail_sonnet,sonnet,2,95.8,"Same size (0xf0), 95.8%. Only blocker is a register swap: the target holds the decoder pointer in r5 and the 0x4c field in r6, mine has them reversed."
 func_020631f4,main,0x9e,115,done,sonnet,2,100,matched by sonnet
 func_02063294,main,0xbc,136,fail_sonnet,sonnet,2,87.2,"Size matches (0xbc). Remaining diff is register allocation only: mwcc puts p in r5, count in r6 and the p+off pointer in r7; target wants p in r6, the"
 func_02063350,main,0x8c,106,fail_sonnet,sonnet,2,98.6,"Only the loop body differs. Target loads the element into r1 (`ldr r1,[r1,r0]; ldr r0,[r1,#0x10]`), but mine uses r0 for both loads. I tried temp vari"
@@ -5381,7 +5381,7 @@ func_02063c94,main,0x6c,70,done,sonnet,0,100,cloned from func_02063c28
 func_02063d00,main,0x254,444,todo,opus,0,,
 func_02063f54,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02063f58,main,0x124,250,fail_sonnet,sonnet,2,97.6,"Register allocation in the three pointer-array loops: target loads the element into r1 and tests r1, mine loads into r0. Variants tried without effect"
-func_0206407c,main,0x128,254,queued,sonnet,0,,
+func_0206407c,main,0x128,254,fail_sonnet,sonnet,2,97.6,Only mismatch is the register for the array-element load in the three pointer-array loops. Target uses r1 and mine uses r0. Six more variants (direct 
 func_020641a4,main,0x124,250,todo,sonnet,0,,
 func_020642c8,main,0x20,20,fail_sonnet,haiku,2,93.8,"Only diff is register allocation: target loads the slot value into r1 (ldr r1,[r0,r4]); mwcc uses r0. Tried byte-offset, struct, unsigned index, local"
 func_020642e8,main,0xa8,110,done,sonnet,2,100,matched by sonnet
@@ -5399,7 +5399,7 @@ func_02064528,main,0x44,48,done,haiku,1,100,matched by haiku
 func_0206456c,main,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
 func_02064574,main,0x324,464,todo,opus,0,,
 func_02064898,main,0xe0,150,fail_sonnet,sonnet,2,38.4,"Size matches (0xe0) and the struct copy chain is right via by-value inline wrappers; blocked on register allocation (target keeps a in r7, b/c/d on st"
-func_02064978,main,0x130,196,queued,sonnet,0,,
+func_02064978,main,0x130,196,fail_sonnet,sonnet,2,9.6,"No match. I ran tools/try twice (d.c and a spill-forcing variant h.c), both 9.6%. The target keeps a 3-word stack spill (sub sp,#0xc, push r4-r7) and "
 func_02064aa8,main,0x4,4,done,haiku,0,,
 func_02064aac,main,0x8,6,done,haiku,0,100,cloned from func_0201c218
 func_02064ab4,main,0x18,16,done,haiku,1,100,matched by haiku
@@ -5411,14 +5411,14 @@ func_02064b40,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_02064b44,main,0x23c,485,todo,opus,0,,jumptable
 func_02064d80,main,0x90,80,fail_sonnet,sonnet,2,20.8,"Struct-based a.c is 0x8c vs 0x90. It pushes {r3-r7,lr} and keeps p in r0, where the target pushes {r4-r7}, moves p to r4 and reuses r0 as the offset. "
 func_02064e10,main,0x44,32,done,haiku,1,100,matched by haiku
-func_02064e54,main,0x130,204,queued,sonnet,0,,
+func_02064e54,main,0x130,204,done,sonnet,1,100,matched by haiku
 func_02064f84,main,0x10,10,done,haiku,1,100,matched by haiku
 func_02064f94,main,0x88,70,fail_sonnet,sonnet,2,21.3,"Size matches (0x88) but register allocation differs. mwcc copies i into r3 and puts the i*0x1c result in r3, with the constant 1 in r2; the target use"
 func_0206501c,main,0x30,24,done,haiku,1,100,matched by haiku
 func_0206504c,main,0x24c,348,todo,opus,0,,
 func_02065298,main,0x6a,59,done,sonnet,1,100,matched by haiku
 func_02065304,main,0x72,71,done,sonnet,2,100,matched by sonnet
-func_02065378,main,0x1b0,240,queued,sonnet,0,,
+func_02065378,main,0x1b0,240,fail_sonnet,sonnet,2,15,"No match. Best is o.c at 15.0% (size 0x1a8 vs 0x1b0). It uses bitfield structs, else-form q=0, and volatile idx/value to force a spill. The target spi"
 func_02065528,main,0x58,50,done,haiku,1,100,matched by haiku
 func_02065580,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02065584,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -5446,7 +5446,7 @@ func_0206591c,main,0xda,149,fail_sonnet,sonnet,2,14.2,"No match. The byte store/
 func_020659f8,main,0x2a,27,todo,haiku,0,,v54 4.2% work/v54/func_020659f8.c
 func_02065a24,main,0x34,34,done,haiku,0,100,cloned from func_020098f4
 func_02065a58,main,0x80,84,done,sonnet,0,100,cloned from func_ov002_0219f9b8
-func_02065ad8,main,0x102,183,queued,sonnet,0,,
+func_02065ad8,main,0x102,183,fail_sonnet,sonnet,2,21.7,"No match; I ran tools/try about 20 times, over the cap of 15. Best is p.c at 21.7%. C mode with a by-value struct {u8 v;} param reproduces the sp-4 by"
 func_02065bdc,main,0x36,49,done,haiku,1,100,matched by haiku
 func_02065c14,main,0x46,59,done,haiku,1,100,matched by haiku
 func_02065c5c,main,0x14,12,done,haiku,0,100,cloned from func_020098e0
@@ -5547,7 +5547,7 @@ func_02066c7c,main,0x58,66,todo,sonnet,0,,
 func_02066cd4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02066cd8,main,0x264,360,todo,opus,0,,
 func_02066f3c,main,0x1b4,318,fail_sonnet,sonnet,2,3.7,"No match. I ran tools/try 3 times; the best score is still the Haiku f.c at 3.7%, and my rewrite a.c scored 3.2%. The frame is the main gap: the targe"
-func_020670f0,main,0x130,190,queued,sonnet,0,,
+func_020670f0,main,0x130,190,fail_sonnet,sonnet,2,9.2,"No match. Typed-struct and while-loop variants (f, g, h, i) scored 6.5% and did not beat c.c at 9.2%. mwcc hoists the count load, spills r6 instead of"
 func_02067220,main,0xa8,97,done,sonnet,0,100,cloned from func_0206660c
 func_020672c8,main,0x48,46,done,haiku,0,100,cloned from func_020666b4
 func_02067310,main,0x4c,50,done,haiku,0,100,cloned from func_020666fc
@@ -5574,7 +5574,7 @@ func_02067888,main,0x58,66,todo,sonnet,0,,
 func_020678e0,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020678e4,main,0x264,360,todo,opus,0,,
 func_02067b48,main,0x1b4,318,todo,sonnet,0,,
-func_02067cfc,main,0x174,226,queued,sonnet,0,,
+func_02067cfc,main,0x174,226,fail_sonnet,sonnet,2,12.4,"No MATCH. I ran tools/try twice on top of the Haiku run's 9, and neither variant beat g.c at 12.4%. A bitfield version of the second loop (h2.c) score"
 func_02067e70,main,0x10,12,done,haiku,1,100,matched by haiku
 func_02067e80,main,0x6c,58,fail_sonnet,sonnet,2,43.5,"Regalloc mismatch: target spills a1 to [sp] (a0 in r7, a6/a7 in r5/r4 under register pressure) while mwcc keeps a1 in a callee-saved register; spill v"
 func_02067eec,main,0x64,75,done,sonnet,1,100,matched by haiku
@@ -5641,8 +5641,8 @@ func_02068db8,main,0xc,9,done,haiku,0,100,cloned from func_02032034
 func_02068dc4,main,0xc,9,done,haiku,0,100,cloned from func_02032028
 func_02068dd0,main,0xc,9,done,haiku,0,100,cloned from func_02065de0
 func_02068ddc,main,0x3a,42,done,haiku,1,100,matched by haiku
-func_02068e18,main,0x13a,210,queued,sonnet,0,,
-func_02068f54,main,0xce,157,queued,sonnet,0,,
+func_02068e18,main,0x13a,210,fail_sonnet,sonnet,2,48.7,No match. a.c is the 48.4% version (a 48.7% variant was overwritten). Remaining diffs: the dummy tag byte sits at sp+0x12 in the target but sp+0x11 in
+func_02068f54,main,0xce,157,fail_sonnet,sonnet,2,91.7,w.c is the same size as the target (0xce) and differs only in r4/r5 allocation: e/b come out as r4/r5 where the target has r5/r4. x.c (declaration ord
 func_02069024,main,0x18,16,done,haiku,0,,
 func_0206903c,main,0x1c,18,done,opus,0,100,cloned from func_0200d5ec
 func_02069058,main,0x80,84,done,sonnet,0,100,cloned from func_ov002_0219f9b8
@@ -5705,19 +5705,19 @@ func_02069828,main,0x1e,21,fail_sonnet,haiku,2,93.3,"Size matches (0x1e), but th
 func_02069848,main,0x40,49,fail_sonnet,haiku,2,84.4,C++ virtual-class version matches control flow and vtable slots; remaining diff is register allocation (mwcc uses r1 for the address and vtable load a
 func_02069888,main,0x72,90,fail_sonnet,sonnet,2,15.3,"Not matched, and I stopped after about 11 of 15 tools/try runs. The 15.3% best was an earlier by-value struct version, which I overwrote in a.c. The f"
 func_020698fc,main,0x7c,89,fail_sonnet,sonnet,2,90.3,"The only remaining diff is that the target copies the node pointer into r1 (adds r1,r5,#0) and loads the vtable from r1 (ldr r2,[r1]); mine loads it f"
-func_02069978,main,0x1a0,284,todo,sonnet,0,,
+func_02069978,main,0x1a0,284,queued,sonnet,0,,
 func_02069b18,main,0x5a,71,fail_sonnet,sonnet,2,92.2,"In the equal-key branch the target reuses the 5th-arg stack slot for n->c0 in the second call. mwcc reloads it from [r4] instead, and the r1=k move is"
 func_02069b74,main,0x1c,34,done,haiku,1,100,matched by haiku
 func_02069b90,main,0x1c,34,done,haiku,0,100,cloned from func_020427d8
-func_02069bac,main,0x114,197,queued,sonnet,0,,
-func_02069cc0,main,0x10c,274,todo,sonnet,0,,jumptable
+func_02069bac,main,0x114,197,fail_sonnet,sonnet,2,67,"Size and stack layout now match (0x114). The one remaining diff is the vtable call: we emit an extra ""adds r2,r1,#0"" before ""ldr r2,[r2]"", where the t"
+func_02069cc0,main,0x10c,274,queued,sonnet,0,,jumptable
 func_02069dcc,main,0x1a,19,done,haiku,2,100,matched by sonnet
 func_02069de8,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
-func_02069e08,main,0x194,248,queued,sonnet,0,,
+func_02069e08,main,0x194,248,fail_sonnet,sonnet,2,97,"No MATCH after 14 of 15 runs. d4.c is C++ (virtual calls via VO and VS structs, S8 struct passed by value to func_02069f9c) and reaches 97.0% at the s"
 func_02069f9c,main,0x38,34,done,haiku,0,100,cloned from func_0200ae7c
 func_02069fd4,main,0x2a4,454,todo,opus,0,,
 func_0206a278,main,0xbc,133,fail_sonnet,sonnet,2,94.7,"Remaining diffs: tst mask ordering (target movs r2,#1 before ldr [q+4]) and vtable call (target adds r0,r4 then ldr r1,[r0]; mine ldr r1,[r4] first). "
-func_0206a334,main,0x158,224,queued,sonnet,0,,
+func_0206a334,main,0x158,224,fail_sonnet,sonnet,2,32,"No match, best 32.0% (g.c; d.c is 31.7%). func_02069bac takes a 16-byte struct by value ({Pair x,y}), which gives the same ldm/stm temp at sp-0xc as t"
 func_0206a48c,main,0x4c,47,fail_sonnet,haiku,2,94.7,"u.c is C++ with a virtual v5() call. It fixes the vtable-load ordering that g.c got wrong, but the data_020b1b68 copy now loads r1/r2 swapped (b befor"
 func_0206a4d8,main,0x28,22,done,haiku,0,100,cloned from func_0202157c
 func_0206a500,main,0x10,8,done,haiku,0,100,cloned from func_0202169c
@@ -5774,11 +5774,11 @@ func_0206b048,main,0x20,24,done,haiku,0,100,cloned from func_0206b014
 func_0206b068,main,0x12,13,done,haiku,0,100,cloned from func_0206b034
 func_0206b07c,main,0xe0,150,done,sonnet,2,100,matched by sonnet
 func_0206b15c,main,0x2c,30,done,haiku,2,100,matched by sonnet
-func_0206b188,main,0xee,191,queued,sonnet,0,,
+func_0206b188,main,0xee,191,fail_sonnet,sonnet,2,13.9,"Not matched. Using an int64 compare for the zero check fixed the xor/orr form (d.c), but the score fell to 6.7%. Register allocation still differs: th"
 func_0206b278,main,0x20a,363,todo,opus,0,,
 func_0206b484,main,0xc6,139,fail_sonnet,sonnet,2,27.3,"Frame is 0x40 vs target 0x58; the constant clip rects c and d are not kept on the stack, and p lands in r5 instead of r6."
 func_0206b54c,main,0x654,1098,todo,opus,0,,
-func_0206bba0,main,0x198,268,queued,sonnet,0,,
+func_0206bba0,main,0x198,268,fail_sonnet,sonnet,2,15.1,"Best is q.c. It uses a Pt-by-value variadic signature with a local Pt copy and n reused as d. Inlining ok(Rect, Rect) by value adds extra rect copies,"
 func_0206bd38,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
 func_0206bd44,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0206bd48,main,0xc,8,done,haiku,0,100,cloned from func_02035e30
@@ -5845,14 +5845,14 @@ func_0206cf14,main,0x14,8,done,haiku,2,100,matched by sonnet
 func_0206cf28,main,0x3c,34,done,haiku,1,100,matched by haiku
 func_0206cf64,main,0x68,56,done,haiku,2,100,matched by sonnet
 func_0206cfcc,main,0x14,8,done,haiku,0,100,cloned from func_0206cf14
-func_0206cfe0,main,0x138,182,queued,sonnet,0,,
+func_0206cfe0,main,0x138,182,done,sonnet,2,100,matched by sonnet
 func_0206d118,main,0x6,5,done,haiku,1,100,matched by haiku
 func_0206d120,main,0x68,66,done,sonnet,1,100,matched by haiku
 func_0206d188,main,0xcc,114,done,sonnet,1,100,matched by haiku
 func_0206d254,main,0x14,8,done,haiku,0,100,cloned from func_0206cf14
 func_0206d268,main,0x1c,18,done,haiku,1,100,matched by haiku
 func_0206d284,main,0x14,8,done,haiku,0,100,cloned from func_0206cf14
-func_0206d298,main,0x11c,172,queued,sonnet,0,,
+func_0206d298,main,0x11c,172,done,sonnet,2,100,matched by sonnet
 func_0206d3b4,main,0x20,20,done,haiku,0,100,cloned from func_0206c270
 func_0206d3d4,main,0xa8,104,fail_sonnet,sonnet,2,10.7,"No match. mwcc keeps 0x321c in r6 only when written as p + k - X, which gives 0xa0 bytes. Grouping p + (k - X) makes it fold the constant to 0x31c0 + "
 func_0206d47c,main,0x40,34,done,haiku,1,100,matched by haiku
@@ -5878,15 +5878,15 @@ func_0206da6c,main,0xa,7,done,haiku,0,100,cloned from func_02057ae8
 func_0206da78,main,0x10,6,done,haiku,1,100,matched by haiku
 func_0206da88,main,0x4,4,done,haiku,0,100,cloned from func_0205cbcc
 func_0206da8c,main,0x8,6,done,haiku,0,100,cloned from func_0201ce20
-func_0206da94,main,0x1b0,286,todo,sonnet,0,,
+func_0206da94,main,0x1b0,286,queued,sonnet,0,,
 func_0206dc44,main,0xe0,134,done,sonnet,1,100,matched by haiku
 func_0206dd24,main,0x40,38,done,haiku,1,100,matched by haiku
 func_0206dd64,main,0x44,42,done,haiku,1,100,matched by haiku
 func_0206dda8,main,0x52,47,fail_sonnet,haiku,2,39,"No match in 7 runs. mwcc loads the idx first and then does the multiply, then loads the base (self+0x24). The target loads the base before the multipl"
 func_0206ddfc,main,0x38,32,done,haiku,1,100,matched by haiku
-func_0206de34,main,0x148,218,queued,sonnet,0,,
+func_0206de34,main,0x148,218,fail_sonnet,sonnet,2,62.7,"No match, and I went over the 15-run tools/try cap by brute-forcing declaration orders. Best is g.c at 62.7%. The 0x28 frame now matches, and I got th"
 func_0206df7c,main,0x20,22,done,haiku,1,100,matched by haiku
-func_0206df9c,main,0x168,208,queued,sonnet,0,,
+func_0206df9c,main,0x168,208,fail_sonnet,sonnet,2,18.6,"Not matched. My own struct-based variant (h.c) scored lower at 13.9%. The compiler keeps the 0x280 constant in a register, so the output has a 0x10 fr"
 func_0206e104,main,0xb8,144,done,sonnet,1,100,matched by haiku
 func_0206e1bc,main,0xc0,150,done,sonnet,1,100,matched by haiku
 func_0206e27c,main,0xc,6,done,haiku,0,100,cloned from func_02043b74
@@ -5895,9 +5895,9 @@ func_0206e2a4,main,0x10,6,done,haiku,1,100,matched by haiku
 func_0206e2b4,main,0xd6,141,fail_sonnet,sonnet,2,31.8,"No match; best is f.c at 31.8% (size 0xbc vs 0xd6), compiled as C++ with virtual calls on p and all locals in one Frame struct. Remaining mismatches: "
 func_0206e38c,main,0x6a,73,fail_sonnet,sonnet,2,95.3,"Size matches (0x6a). Only the loop body differs: target does ldr r0,[sp,#0xc]; ldrb r6,[r0]; adds r0,r0,#1, but we get ldr r6; adds r0,r6,#1; ldrb r6,"
 func_0206e3f8,main,0x3c,34,done,haiku,1,100,matched by haiku
-func_0206e434,main,0x138,226,queued,sonnet,0,,
-func_0206e56c,main,0x1f8,348,todo,sonnet,0,,
-func_0206e764,main,0x10e,189,queued,sonnet,0,,
+func_0206e434,main,0x138,226,fail_sonnet,sonnet,2,24.7,"No match after 5 tries. My variants (a.c, b.c, c.c, d.c) scored 24.4%, 8.0%, 8.0% and 3.5%, so f.c stays best. Mine get a 0x10–0x18 frame and use r7. "
+func_0206e56c,main,0x1f8,348,queued,sonnet,0,,
+func_0206e764,main,0x10e,189,fail_sonnet,sonnet,2,16.3,"Signature is right: (Ring*, int8_t *cur, It beg by value in r2/r3, It end on the stack, with It = {uint8_t *p; uint32_t x}). Still wrong: the target's"
 func_0206e874,main,0x2c,30,done,haiku,1,100,matched by haiku
 func_0206e8a0,main,0xa4,98,done,sonnet,1,100,matched by haiku
 func_0206e944,main,0x38,38,done,haiku,1,100,matched by haiku
@@ -5940,7 +5940,7 @@ func_0206efd0,main,0x2c,28,done,haiku,1,100,matched by haiku
 func_0206effc,main,0x30,28,done,haiku,1,100,matched by haiku
 func_0206f02c,main,0x60,58,done,haiku,1,100,matched by haiku
 func_0206f08c,main,0x28,20,done,haiku,1,100,matched by haiku
-func_0206f0b4,main,0x120,178,queued,sonnet,0,,
+func_0206f0b4,main,0x120,178,done,sonnet,1,100,matched by haiku
 func_0206f1d4,main,0x30,26,done,haiku,1,100,matched by haiku
 func_0206f204,main,0x28,24,done,haiku,1,100,matched by haiku
 func_0206f22c,main,0x24,24,done,haiku,1,100,matched by haiku
@@ -6018,9 +6018,9 @@ func_0206fc24,main,0x4c,44,done,haiku,1,100,matched by haiku
 func_0206fc70,main,0x54,50,done,haiku,1,100,matched by haiku
 func_0206fcc4,main,0x3c,38,fail_sonnet,haiku,2,88.3,"Target copies the alloc result r0 into r1 (adds r1, r0, #0) before the null test and stores through r1. Mine does cmp r0, #0 and stores through r0. No"
 func_0206fd00,main,0x1c,14,done,haiku,1,100,matched by haiku
-func_0206fd1c,main,0x124,236,queued,sonnet,0,,jumptable
+func_0206fd1c,main,0x124,236,done,sonnet,2,100,matched by sonnet
 func_0206fe40,main,0x264,492,todo,opus,0,,jumptable
-func_020700a4,main,0x236,409,todo,sonnet,0,,
+func_020700a4,main,0x236,409,queued,sonnet,0,,
 func_020702dc,main,0x96,107,fail_sonnet,sonnet,2,72.7,"Size matches (0x96) and the control flow matches. The only diff is register coloring: the target has call result=r6 and key ptr=r3, but mine has them "
 func_02070374,main,0x56,75,done,sonnet,0,100,cloned from func_02052b88
 func_020703cc,main,0x6c,76,done,sonnet,2,100,matched by sonnet
@@ -6033,7 +6033,7 @@ func_0207051c,main,0x16,15,done,haiku,1,100,matched by haiku
 func_02070534,main,0x16,15,done,haiku,1,100,matched by haiku
 func_0207054c,main,0x16,15,done,haiku,0,100,cloned from func_02070534
 func_02070564,main,0x70,72,done,sonnet,1,100,matched by haiku
-func_020705d4,main,0x224,342,todo,sonnet,0,,
+func_020705d4,main,0x224,342,queued,sonnet,0,,
 func_020707f8,main,0x20,22,done,haiku,1,100,matched by haiku
 func_02070818,main,0x38,38,done,haiku,1,100,matched by haiku
 func_02070850,main,0xa8,110,fail_sonnet,sonnet,2,29.2,The 0x1c frame and the volatile spills of ctx+4 and the node temp now match. The size is still 0x9c against 0xa8. mwcc puts ctx in r5 and out in r6 in
@@ -6072,7 +6072,7 @@ func_02070dfc,main,0x20,18,done,haiku,1,100,matched by haiku
 func_02070e1c,main,0x24,27,done,haiku,1,100,matched by haiku
 func_02070e40,main,0xb0,108,fail_sonnet,sonnet,2,8.5,"I ran tools/try once, on the C++ version h.c, and it gave 8.5%. Still unmatched: the sp-4 byte-through-temp for the by-value fill arg, the zero-init o"
 func_02070ef0,main,0x8e,89,fail_sonnet,sonnet,2,26.1,"Not matched after 3 further tries (14.1%, 10.6%, ~10%). Blocked on the 0x18-byte frame with x and tmp spilled, and the byte arg round-tripped through "
-func_02070f80,main,0x1ec,380,todo,sonnet,0,,
+func_02070f80,main,0x1ec,380,queued,sonnet,0,,
 func_0207116c,main,0x4,4,done,haiku,0,100,cloned from func_0203915c
 func_02071170,main,0x16,14,done,haiku,1,100,matched by haiku
 func_02071188,main,0x16,14,done,haiku,1,100,matched by haiku
@@ -6095,7 +6095,7 @@ func_020714a4,main,0x12,13,done,haiku,0,100,cloned from func_02005974
 func_020714b8,main,0x80,84,done,sonnet,0,100,cloned from func_ov002_0219f9b8
 func_02071538,main,0xc4,134,fail_sonnet,sonnet,2,8.7,"No match after 14 tries. Passing a 1-byte struct by value in C reproduces the sp-4 temp, and a 3-pad/a/b/3-pad local struct reproduces the 0x1c frame "
 func_020715fc,main,0x80,84,done,sonnet,0,100,cloned from func_ov002_0219f9b8
-func_0207167c,main,0x138,198,queued,sonnet,0,,
+func_0207167c,main,0x138,198,fail_sonnet,sonnet,2,6.4,"No match after 4 of 15 tries. Best is f.c at 6.4% (0x11a bytes against the 0x138 target). It is C++ with a byte allocator-like class passed by value, "
 func_020717b4,main,0x26,35,done,haiku,1,100,matched by haiku
 func_020717dc,main,0x34,34,done,haiku,0,100,cloned from func_0200b704
 func_02071810,main,0x80,84,done,sonnet,0,100,cloned from func_ov002_0219f9b8
@@ -6187,7 +6187,7 @@ func_020725a0,main,0x54,42,done,haiku,1,100,matched by haiku
 func_020725f4,main,0x20,18,done,haiku,0,100,cloned from func_02044160
 func_02072614,main,0x24,22,done,haiku,0,100,cloned from func_02043f80
 func_02072638,main,0x54,38,done,haiku,1,100,matched by haiku
-func_0207268c,main,0xe0,170,queued,sonnet,0,,jumptable
+func_0207268c,main,0xe0,170,done,sonnet,1,100,matched by haiku
 func_0207276c,main,0x38,40,done,haiku,2,100,matched by sonnet
 func_020727a4,main,0x18,17,done,haiku,1,100,matched by haiku
 func_020727bc,main,0xc,6,done,haiku,1,100,matched by haiku
@@ -6210,7 +6210,7 @@ func_02072c80,main,0x54,42,done,haiku,0,100,cloned from func_02072a48
 func_02072cd4,main,0x20,18,done,haiku,0,100,cloned from func_02044160
 func_02072cf4,main,0x24,22,done,haiku,0,100,cloned from func_02043f80
 func_02072d18,main,0x38,28,done,haiku,1,100,matched by haiku
-func_02072d50,main,0xc8,158,queued,sonnet,0,,jumptable
+func_02072d50,main,0xc8,158,done,sonnet,1,100,matched by haiku
 func_02072e18,main,0x5c,67,done,sonnet,2,100,matched by sonnet
 func_02072e74,main,0x14,10,done,haiku,0,100,cloned from func_02054658
 func_02072e88,main,0x3c,38,done,haiku,1,100,matched by haiku
@@ -6288,7 +6288,7 @@ func_02073ccc,main,0xc0,154,done,sonnet,2,100,matched by sonnet
 func_02073d8c,main,0x78,64,done,sonnet,1,100,matched by haiku
 func_02073e04,main,0x20,18,done,haiku,1,100,matched by haiku
 func_02073e24,main,0x82,89,fail_sonnet,sonnet,2,98.5,"Only diff: target emits ""adds r1, r0, #0"" after the func_ov007_021bf21c call, but mwcc emits ""cmp r0, #0"". Pointer vs int return type and a shared var"
-func_02073ea8,main,0xb8,163,queued,sonnet,0,,jumptable
+func_02073ea8,main,0xb8,163,fail_sonnet,sonnet,2,99.5,"Only one instruction differs: case 0 vtable load is `ldr r1,[r4]` in my output and `ldr r1,[r0]` in the target. Variants e.c and g.c (local copy, doub"
 func_02073f60,main,0x3c,42,done,haiku,1,100,matched by haiku
 func_02073f9c,main,0x80,112,done,sonnet,1,100,matched by haiku
 func_0207401c,main,0xc,9,done,haiku,1,100,matched by haiku
@@ -6363,14 +6363,14 @@ func_020749f8,main,0x40,41,done,haiku,1,100,matched by haiku
 func_02074a38,main,0x24,28,done,haiku,1,100,matched by haiku
 func_02074a5c,main,0x1e,24,done,haiku,1,100,matched by haiku
 func_02074a7c,main,0xac,128,fail_sonnet,sonnet,2,94.2,"Only the stack-flag setup differs. Target emits movs r2,#1 before adds and uses r1 as the sp+8 base. mwcc emits movs r1,#1 after the str and uses r0 a"
-func_02074b28,main,0xdc,164,queued,sonnet,0,,
+func_02074b28,main,0xdc,164,done,sonnet,1,100,matched by haiku
 func_02074c04,main,0xc4,142,fail_sonnet,sonnet,2,94.9,"Only the flag-init scheduling differs: the target puts movs r2,#1 before the adds and keeps the stack-slot address in r1, while mine uses r1 for the 1"
 func_02074cc8,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02074ce0,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02074cf8,main,0x80,76,done,sonnet,1,100,matched by haiku
 func_02074d78,main,0x6c,80,done,sonnet,2,100,matched by sonnet
 func_02074de4,main,0x58,52,fail_sonnet,haiku,2,94.3,"Flag setup registers differ: target uses r2 for the constant 1 and r1 for the struct address, mwcc gives r1/r0. Tried C and C++ ctor/dtor variants, po"
-func_02074e3c,main,0x11c,184,queued,sonnet,0,,
+func_02074e3c,main,0x11c,184,fail_sonnet,sonnet,2,89.1,"Size and structure match (0x11c). The remaining diffs are three things. (1) The struct base register is sp+0x10 in mine but sp+0x14 in the target, so "
 func_02074f58,main,0x18,15,done,haiku,1,100,matched by haiku
 func_02074f70,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02074f74,main,0x18,15,done,haiku,1,100,matched by haiku
@@ -6378,7 +6378,7 @@ func_02074f8c,main,0x18,15,done,haiku,1,100,matched by haiku
 func_02074fa4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02074fa8,main,0x64,59,done,sonnet,1,100,matched by haiku
 func_0207500c,main,0x2e,37,done,haiku,1,100,matched by haiku
-func_0207503c,main,0x154,252,queued,sonnet,0,,
+func_0207503c,main,0x154,252,done,sonnet,2,100,matched by sonnet
 func_02075190,main,0x2c,28,done,haiku,1,100,matched by haiku
 func_020751bc,main,0x30,30,done,haiku,1,100,matched by haiku
 func_020751ec,main,0x10,8,fail_sonnet,haiku,2,75,Instructions match (tail bx with swapped args); only the literal pool word differs (0x0 vs 0x021595d9) because func_021595d9 is unresolved. It needs a
@@ -6467,7 +6467,7 @@ func_020763c4,main,0x40,38,done,haiku,0,100,cloned from func_020315ac
 func_02076404,main,0x20,20,done,haiku,1,100,matched by haiku
 func_02076424,main,0x10,12,done,haiku,0,100,cloned from func_02031554
 func_02076434,main,0xe,11,done,haiku,1,100,matched by haiku
-func_02076444,main,0x218,360,todo,sonnet,0,,
+func_02076444,main,0x218,360,queued,sonnet,0,,
 func_0207665c,main,0x28,20,done,haiku,1,100,matched by haiku
 func_02076684,main,0x22,22,done,haiku,1,100,matched by haiku
 func_020766a8,main,0x28,20,done,haiku,0,100,cloned from func_0207665c
@@ -6488,16 +6488,16 @@ func_02076a7c,main,0x60,62,fail_sonnet,sonnet,2,95.8,"C++ virtual-call form fixe
 func_02076adc,main,0x64,58,fail_sonnet,sonnet,2,99,"Size matches (0x64). One diff left: the first vtable load is `ldr r2,[r4]` where the target has `ldr r2,[r0]`. Variants k, l, m and n (struct-typed se"
 func_02076b40,main,0x60,53,fail_sonnet,sonnet,2,95.8,"Only diff is vtable load hoisting (ldr r1,[r4] before adds). A C++ virtual-call version (e.c) fixed that but changed struct-copy scheduling and regall"
 func_02076ba0,main,0x94,95,fail_sonnet,sonnet,2,91.9,d.c (C) gets the tail and registers right and differs only in the vtable calls. f.c (C++ virtual methods) gets the head and the vtable calls right (89
-func_02076c34,main,0x16e,258,queued,sonnet,0,,
+func_02076c34,main,0x16e,258,done,sonnet,1,100,matched by haiku
 func_02076da4,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02076dbc,main,0x24,18,done,haiku,1,100,matched by haiku
 func_02076de0,main,0x2a,29,done,haiku,0,100,cloned from func_020766d0
 func_02076e0c,main,0xe,13,done,haiku,1,100,matched by haiku
-func_02076e1c,main,0x144,188,queued,sonnet,0,,
+func_02076e1c,main,0x144,188,fail_sonnet,sonnet,2,92.6,Size matches (0x144) but d.c is not a match. The array-init loop differs from the target: the target keeps a separate base register r2 (copied from r5
 func_02076f60,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_02076f80,main,0xe4,143,fail_sonnet,sonnet,2,98.2,"No match after 14 tools/try runs. Two near-matches, both 98.2%, each wrong in a different spot. h.c (C mode, struct-copy tail) matches everything exce"
 func_02077064,main,0x174,252,done,sonnet,2,100,matched by sonnet
-func_020771d8,main,0x128,160,queued,sonnet,0,,
+func_020771d8,main,0x128,160,done,sonnet,2,100,matched by sonnet
 func_02077300,main,0xc,10,done,haiku,0,100,cloned from func_020424d4
 func_0207730c,main,0x20,23,done,haiku,0,100,cloned from func_02008fa8
 func_0207732c,main,0x1e,25,fail_sonnet,haiku,4,13.3,"mwcc loads f late into r0 and uses push {r3,lr}; target preloads f into r4 before the compares. Tried early-exit chain, nested ifs, local copy, OR con"
@@ -6584,13 +6584,13 @@ func_020784ac,main,0x5a,63,fail_sonnet,sonnet,2,95.6,"Only diff left is the tail
 func_02078508,main,0xe8,150,fail_sonnet,sonnet,2,17.2,mwcc won't keep s1/s2 in the caller's stack-arg slots (spills or hoists the m2 mask); f.c (volatile copies) scores 17.2% but its frame is 0x10 vs 0x8;
 func_020785f0,main,0x14,10,done,haiku,1,100,matched by haiku
 func_02078604,main,0xcc,146,fail_sonnet,sonnet,2,48,"No match after 11 runs. Mask code in the f==4 branch gets a*4/c*4 register order and scheduling backwards, and the d.c variants that fix it come out 2"
-func_020786d0,main,0x1ae,305,todo,sonnet,0,,
-func_02078880,main,0x12c,206,queued,sonnet,0,,
-func_020789ac,main,0x13c,216,queued,sonnet,0,,
+func_020786d0,main,0x1ae,305,queued,sonnet,0,,
+func_02078880,main,0x12c,206,fail_sonnet,sonnet,2,14.2,"No match. Best is m.c at 14.2% (size 0x12e vs 0x12c). The compiler spills base to the stack, but the target keeps it in ip. The spill slots for fl and"
+func_020789ac,main,0x13c,216,fail_sonnet,sonnet,2,37.5,"Size 0x140 vs 0x13c; target pushes r3 with an 8-byte-larger frame, and cnt/ip register roles and load order (ip loaded after cnt, interleaved with cmp"
 func_02078ae8,main,0x34,32,done,haiku,2,100,matched by sonnet
 func_02078b1c,main,0x5e,67,fail_sonnet,sonnet,2,79.8,"Size matches (0x5e). The stride multiplier m lands in r0 and the stride loads in r1, but the target has m in r1 and the loads in r0. I tried reorderin"
-func_02078b7c,main,0x118,184,queued,sonnet,0,,
-func_02078c94,main,0x13a,203,queued,sonnet,0,,
+func_02078b7c,main,0x118,184,fail_sonnet,sonnet,2,97.1,"Only the stack slots for mode, bpp and row_adv differ. The target has mode at 0x14, row_adv at 0x18 and bpp at 0x1c. k.c puts them at 0x1c, 0x14 and 0"
+func_02078c94,main,0x13a,203,fail_sonnet,sonnet,2,10.4,No match. I ran tools/try 4 times and none beat the Haiku 10.4%. The code is 0x148 bytes against the target's 0x13a. mwcc uses a 0x5c frame and keeps 
 func_02078dd0,main,0x14,12,fail_sonnet,haiku,2,55,"All store orders and local-hoisting variants give 55%: mwcc loads d into r1 after the 0x14 store, not into r2 before it. Cap reached."
 func_02078de4,main,0xb4,145,fail_sonnet,sonnet,2,19,"Local array/struct holding res and the dead pointer gets the right call and stack layout, but mwcc spills r7 instead of ctx. That gives a 0x18 frame w"
 func_02078e98,main,0x1c,14,done,haiku,1,100,matched by haiku
@@ -6603,7 +6603,7 @@ func_02079260,main,0x7c,92,fail_sonnet,sonnet,2,87.1,"I used about 16 tools/try 
 func_020792dc,main,0xe0,138,fail_sonnet,sonnet,2,27.4,"No match after 15 tries. q.c scores 27.4% but multiplies unsigned bytes, so it is semantically wrong. o.c (8.7%) is the best signed version. Passing t"
 func_020793bc,main,0xb4,106,fail_sonnet,sonnet,2,6.7,"No match. The target frame is 0x2c, and the Vec2 result is copied twice (sp+0x14 and sp+0x24). The 5th arg to func_020784ac is f1, loaded from [sp+0x4"
 func_02079470,main,0x84,78,done,sonnet,2,100,matched by sonnet
-func_020794f4,main,0x118,226,queued,sonnet,0,,
+func_020794f4,main,0x118,226,done,sonnet,2,100,matched by sonnet
 func_0207960c,main,0x90,106,fail_sonnet,sonnet,2,34,"Size now matches (0x90), but register allocation differs. The target keeps the base pointer in r1 and the loop counter in r0, with e in r6. My output "
 func_0207969c,main,0x40,48,done,haiku,2,100,matched by sonnet
 func_020796dc,main,0xc,8,done,haiku,1,100,matched by haiku
@@ -6644,7 +6644,7 @@ func_02079b40,main,0x12,13,done,haiku,1,100,matched by haiku
 func_02079b54,main,0x1a,17,done,haiku,1,100,matched by haiku
 func_02079b70,main,0xa,7,done,haiku,0,100,cloned from func_0207eee4
 func_02079b7c,main,0x7c,88,done,sonnet,1,100,matched by haiku
-func_02079bf8,main,0x118,192,queued,sonnet,0,,
+func_02079bf8,main,0x118,192,done,sonnet,2,100,matched by sonnet
 func_02079d10,main,0x68,70,done,sonnet,1,100,matched by haiku
 func_02079d78,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_02079d80,main,0x40,40,done,haiku,2,100,matched by sonnet
@@ -6662,7 +6662,7 @@ func_0207a014,main,0x40,42,done,haiku,1,100,matched by haiku
 func_0207a054,main,0x48,32,done,haiku,1,100,matched by haiku
 func_0207a09c,main,0x3a,47,done,haiku,1,100,matched by haiku
 func_0207a0d8,main,0x16,15,done,haiku,1,100,matched by haiku
-func_0207a0f0,main,0x114,172,queued,sonnet,0,,
+func_0207a0f0,main,0x114,172,done,sonnet,2,100,matched by sonnet
 func_0207a204,main,0x36,35,done,haiku,1,100,matched by haiku
 func_0207a23c,main,0x10,12,done,haiku,1,100,matched by haiku
 func_0207a24c,main,0x44,50,done,haiku,1,100,matched by haiku
@@ -6679,7 +6679,7 @@ func_0207a468,main,0x90,116,done,sonnet,1,100,matched by haiku
 func_0207a4f8,main,0x3c,42,done,haiku,1,100,matched by haiku
 func_0207a534,main,0x50,52,done,haiku,1,100,matched by haiku
 func_0207a584,main,0x94,90,done,sonnet,2,100,matched by sonnet
-func_0207a618,main,0x12c,194,queued,sonnet,0,,
+func_0207a618,main,0x12c,194,done,sonnet,1,100,matched by haiku
 func_0207a744,main,0x88,92,done,sonnet,2,100,matched by sonnet
 func_0207a7cc,main,0x10,8,done,haiku,1,100,matched by haiku
 func_0207a7dc,main,0xc,6,done,haiku,0,100,cloned from func_02017fa8
@@ -6739,7 +6739,7 @@ func_0207b4f8,main,0x2c,28,done,haiku,1,100,matched by haiku
 func_0207b524,main,0x52,55,done,haiku,1,100,matched by haiku
 func_0207b578,main,0x94,100,done,sonnet,1,100,matched by haiku
 func_0207b60c,main,0x76,79,done,sonnet,1,100,matched by haiku
-func_0207b684,main,0x104,162,queued,sonnet,0,,
+func_0207b684,main,0x104,162,fail_sonnet,sonnet,2,52.3,"No match after 13 tries. The target jumps to the loop condition at entry for both loops, and every form I tried either dropped that jump or kept an ex"
 func_0207b788,main,0x90,106,done,sonnet,1,100,matched by haiku
 func_0207b818,main,0x18,14,done,haiku,1,100,matched by haiku
 func_0207b830,main,0x36,33,done,haiku,1,100,matched by haiku
@@ -6750,10 +6750,10 @@ func_0207b8ac,main,0x20,22,fail_sonnet,haiku,2,78.1,Size matches (0x20). The onl
 func_0207b8cc,main,0x6,5,done,haiku,0,100,cloned from func_02053234
 func_0207b8d4,main,0x12,13,done,haiku,1,100,matched by haiku
 func_0207b8e8,main,0x2c,28,done,haiku,1,100,matched by haiku
-func_0207b914,main,0x140,198,queued,sonnet,0,,
+func_0207b914,main,0x140,198,fail_sonnet,sonnet,2,93.4,Not matched. Stack frame and instruction count already match. The remaining diffs are register allocation: the flags word should sit in r1 with the bi
 func_0207ba54,main,0x74,68,done,sonnet,1,100,matched by haiku
 func_0207bac8,main,0x26,23,done,haiku,1,100,matched by haiku
-func_0207baf0,main,0x200,325,todo,sonnet,0,,
+func_0207baf0,main,0x200,325,queued,sonnet,0,,
 func_0207bcf0,main,0x3a,39,done,haiku,1,100,matched by haiku
 func_0207bd2c,main,0x6c,71,done,sonnet,1,100,matched by haiku
 func_0207bd98,main,0x4c,47,fail_sonnet,haiku,2,96.1,"The flag load, lsls and asrs use r0 where the target uses r1. Every variant I tried gave r0 (about 5 tries, plus Haiku's earlier 8). The variants were"
@@ -6765,8 +6765,8 @@ func_0207beb4,main,0x34,36,done,haiku,1,100,matched by haiku
 func_0207bee8,main,0x2c,30,done,haiku,1,100,matched by haiku
 func_0207bf14,main,0x20,20,done,haiku,1,100,matched by haiku
 func_0207bf34,main,0x74,72,done,sonnet,1,100,matched by haiku
-func_0207bfa8,main,0xd8,166,queued,sonnet,0,,
-func_0207c080,main,0xf2,160,queued,sonnet,0,,
+func_0207bfa8,main,0xd8,166,fail_sonnet,sonnet,2,55.6,"No match after 12 runs. mwcc keeps the new node in r0 and the copy index in r1, but the target has node in r1 (adds r1,r0,#0) and index in r0. The lit"
+func_0207c080,main,0xf2,160,fail_sonnet,sonnet,2,95.9,"Two diffs remain: mwcc hoists the zero store to the p8 slot (movs r1/str r1 vs target movs r0/str r0 after the sp#4 store), and the final cmp has swap"
 func_0207c174,main,0x592,983,todo,opus,0,,
 func_0207c708,main,0x6c,42,done,haiku,1,100,matched by haiku
 func_0207c774,main,0xa2,113,done,sonnet,1,100,matched by haiku
@@ -6813,8 +6813,8 @@ func_0207ce28,main,0x3c,44,done,haiku,1,100,matched by haiku
 func_0207ce64,main,0x12,15,done,haiku,1,100,matched by haiku
 func_0207ce78,main,0x38,42,done,haiku,1,100,matched by haiku
 func_0207ceb0,main,0x28,22,done,haiku,1,100,matched by haiku
-func_0207ced8,main,0xd4,208,queued,sonnet,0,,
-func_0207cfac,main,0x158,260,queued,sonnet,0,,jumptable
+func_0207ced8,main,0xd4,208,done,sonnet,2,100,matched by sonnet
+func_0207cfac,main,0x158,260,done,sonnet,2,100,matched by sonnet
 func_0207d104,main,0x26c,392,todo,opus,0,,
 func_0207d370,main,0x30,26,done,haiku,2,100,matched by haiku
 func_0207d3a0,main,0x38,36,done,haiku,1,100,matched by haiku
@@ -6838,7 +6838,7 @@ func_0207d7b8,main,0x54,49,done,haiku,1,100,matched by haiku
 func_0207d80c,main,0x24,24,fail_sonnet,haiku,2,91.7,"Only the tail register allocation differs. The target loads the global pointer into r1 and zero into r2. mwcc emits movs r1 / ldr r0,[r0] / str r1,[r0"
 func_0207d830,main,0x80,88,done,sonnet,1,100,matched by haiku
 func_0207d8b0,main,0x3c,35,done,haiku,1,100,matched by haiku
-func_0207d8ec,main,0x130,183,queued,sonnet,0,,
+func_0207d8ec,main,0x130,183,fail_sonnet,sonnet,2,93.8,"Register allocation: the 0x508 index value gets r1 and its offset constant gets r0, the reverse of the target. The +0x28 store is also scheduled befor"
 func_0207da1c,main,0x64,70,done,haiku,1,100,matched by haiku
 func_0207da80,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_0207da88,main,0x8,4,done,haiku,0,100,cloned from func_020159f8
@@ -6855,14 +6855,14 @@ func_0207dc40,main,0x20,20,done,haiku,1,100,matched by haiku
 func_0207dc60,main,0x66,83,done,sonnet,1,100,matched by haiku
 func_0207dcc8,main,0x40,54,done,haiku,1,100,matched by haiku
 func_0207dd08,main,0x21c,679,todo,opus,0,,jumptable
-func_0207df24,main,0x11c,224,queued,sonnet,0,,
+func_0207df24,main,0x11c,224,fail_sonnet,sonnet,2,98.2,Only diff left: first block flags value goes in r1 (target r2) with 0x20 const in r0 (target r1); size matches at 0x11c.
 func_0207e040,main,0x54,72,done,haiku,2,100,matched by sonnet
 func_0207e094,main,0x60,82,done,sonnet,1,100,matched by haiku
-func_0207e0f4,main,0xd8,160,queued,sonnet,0,,
+func_0207e0f4,main,0xd8,160,done,sonnet,2,100,matched by sonnet
 func_0207e1cc,main,0x54,72,done,haiku,1,100,matched by haiku
 func_0207e220,main,0x7c,74,done,sonnet,2,100,matched by sonnet
 func_0207e29c,main,0x36,51,done,haiku,1,100,matched by haiku
-func_0207e2d4,main,0x1d8,364,todo,sonnet,0,,
+func_0207e2d4,main,0x1d8,364,queued,sonnet,0,,
 func_0207e4ac,main,0x14,12,done,haiku,0,,
 func_0207e4c0,main,0x98,126,fail_sonnet,sonnet,2,26.3,"Not matched. The remaining difference is the list-append head load. The target uses two separate literal loads of data_021410cc, with the head in r0 a"
 func_0207e558,main,0x6c,82,fail_sonnet,sonnet,2,24.1,Not matched after 5 runs. The unlink loop keeps getting pp in r1 and cur in r0 with a single literal-pool entry. The target uses two separate literal 
@@ -6900,7 +6900,7 @@ func_0207eb4c,main,0x48,38,done,haiku,2,100,matched by sonnet
 func_0207eb94,main,0x14,16,done,haiku,0,100,cloned from func_020525f0
 func_0207eba8,main,0x26,25,done,haiku,2,100,matched by haiku
 func_0207ebd0,main,0x18,12,done,haiku,1,100,matched by haiku
-func_0207ebe8,main,0x100,188,queued,sonnet,0,,
+func_0207ebe8,main,0x100,188,fail_sonnet,sonnet,2,15.6,"Passing the 8-byte tmp by value (S8 struct) in f.c fixes the ldm r5! diff (13.3% only because of the size shift). The literal-pool 'ldr r0,=0x13; cmp "
 func_0207ece8,main,0x94,112,done,sonnet,1,100,matched by haiku
 func_0207ed7c,main,0xc4,143,done,sonnet,1,100,matched by haiku
 func_0207ee40,main,0xa4,149,done,sonnet,2,100,matched by sonnet
@@ -6910,7 +6910,7 @@ func_0207ef1c,main,0x34,37,done,haiku,1,100,matched by haiku
 func_0207ef50,main,0x18,12,done,haiku,1,100,matched by haiku
 func_0207ef68,main,0x64,56,done,sonnet,1,100,matched by haiku
 func_0207efcc,main,0xac,108,done,sonnet,2,100,matched by sonnet
-func_0207f078,main,0x168,300,todo,sonnet,0,,
+func_0207f078,main,0x168,300,queued,sonnet,0,,
 func_0207f1e0,main,0x24c,478,todo,opus,0,,
 func_0207f42c,main,0x48,44,done,haiku,1,100,matched by haiku
 func_0207f474,main,0x12,11,done,haiku,1,100,matched by haiku
@@ -6993,7 +6993,7 @@ func_02080b78,main,0x124,73,done,sonnet,1,100,matched by haiku
 func_02080c9c,main,0x24,20,fail_sonnet,haiku,2,9.5,"No match after 9 runs. mwcc never emits the stm/writeback zero-fill. Plain stores, u64 stores, and *p++ all give separate str. Struct-copy variants ad"
 func_02080cc0,main,0x24,20,fail_sonnet,haiku,2,8.7,"No match after 10 runs. Plain stores, pointer increments, C++ ctors and struct copies from locals or inline helpers all fail. The first three give ind"
 func_02080ce4,main,0x22,19,fail_sonnet,haiku,2,8.8,"No MATCH after 10 tries. mwcc never emits register-sourced stm writeback pairs. Plain-store variants (pointer walks, u64 stores, C++ ctors, locals) fo"
-func_02080d08,main,0x3bc,239,queued,sonnet,0,,
+func_02080d08,main,0x3bc,239,fail_sonnet,sonnet,2,14.8,"No match, and I went past the 15-run cap on tools/try. Best build is 0x3f0 bytes against the 0x3bc target. mwcc schedules the first term as a00*b00 in"
 func_020810c4,main,0x14c,96,fail_sonnet,sonnet,2,32.2,"No match after 7 tries, best 32.2%. mwcc hoists the g[] zero stores above the f!=0x1000 multiply and reuses one zero register (r4) for the divider sto"
 func_02081210,main,0xc,10,done,haiku,0,,
 func_0208121c,main,0x20,26,done,haiku,2,100,matched by haiku
@@ -7010,7 +7010,7 @@ func_02081398,main,0x80,32,done,haiku,1,100,matched by haiku
 func_02081418,main,0x114,90,fail_sonnet,sonnet,2,44.6,"No match. j.c is the best at 44.6% and is 4 bytes too large (0x118, target 0x114). It keeps v[0] as the first load and puts lsl r2,r7,#2 early; the ta"
 func_0208152c,main,0x12c,96,fail_sonnet,sonnet,2,73,Size (0x12c) and push list now match. The tail is fixed by reading the divider result as one `*(volatile int64_t*)0x40002a0` and using absolute-addres
 func_02081658,main,0x7c,41,fail_sonnet,haiku,2,93.5,Size and instruction order now match (0x7c). The only remaining diff is register allocation in the tail: the target puts the hi word (lsl #2) in r0 an
-func_020816d4,main,0xf0,228,queued,sonnet,0,,
+func_020816d4,main,0xf0,228,done,sonnet,1,100,matched by haiku
 func_020817c4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_020817c8,main,0x18,8,done,haiku,0,,
 func_020817e0,main,0x20,8,done,haiku,1,100,matched by haiku
@@ -7085,17 +7085,17 @@ func_02082a10,main,0x58,56,done,haiku,0,100,cloned from func_02082908
 func_02082a68,main,0x58,56,done,haiku,0,100,cloned from func_02082908
 func_02082ac0,main,0x58,56,done,haiku,0,100,cloned from func_02082908
 func_02082b18,main,0x38,22,done,haiku,1,100,matched by haiku
-func_02082b50,main,0x108,186,queued,sonnet,0,,
+func_02082b50,main,0x108,186,done,sonnet,1,100,matched by haiku
 func_02082c58,main,0x3c,38,fail_sonnet,haiku,2,88.3,"Register swap on the -1 compare: mwcc puts the value in r1 and the mask in r0, but the target has the value in r0 and the mask in r1. Local mask varia"
 func_02082c94,main,0x20,14,done,haiku,1,100,matched by haiku
 func_02082cb4,main,0x60,54,fail_sonnet,sonnet,2,25,"Branch layout matches, but mwcc keeps the -1 constant in r6 and g in r1, and pushes {r3-r6}. The target keeps g in r6 and c in r7 with -1 in a temp. T"
 func_02082d14,main,0x38,36,fail_sonnet,haiku,2,87.5,"Only diff is the start: mwcc puts the global in r1 and -1 in r0, while the target has the global in r0 and -1 in r1. 8 variants tried, none changed it"
 func_02082d4c,main,0x94,76,done,sonnet,1,100,matched by haiku
-func_02082de0,main,0x150,260,queued,sonnet,0,,jumptable
-func_02082f30,main,0xb8,162,queued,sonnet,0,,jumptable
+func_02082de0,main,0x150,260,done,sonnet,2,100,matched by sonnet
+func_02082f30,main,0xb8,162,done,sonnet,2,100,matched by sonnet
 func_02082fe8,main,0x9c,108,done,sonnet,2,100,matched by sonnet
 func_02083084,main,0x6c,68,done,sonnet,1,100,matched by haiku
-func_020830f0,main,0xfc,192,queued,sonnet,0,,jumptable
+func_020830f0,main,0xfc,192,done,sonnet,2,100,matched by sonnet
 func_020831ec,main,0x78,82,done,sonnet,2,100,matched by sonnet
 func_02083264,main,0x98,112,done,sonnet,2,100,matched by sonnet
 func_020832fc,main,0x58,58,done,haiku,1,100,matched by haiku
@@ -7136,9 +7136,9 @@ func_02083c10,main,0x78,83,done,sonnet,2,100,matched by sonnet
 func_02083c88,main,0x28,18,done,haiku,1,100,matched by haiku
 func_02083cb0,main,0x34,18,done,haiku,1,100,matched by haiku
 func_02083ce4,main,0x84,89,done,sonnet,1,100,matched by haiku
-func_02083d68,main,0x158,180,queued,sonnet,0,,
+func_02083d68,main,0x158,180,done,sonnet,1,100,matched by haiku
 func_02083ec0,main,0x54,36,done,haiku,1,100,matched by haiku
-func_02083f14,main,0xe6,218,queued,sonnet,0,,
+func_02083f14,main,0xe6,218,done,sonnet,1,100,matched by haiku
 func_02083ffc,main,0x30,54,done,haiku,2,100,matched by sonnet
 func_0208402c,main,0x22,33,done,haiku,1,100,matched by haiku
 func_02084050,main,0x30,54,done,haiku,1,100,matched by haiku
@@ -7148,7 +7148,7 @@ func_020840d8,main,0x28,36,done,haiku,1,100,matched by haiku
 func_02084100,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02084118,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02084130,main,0x1e,17,done,haiku,1,100,matched by haiku
-func_02084160,main,0x31c,271,queued,sonnet,0,,
+func_02084160,main,0x31c,271,fail_sonnet,sonnet,2,10.1,"I couldn't get mwccarm 1.2p2 to emit any `ror` instruction. The target needs ror operand forms (`add ..., r4, ror #27`, `ror r6, r5, #2`, and the bswa"
 func_0208447c,main,0x10,14,done,haiku,1,100,matched by haiku
 func_0208448c,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02084498,main,0x54,72,done,haiku,2,100,matched by sonnet
@@ -7191,7 +7191,7 @@ func_02085758,main,0xa0,108,fail_sonnet,haiku,2,15.1,"No match; best 15.1% at 0x
 func_020857f8,main,0x60,54,fail_sonnet,haiku,2,32.3,"No match after 6 more tries (f.c and c.c tie at 32.3%). mwcc puts the count in r3 and the sum in ip, and emits sub+cmp where the target has subs+bgt. "
 func_02085858,main,0x84,65,fail_sonnet,haiku,2,32.6,"Not matched. My variants (a, b, c, d2, e2, f, g) scored 13-21%, below h.c at 32.6%. mwcc compiles the header read as ldr with lr/ip temporaries, not t"
 func_020858dc,main,0x54,58,done,haiku,1,100,matched by haiku
-func_02085930,main,0x11c,234,queued,sonnet,0,,
+func_02085930,main,0x11c,234,fail_sonnet,sonnet,2,37.7,"Register allocation and prologue ordering differ from the target. The target keeps dst in r2 and puts outPos, inPos and lit in r2, r1 and r3, with fou"
 func_02085a4c,main,0x1c,24,done,haiku,1,100,matched by haiku
 func_02085a68,main,0x80,98,done,sonnet,2,100,matched by sonnet
 func_02085ae8,main,0x78,80,done,sonnet,1,100,matched by haiku
@@ -7411,7 +7411,7 @@ func_02088714,main,0x5c,60,done,haiku,1,100,matched by haiku
 func_02088770,main,0x5c,60,done,haiku,1,100,matched by haiku
 func_020887cc,main,0x30,26,done,haiku,2,100,matched by haiku
 func_020887fc,main,0x2c,32,done,haiku,1,100,matched by haiku
-func_02088828,main,0xe0,159,queued,sonnet,0,,
+func_02088828,main,0xe0,159,done,sonnet,2,100,matched by sonnet
 func_02088908,main,0x34,40,done,haiku,1,100,matched by haiku
 func_0208893c,main,0x28,24,fail_sonnet,haiku,2,87.5,Only diff is the temporaries landing in r0 instead of r2 (ldr/cmp/ldr/adds/str). About 12 variants all give r0 (or r1 when the global is used directly
 func_02088964,main,0x14,7,blocked,haiku,2,10.7,system register access (mrs/msr): not C
@@ -7458,7 +7458,7 @@ func_02089100,main,0xa8,130,fail_sonnet,sonnet,2,97,"Same size (0xa8) as the tar
 func_020891a8,main,0x4c,42,done,haiku,1,100,matched by haiku
 func_020891f4,main,0x24,20,done,haiku,2,100,matched by sonnet
 func_02089218,main,0x68,60,fail_sonnet,sonnet,2,90.4,Only diff is register allocation: mwcc puts the 0x04000184 pointer in r4 and the packed value in r5. The target has them the other way round (pointer 
-func_02089280,main,0xb4,189,queued,sonnet,0,,
+func_02089280,main,0xb4,189,fail_sonnet,sonnet,2,15,"Register allocation differs: target keeps the -4 sentinel in r6 and the 0x4000 mask in r7 (v in r5, preloaded from [sp,#0xc]); mine puts the sentinel "
 func_02089334,main,0x40,48,done,haiku,1,100,matched by haiku
 func_02089374,main,0x48,46,fail_sonnet,haiku,2,94.4,"Only the flag temp register differs (target r1, mwcc emits r0). I tried a local copy of the flag, a direct global access, int return types on both cal"
 func_020893bc,main,0x24,20,done,haiku,1,100,matched by haiku
@@ -7520,7 +7520,7 @@ func_02089e84,main,0x84,80,fail_sonnet,sonnet,2,78.8,No match after 12 tools/try
 func_02089f08,main,0xa0,134,fail_sonnet,sonnet,2,95,"Two diffs remain: the compiler loads the data_021419a4 literal after copying param a into r6, where the target loads it first. It also schedules the c"
 func_02089fa8,main,0x5e,99,done,haiku,1,100,matched by haiku
 func_0208a008,main,0x28,26,fail_sonnet,haiku,4,85,"Register allocation differs: mwcc puts the queue base in r2 and the tail in r1 (target has base r1, tail r2). Using a global-array form gets the regis"
-func_0208a030,main,0x108,214,queued,sonnet,0,,
+func_0208a030,main,0x108,214,fail_sonnet,sonnet,2,98.1,"Only the tail store block differs: idx and value land in r3/r2 instead of r1/r3. Statement order, idx type, pointer forms and temps all left it unchan"
 func_0208a138,main,0x44,78,done,haiku,1,100,matched by haiku
 func_0208a17c,main,0x20,22,fail_sonnet,haiku,2,93.8,Flag loads into r0 instead of r2 (base in r1 is correct). Tried struct/array/ternary/typed/call-result-liveness variants; none changed the allocation 
 func_0208a19c,main,0x3c,42,done,haiku,2,100,matched by sonnet
@@ -7544,11 +7544,11 @@ func_0208a458,main,0x7c,98,fail_sonnet,sonnet,2,26.6,"No MATCH after 8 runs. mwc
 func_0208a4d4,main,0x52,81,done,haiku,1,100,matched by haiku
 func_0208a528,main,0x2a,41,done,haiku,1,100,matched by haiku
 func_0208a554,main,0x10,10,done,haiku,1,100,matched by haiku
-func_0208a564,main,0xf4,226,queued,sonnet,0,,jumptable
+func_0208a564,main,0xf4,226,fail_sonnet,sonnet,2,26.6,"l.c (typedef'd Idx/Out/Src structs, one shared q = p + (w>>8) computed before the switch) gets the target register allocation (p r3, out r0, idx r6) b"
 func_0208a658,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_0208a65c,main,0x20,22,done,haiku,1,100,matched by haiku
 func_0208a67c,main,0x2a,31,done,haiku,1,100,matched by haiku
-func_0208a6a8,main,0x16c,268,queued,sonnet,0,,jumptable
+func_0208a6a8,main,0x16c,268,fail_sonnet,sonnet,2,56.8,"I ran tools/try more than the 15-run cap, so I stopped. Best is t.c at 56.8%. What fixed it: the semantics are corrected (key 0 runs the idx chain; ke"
 func_0208a814,main,0x44,50,done,haiku,1,100,matched by haiku
 func_0208a858,main,0x7c,72,done,sonnet,2,100,matched by sonnet
 func_0208a8d4,main,0xa0,112,fail_sonnet,sonnet,2,90.6,"Size matches (0xa0); only r2/r3 swap remains (loaded s->c/s->d lands in r3 and zero in r2, target is the opposite); reordering and scoping variants di"
@@ -7561,16 +7561,16 @@ func_0208aaf4,main,0x64,61,done,haiku,1,100,matched by haiku
 func_0208ab58,main,0xc8,142,done,sonnet,2,100,matched by sonnet
 func_0208ac20,main,0x12,13,done,haiku,1,100,matched by haiku
 func_0208ac34,main,0xc,6,done,haiku,1,100,matched by haiku
-func_0208ac40,main,0x184,260,queued,sonnet,0,,
+func_0208ac40,main,0x184,260,fail_sonnet,sonnet,2,92.5,"Size matches (0x184), but m.c, n.c and o.c all stop at 92.5%. The remaining differences are the post-call order (the target stores irq to [sp+0x14] an"
 func_0208adc4,main,0xac,100,fail_sonnet,sonnet,2,47.1,No MATCH after 9 more tools/try runs (variants e to l). The output stays 4 bytes short (0xa8 vs 0xac) because the compiler CSEs the data_02143500 addr
 func_0208ae70,main,0x10,20,done,haiku,2,100,matched by sonnet
 func_0208ae80,main,0xc,6,done,haiku,1,100,matched by haiku
 func_0208ae8c,main,0x44,48,done,haiku,1,100,matched by haiku
-func_0208aed0,main,0xd0,180,queued,sonnet,0,,jumptable
+func_0208aed0,main,0xd0,180,fail_sonnet,sonnet,2,93.8,Size now matches (0xd0). The remaining diffs are register choice (the target uses r1 for the flag load and the constant 1) and the order of the arg lo
 func_0208afa0,main,0x24,20,done,haiku,0,100,cloned from func_020893bc
 func_0208afc4,main,0x40,42,done,haiku,1,100,matched by haiku
 func_0208b004,main,0x24,20,done,haiku,1,100,matched by haiku
-func_0208b028,main,0xa8,159,queued,sonnet,0,,jumptable
+func_0208b028,main,0xa8,159,done,sonnet,1,100,matched by haiku
 func_0208b0d0,main,0xbc,118,done,sonnet,1,100,matched by haiku
 func_0208b18c,main,0x1c,16,done,haiku,0,100,cloned from func_02086234
 func_0208b1a8,main,0xc,6,done,haiku,1,100,matched by haiku
@@ -7580,7 +7580,7 @@ func_0208b220,main,0x8,8,done,haiku,1,100,matched by haiku
 func_0208b228,main,0x1c,17,done,haiku,2,100,matched by sonnet
 func_0208b244,main,0x1c,26,done,haiku,3,100,matched by sonnet
 func_0208b260,main,0x64,68,done,haiku,1,100,matched by haiku
-func_0208b2c4,main,0xc8,189,queued,sonnet,0,,jumptable
+func_0208b2c4,main,0xc8,189,fail_sonnet,sonnet,2,44.5,No MATCH after 10 tools/try runs; best is g.c at 44.5% (e.c is the same). The shared-call flag path and the 0x70 jump table (fake cases 1-3) now match
 func_0208b38c,main,0x50,62,done,haiku,1,100,matched by haiku
 func_0208b3dc,main,0x6c,100,done,sonnet,1,100,matched by haiku
 func_0208b448,main,0x5c,58,fail_sonnet,haiku,2,92.4,"Only the ordering differs: mwcc hoists ldr =0x3006000 above str r1,[sp] (and movs r1,#1 placement). I tried volatile, store reordering, pointer and u1"
@@ -7599,8 +7599,8 @@ func_0208b68c,main,0x14,10,done,haiku,1,100,matched by haiku
 func_0208b6a0,main,0x42,49,done,haiku,2,100,matched by sonnet
 func_0208b6e4,main,0x18,26,done,haiku,0,,
 func_0208b6fc,main,0x7c,114,fail_sonnet,sonnet,2,67.7,"No MATCH after 9 tools/try runs here (the Haiku worker's 9 runs aren't counted). I tried goto layouts, a switch, and reordered if-chains. None scored "
-func_0208b778,main,0x214,416,todo,sonnet,0,,
-func_0208b98c,main,0x144,300,todo,sonnet,0,,
+func_0208b778,main,0x214,416,queued,sonnet,0,,
+func_0208b98c,main,0x144,300,queued,sonnet,0,,
 func_0208bad0,main,0x24,28,done,haiku,1,100,matched by haiku
 func_0208baf4,main,0x14,12,done,haiku,1,100,matched by haiku
 func_0208bb08,main,0x14,10,done,haiku,0,100,cloned from func_0208b68c
@@ -7629,7 +7629,7 @@ func_0208c54c,main,0x2e,43,done,haiku,1,100,matched by haiku
 func_0208c57c,main,0x30,44,done,haiku,1,100,matched by haiku
 func_0208c5ac,main,0x632,1289,todo,opus,0,,
 func_0208cbe0,main,0x1c,16,done,haiku,1,100,matched by haiku
-func_0208cbfc,main,0x194,286,todo,sonnet,0,,
+func_0208cbfc,main,0x194,286,queued,sonnet,0,,
 func_0208cd90,main,0x48,52,done,haiku,1,100,matched by haiku
 func_0208cdd8,main,0x10,8,done,haiku,1,100,matched by haiku
 func_0208cde8,main,0x48,44,done,haiku,1,100,matched by haiku
@@ -7660,7 +7660,7 @@ func_0208d5a0,main,0x14,14,done,haiku,1,100,matched by haiku
 func_0208d5b4,main,0x60,68,done,sonnet,1,100,matched by haiku
 func_0208d614,main,0x48,50,done,haiku,1,100,matched by haiku
 func_0208d65c,main,0x48,50,done,haiku,0,100,cloned from func_0208d614
-func_0208d6a4,main,0xca,179,queued,sonnet,0,,
+func_0208d6a4,main,0xca,179,fail_sonnet,sonnet,2,52,"Register allocation differs: the target wants dst in r2, data pointer in r4, lim in r5, used in r6 and the counter in r1. The struct-return version (a"
 func_0208d770,main,0x44,40,done,haiku,1,100,matched by haiku
 func_0208d7b4,main,0xc,6,done,haiku,0,100,cloned from func_02007c54
 func_0208d7c0,main,0x40,46,done,haiku,1,100,matched by haiku
@@ -7676,12 +7676,12 @@ func_0208d9b8,main,0x2e,41,done,haiku,1,100,matched by haiku
 func_0208d9e8,main,0x50,60,done,haiku,1,100,matched by haiku
 func_0208da38,main,0xc,6,done,haiku,0,100,cloned from func_02007c54
 func_0208da44,main,0x28,30,done,haiku,1,100,matched by haiku
-func_0208da6c,main,0xec,158,queued,sonnet,0,,
+func_0208da6c,main,0xec,158,fail_sonnet,sonnet,2,96.6,"Scheduling diff after bl func_0208cdd8: target has ldrh r0,[r5,#6] after add r4,sp,#0 and add r1,sp,#0xc after strh r6; pointer-alias and store-reorde"
 func_0208db58,main,0x28,30,done,haiku,0,100,cloned from func_0208da44
 func_0208db80,main,0x98,108,done,sonnet,1,100,matched by haiku
 func_0208dc18,main,0x88,92,done,sonnet,1,100,matched by haiku
 func_0208dca0,main,0x5c,58,done,haiku,1,100,matched by haiku
-func_0208dcfc,main,0xfc,172,queued,sonnet,0,,
+func_0208dcfc,main,0xfc,172,done,sonnet,1,100,matched by haiku
 func_0208ddf8,main,0x64,56,done,sonnet,1,100,matched by haiku
 func_0208de5c,main,0x3c,34,done,haiku,1,100,matched by haiku
 func_0208de98,main,0xce,135,done,sonnet,1,100,matched by haiku
@@ -7689,7 +7689,7 @@ func_0208df68,main,0x48,52,done,haiku,1,100,matched by haiku
 func_0208dfb0,main,0x66,73,done,sonnet,1,100,matched by haiku
 func_0208e018,main,0x7c,82,done,sonnet,1,100,matched by haiku
 func_0208e094,main,0x44,50,done,haiku,1,100,matched by haiku
-func_0208e0d8,main,0x1e4,302,todo,sonnet,0,,
+func_0208e0d8,main,0x1e4,302,queued,sonnet,0,,
 func_0208e2bc,main,0x34,30,done,haiku,1,100,matched by haiku
 func_0208e2f0,main,0x244,364,todo,opus,0,,
 func_0208e534,main,0x90,84,done,sonnet,1,100,matched by haiku
@@ -7720,7 +7720,7 @@ func_0208ecb0,main,0x16,17,done,haiku,1,100,matched by haiku
 func_0208ecc8,main,0x2e,43,done,haiku,1,100,matched by haiku
 func_0208ecf8,main,0x68,84,fail_sonnet,haiku,2,28.7,"No match. mwcc hoists the constant r1 move above the cmp and emits the r0 shift before the r1 shift. Tried ternary, switch, shift and multiply forms, "
 func_0208ed60,main,0x78,84,done,haiku,1,100,matched by haiku
-func_0208edd8,main,0x14c,210,queued,sonnet,0,,
+func_0208edd8,main,0x14c,210,fail_sonnet,sonnet,2,61.5,"Stopped at 61.5% after 12 of 15 tries. Frame, branch layout and stack slots now match, using a volatile p8 pointer spilled at sp+8. Two diffs remain. "
 func_0208ef24,main,0x1c,16,done,haiku,1,100,matched by haiku
 func_0208ef40,main,0x38,41,done,haiku,1,100,matched by haiku
 func_0208ef78,main,0xe,11,done,haiku,1,100,matched by haiku
@@ -7758,13 +7758,13 @@ func_0208f800,main,0xa4,92,fail_sonnet,sonnet,2,36,"mwcc hoists the data_0214482
 func_0208f8a4,main,0x72,71,fail_sonnet,sonnet,2,96.5,"Size matches (0x72). Only the register allocation of the merged header word differs: target puts the orrs result in r0, mine in r1 (4 lines). I used a"
 func_0208f918,main,0xac,96,done,sonnet,2,100,matched by sonnet
 func_0208f9c4,main,0x214,372,todo,opus,0,,
-func_0208fbd8,main,0x1b2,305,todo,sonnet,0,,
+func_0208fbd8,main,0x1b2,305,queued,sonnet,0,,
 func_0208fd8c,main,0x50,53,fail_sonnet,haiku,2,96.2,"Only diff is the first flag load: the compiler uses r0 where the target uses r1 (ldr/lsls/lsrs r1). Five more variants didn't change it: no temp, shif"
 func_0208fddc,main,0x8a,89,done,sonnet,1,100,matched by haiku
 func_0208fe68,main,0x60,82,done,sonnet,1,100,matched by haiku
 func_0208fec8,main,0x48,48,done,haiku,1,100,matched by haiku
 func_0208ff10,main,0xb8,106,done,sonnet,2,100,matched by sonnet
-func_0208ffc8,main,0x104,173,queued,sonnet,0,,
+func_0208ffc8,main,0x104,173,done,sonnet,1,100,matched by haiku
 func_020900cc,main,0xc4,112,fail_sonnet,sonnet,2,85.2,"Size matches (0xc4), but registers are shifted. Target has idx=r4, p0/result=r5 and off=r6 in the else branch only. n.c gives idx=r5, p0=r6, off=r4. T"
 func_02090190,main,0x14,12,done,haiku,1,100,matched by haiku
 func_020901a4,main,0x38,24,done,haiku,0,100,cloned from func_02083728
@@ -7785,10 +7785,10 @@ func_020903f4,main,0x1a,31,done,haiku,1,100,matched by haiku
 func_02090410,main,0x36,51,done,haiku,1,100,matched by haiku
 func_02090448,main,0x72,119,done,sonnet,1,100,matched by haiku
 func_020904bc,main,0x334,782,todo,opus,0,,jumptable
-func_020907f0,main,0x1ac,336,todo,sonnet,0,,
+func_020907f0,main,0x1ac,336,queued,sonnet,0,,
 func_0209099c,main,0x20c,384,todo,opus,0,,
 func_02090ba8,main,0x324,524,todo,opus,0,,
-func_02090ecc,main,0xae,159,queued,sonnet,0,,
+func_02090ecc,main,0xae,159,fail_sonnet,sonnet,2,85.6,"Size and control flow match (0xae). The only diff is register allocation: the target has len in r2, s in r5, q in r3 and the digit in r4. Mine has len"
 func_02090f7c,main,0x4a4,928,todo,opus,0,,
 func_02091420,main,0x5c0,1260,todo,opus,0,,jumptable
 func_020919e0,main,0x1a,17,done,haiku,1,100,matched by haiku
@@ -7796,7 +7796,7 @@ func_020919fc,main,0x26,23,done,haiku,1,100,matched by haiku
 func_02091a24,main,0xb0,102,done,sonnet,1,100,matched by haiku
 func_02091ad4,main,0x3c,36,fail_sonnet,haiku,2,95,"Only mismatch is the end-of-buffer store: target uses r1 for buf+size-1, mwcc uses r0. Tried pointer temps, p[-1], --p, buf[size-1], reordered branche"
 func_02091b10,main,0x1e,19,done,haiku,0,,
-func_02091b30,main,0xdc,204,queued,sonnet,0,,
+func_02091b30,main,0xdc,204,done,sonnet,2,100,matched by sonnet
 func_02091c0c,main,0x28,14,done,haiku,1,100,matched by haiku
 func_02091c34,main,0xc,6,done,haiku,0,100,cloned from func_0207ca98
 func_02091c40,main,0x30a,733,todo,opus,0,,jumptable
@@ -7811,7 +7811,7 @@ func_02092864,main,0x12,23,done,haiku,1,100,matched by haiku
 func_02092878,main,0x78,110,done,sonnet,1,100,matched by haiku
 func_020928f0,main,0x32,59,done,haiku,2,100,matched by sonnet
 func_02092924,main,0x22,43,done,haiku,1,100,matched by haiku
-func_02092948,main,0xbc,172,queued,sonnet,0,,
+func_02092948,main,0xbc,172,fail_sonnet,sonnet,2,42,"No match. I used 9 tools/try runs, and none beat Haiku's f.c at 42%. Merging the byte tail so it is entered with c1 live (target 0x90) and peeling the"
 func_02092a04,main,0x26,41,done,haiku,1,100,matched by haiku
 func_02092a2c,main,0x26,41,done,haiku,1,100,matched by haiku
 func_02092a54,main,0x2e,47,done,haiku,1,100,matched by haiku
@@ -7838,30 +7838,30 @@ func_02093c2c,main,0x32,45,fail_sonnet,haiku,2,92.6,"Best is d.c at 92.6% (same 
 func_02093c60,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02093c64,main,0x24,28,done,haiku,1,100,matched by haiku
 func_02093c88,main,0x72,89,fail_sonnet,sonnet,2,97.4,"Only diff is the first call: target is `blx .L_0209a6e0` (a label 12 bytes past func_0209a6d4), and C emits an unresolved `bl`. I tried the names func"
-func_02093cfc,main,0x104,210,queued,sonnet,0,,
+func_02093cfc,main,0x104,210,done,sonnet,1,100,matched by haiku
 func_02093e00,main,0x54,84,fail_sonnet,sonnet,2,71.4,"Size now matches (0x54) and control flow is right (int i, for loop, c<=5 test). It still doesn't match because mwcc puts the zero/loop index i in r4 a"
-func_02093e54,main,0x238,372,todo,sonnet,0,,jumptable
+func_02093e54,main,0x238,372,queued,sonnet,0,,jumptable
 func_0209408c,main,0x8e,131,fail_sonnet,sonnet,2,82.4,"Only the final loop differs. Target reloads a->n4 into r1 each iteration (size 0x8e). mwcc keeps it cached in r3 (size 0x8c). Loop rewrites (for, whil"
 func_0209411c,main,0x94,138,done,sonnet,2,100,matched by sonnet
-func_020941b0,main,0x184,380,todo,sonnet,0,,
-func_02094334,main,0xfa,163,queued,sonnet,0,,
+func_020941b0,main,0x184,380,queued,sonnet,0,,
+func_02094334,main,0xfa,163,fail_sonnet,sonnet,2,96.4,"Code is byte-identical in size and layout (0xfa). The only diffs are 3 compiler-generated helper calls (_deq, _dsub, _ll_sto_d), emitted as `bl` place"
 func_02094430,main,0x62,85,fail_sonnet,sonnet,2,94.9,"Only diff is the register for the constant 2 in the first ldrsh and its order (target does movs r3,#2 after adds r5,r3; mine does movs r1,#2 first). T"
 func_02094494,main,0x3da,733,todo,opus,0,,
 func_02094870,main,0x1a,17,done,haiku,1,100,matched by haiku
 func_0209488c,main,0x29c,448,todo,opus,0,,jumptable
 func_02094b28,main,0xba4,1798,todo,opus,0,,
 func_020956cc,main,0x418,650,todo,opus,0,,
-func_02095ae4,main,0x204,292,todo,sonnet,0,,
+func_02095ae4,main,0x204,292,queued,sonnet,0,,
 func_02095ce8,main,0x7c0,1482,todo,opus,0,,jumptable
-func_020964a8,main,0x198,234,queued,sonnet,0,,
+func_020964a8,main,0x198,234,done,sonnet,1,100,matched by haiku
 func_02096640,main,0x338,516,todo,opus,0,,
-func_02096978,main,0x130,214,queued,sonnet,0,,
+func_02096978,main,0x130,214,fail_sonnet,sonnet,2,97,"Only diffs left are the three double-compare calls: the compiler emits bl to an unresolved _dgr, while the target has blx to func_02099ff0. The code l"
 func_02096aa8,main,0x20,16,done,haiku,1,100,matched by haiku
 func_02096ac8,main,0xe4,150,done,sonnet,1,100,matched by haiku
 func_02096bac,main,0x18,12,done,haiku,2,100,matched by sonnet
-func_02096bc4,main,0x134,204,queued,sonnet,0,,
+func_02096bc4,main,0x134,204,fail_sonnet,sonnet,2,82.1,Signed asrs addend fixed. Still unmatched: the compare emits bl _dgr (unresolved) instead of blx func_02099ff0. Target also spills the original low wo
 func_02096cf8,main,0x80,66,done,sonnet,1,100,matched by haiku
-func_02096d78,main,0x188,234,queued,sonnet,0,,
+func_02096d78,main,0x188,234,fail_sonnet,sonnet,2,94.4,"Using `!(x.d != 0.0)` fixed the flags-based bne (it emits _dneq, though try reports it as an unresolved _dneq bl instead of blx func_0209a1c8). Remain"
 func_02096f00,main,0xe8,152,done,sonnet,1,100,matched by haiku
 func_02096fe8,main,0x8,6,done,haiku,0,100,cloned from func_02086b20
 func_02096ff0,main,0x8,6,done,haiku,0,100,cloned from func_02086b20
@@ -8018,9 +8018,9 @@ func_02099314,main,0x24,14,todo,haiku,0,,
 func_02099338,main,0x24,14,todo,haiku,0,,
 func_0209935c,main,0x1a,20,done,haiku,2,100,matched by sonnet
 func_02099378,main,0x16,18,done,haiku,1,100,matched by haiku
-func_02099390,main,0x318,311,todo,sonnet,0,,
-func_020996c0,main,0x3b4,374,todo,sonnet,0,,
-func_02099a74,main,0x364,352,todo,sonnet,0,,
+func_02099390,main,0x318,311,queued,sonnet,0,,
+func_020996c0,main,0x3b4,374,queued,sonnet,0,,
+func_02099a74,main,0x364,352,queued,sonnet,0,,
 func_02099dd8,main,0x104,105,fail_sonnet,sonnet,2,14.6,"Not matched after 8 tries/15. The compiler emits add+cmp or mvn+cmp for the inf check instead of the target's cmn r3,#0x200000. It also schedules lsr "
 func_02099edc,main,0x40,20,fail_sonnet,haiku,2,21.4,"Target needs a single ARM clz instruction. mwcc emits it only from inline asm, which is not allowed. __clz, __builtin_clz, __cntlzw, _CountLeadingZero"
 func_02099f1c,main,0x3c,21,fail_sonnet,haiku,2,12,"Target uses a single clz instruction. __clz, __builtin_clz, __cntlzw, _CountLeadingZeros, __cntlz and CLZ are all unresolved here and emit a bl. The p"
@@ -8036,22 +8036,22 @@ func_0209a398,main,0x68,40,blocked,haiku,0,,system register access (mrs/msr): no
 func_0209a400,main,0x84,60,fail_sonnet,haiku,2,11.4,"Blocked on the clz in the subnormal path. I tried __builtin_clz, __clz, __CLZ, _CountLeadingZeros, __builtin_arm_clz and __cntlzw. Each compiles to an"
 func_0209a484,main,0x48,26,fail_sonnet,haiku,4,9.6,"No clz intrinsic found: __builtin_clz, __clz, CLZ, _CLZ, __CLZ, __cntlzw, __cntlz, __clz32 and _clz all compile to a bl call. Rest of the structure in"
 func_0209a4cc,main,0x48,28,fail_sonnet,haiku,2,10.3,"No C idiom found that emits clz. __builtin_clz, __clz, CLZ, _clz, __cntlzw and similar names are all unresolved externs, and loop forms compile to 0x7"
-func_0209a514,main,0x1c0,229,queued,sonnet,0,,
+func_0209a514,main,0x1c0,229,fail_sonnet,sonnet,2,10.3,"Target has two entry points (0x0 mod, 0x10 div) sharing one body with a flag in r4; one C function can't produce that. Only reran Haiku's a.c, still a"
 func_0209a6d4,main,0x48,31,fail_sonnet,haiku,2,13.9,"Hand-written runtime asm (64-bit divmod) with two entry points, a push of r4-r7/fp/ip/lr and a flag in r4; this can't be written as pure C. Callee sym"
 func_0209a71c,main,0x20,10,fail_sonnet,haiku,2,43.8,"mwcc compiles the 64-bit multiply correctly (umull plus two mla). It uses scratch regs lr/ip and pushes {r3, lr}, so the size is 0x1c vs the target's "
 func_0209a73c,main,0x30,20,fail_sonnet,haiku,2,32.7,"Masked count lands in r3/ip not r2, compiler predicates the s>=32 path (lslpl/bxpl) instead of bge, and composing the 64-bit return adds junk orr #0 ("
-func_0209a76c,main,0x20c,177,queued,sonnet,0,,jumptable
-func_0209a978,main,0x1e4,167,queued,sonnet,0,,jumptable
+func_0209a76c,main,0x20c,177,fail_sonnet,sonnet,2,5.2,I ran no tools/try attempts myself. The target is the runtime's signed divmod with a 32-step unrolled restoring division entered through a computed ju
+func_0209a978,main,0x1e4,167,fail_sonnet,sonnet,2,2.5,"Target is a hand-written unrolled divmod that uses adcs carry chains and a computed jump (add pc). Pure C cannot produce those. I ran tools/try once, "
 func_0209ab5c,main,0x34,19,fail_sonnet,haiku,2,25,"Right size (0x34) but mwcc emits separate lsr+rsb+cmp instead of fused subs with lsr #23, predicated saturation instead of out-of-line ble, and rsblt "
 func_0209ab90,main,0x40,26,fail_sonnet,haiku,4,50,"No match. mwcc if-converts the r1<0 early return (or, in the sign-first layout, drops the register-held 0xff000000 and uses bxls). It never emits the "
 func_0209abd0,main,0x4c,28,fail_sonnet,haiku,2,89.5,"mwcc hoists the ldr =0x41e above the bic and emits sub+cmp instead of subs, so the shift count and abs value land in the wrong registers (r3/r2 swappe"
 func_0209ac1c,main,0x8c,54,fail_sonnet,haiku,2,40.8,"No match. The 64-bit compare fixes the negative check, but mwcc still predicates the e>32 return, puts the exponent in r3 instead of r2, keeps the man"
-func_0209aca8,main,0x19c,176,queued,sonnet,0,,
+func_0209aca8,main,0x19c,176,fail_sonnet,sonnet,2,13.6,"Not matched. I ran tools/try twice, once on e.c and once on a fresh fdlibm-style attempt (a.c, 6.8%, and `__clz` is unresolved). e.c is still the best"
 func_0209ae44,main,0xe4,99,fail_sonnet,sonnet,2,9.6,"Not matched. mwcc emits push {r3,lr} or {r4,lr} where the target is a frame-less stmdb {lr} leaf, and the target clobbers r4 without saving it, which "
-func_0209af28,main,0x1e0,230,queued,sonnet,0,,
-func_0209b108,main,0x21c,239,queued,sonnet,0,,
+func_0209af28,main,0x1e0,230,fail_sonnet,sonnet,2,11.9,"Target needs an inline clz instruction. mwcc treats __clz, __builtin_clz, __CLZ, _clz and clz as external calls, and __CLZ32 gives a compile error. Lo"
+func_0209b108,main,0x21c,239,fail_sonnet,sonnet,2,8.9,No match; only 1 of 15 runs used. The sign-differ bmi tail-jump to 0x209b344 can't be expressed in C. The inlined soft-float add relies on carry/rrx/f
 func_0209b324,main,0x8,4,done,haiku,1,100,matched by haiku
-func_0209b338,main,0x278,278,todo,sonnet,0,,
+func_0209b338,main,0x278,278,queued,sonnet,0,,
 func_0209b5bc,main,0x3b8,379,blocked,sonnet,0,,system register access (mcr): not C
 func_0209b98c,main,0x544,509,blocked,opus,0,,system register access (mcr): not C
 func_0209bed0,main,0x4,3,done,haiku,0,100,cloned from AutoloadCallback
@@ -8069,14 +8069,14 @@ func_0209bfdc,main,0x5c,60,done,sonnet,1,100,matched by haiku
 func_0209c038,main,0x38,50,done,haiku,1,100,matched by haiku
 func_0209c070,main,0x8a,107,done,sonnet,2,100,matched by sonnet
 func_0209c0fc,main,0x16,17,done,haiku,1,100,matched by haiku
-func_0209c114,main,0x1c2,545,todo,sonnet,0,,jumptable
+func_0209c114,main,0x1c2,545,queued,sonnet,0,,jumptable
 func_0209c2d8,main,0x5ec,1282,todo,opus,0,,jumptable
-func_0209c8c4,main,0xbc,166,queued,sonnet,0,,jumptable
+func_0209c8c4,main,0xbc,166,done,sonnet,2,100,matched by sonnet
 func_0209c980,main,0x4a,55,fail_sonnet,haiku,2,60.8,"j1.c is the same size and has the right registers, but `adds r4,r4,#4` is scheduled after `ldrb r0,[r4]` instead of at loop end. Whenever p+=4 is move"
 func_0209c9cc,main,0x80,82,fail_sonnet,sonnet,2,8.8,"The target looks like mwcc C++ exception-handling output (try/catch). b.c uses ""/* cflags: -lang c++ -Cpp_exceptions on */"" with try/catch(...) and ge"
 func_0209ca4c,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_0209ca50,main,0x34,30,fail_sonnet,haiku,2,96.2,"Only the prologue copy order differs: target has adds r2,r7 before adds r5,r0, and mwcc emits adds r5,r0 first. Local copies, struct types, int/void* "
-func_0209ca84,main,0x10e,233,queued,sonnet,0,,jumptable
+func_0209ca84,main,0x10e,233,done,sonnet,2,100,matched by sonnet
 func_0209cb94,main,0x36,33,done,haiku,1,100,matched by haiku
 func_0209cbcc,main,0x98,106,done,sonnet,1,100,matched by haiku
 func_0209cc64,main,0x18,19,done,haiku,1,100,matched by haiku
@@ -8089,7 +8089,7 @@ func_0209ccdc,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_0209cce4,main,0x10,9,done,haiku,1,100,matched by haiku
 func_0209ccf4,main,0x10,9,done,haiku,1,100,matched by haiku
 func_0209cd04,main,0x18,12,done,haiku,1,100,matched by haiku
-func_0209cd1c,main,0x120,292,todo,sonnet,0,,
+func_0209cd1c,main,0x120,292,queued,sonnet,0,,
 func_0209ce3c,main,0x14,12,fail_sonnet,haiku,2,33.3,"Only a live VLA forces the r7 frame pointer and `mov sp, r7`, but it also emits the VLA allocation code (target has none). The fixed-frame variants (k"
 func_0209ce52,main,0xe,9,todo,haiku,0,,unaligned
 func_0209ce62,main,0x6,17,todo,haiku,0,,unaligned
@@ -8162,7 +8162,7 @@ __sinit_020a7b0c,main,0x30,20,blocked,haiku,0,,__sinit: integrate breaks dsd (.c
 func_01ff8020,itcm,0x54,44,done,haiku,1,100,matched by haiku
 func_01ff8074,itcm,0x50,42,done,haiku,1,100,matched by haiku
 func_01ff80c4,itcm,0x54,54,done,haiku,1,100,matched by haiku
-func_01ff8118,itcm,0x180,226,queued,sonnet,0,,
+func_01ff8118,itcm,0x180,226,fail_sonnet,sonnet,2,28.7,"No MATCH after 7 of 15 tools/try runs. Best is e2.c at 28.7% (0x198 bytes vs 0x180), which keeps p in a volatile local. The compiler spills `top` inst"
 func_01ff8298,itcm,0x428,728,todo,opus,0,,
 func_01ff86c0,itcm,0xb4,106,fail_sonnet,sonnet,2,98.9,"Size matches (0xb4). Only diff: the q[1] flag load and lsls use r0 instead of r1 in the slow path; r1/size reuse, signed t and other variants did not "
 func_01ff8774,itcm,0xbc,132,fail_sonnet,sonnet,2,93.1,"Only diff left is p/sentinel register swap (target p=r7, sent=r6; ours p=r6, sent=r7). Fixes found: do{}while(bin++ != binend), store head to *p right"
@@ -8174,12 +8174,12 @@ func_01ff8950,itcm,0x48,21,done,haiku,1,100,matched by haiku
 func_01ff8998,itcm,0x12c,125,fail_sonnet,sonnet,2,65.7,C++ -nothumb with RAII lock guard (8-byte pad) and virtual Node methods match the frame and call sequence. Still missing is the lsl/lsrs #0x18 normali
 func_01ff8ac4,itcm,0x124,123,done,sonnet,2,100,matched by sonnet
 func_01ff8be8,itcm,0xc0,72,fail_sonnet,sonnet,2,29.1,"C++ with real virtual classes, a Guard class for the global save/restore and a Lock RAII class for the 0x26 flag matches the frame and call shapes (be"
-func_01ff8ca8,itcm,0x280,245,queued,sonnet,0,,
+func_01ff8ca8,itcm,0x280,245,fail_sonnet,sonnet,2,81.2,"Size now matches (0x280), as do the guard, the 0x18 frame and the sort block. The emission loop still gets different registers: the target keeps the l"
 func_01ff8f28,itcm,0x98,94,done,sonnet,1,100,matched by haiku
 func_01ff8fc0,itcm,0x78,100,done,sonnet,1,100,matched by haiku
 func_01ff9038,itcm,0x58,34,fail_sonnet,haiku,2,16.7,"I used 2 of 15 tools/try runs. Neither `__clz` nor `__builtin_clz` compiles to a clz instruction. Each becomes an unresolved bl, so the frame is push "
 func_01ff9090,itcm,0x160,134,blocked,sonnet,0,,system register access (mrs/msr): not C
-func_01ff91f0,itcm,0xc4,172,queued,sonnet,0,,jumptable
+func_01ff91f0,itcm,0xc4,172,fail_sonnet,sonnet,2,5.6,"Target uses raw svc 0x24/0x25/0x26/0x28. I tried __svc(n), __swi(n) and __attribute__((svc(n))) in pure C, and the compiler rejects or ignores them. W"
 func_01ff92b4,itcm,0xa8,70,done,sonnet,1,100,matched by haiku
 func_01ff935c,itcm,0x70,71,done,haiku,1,100,matched by haiku
 func_01ff93cc,itcm,0xd0,79,fail_sonnet,sonnet,2,12.5,"Target has no push {lr} and ends with an 11-register ldm and `bx ip`. Plain C compiles with a prologue, so it can't match. I ran tools/try once, with "
