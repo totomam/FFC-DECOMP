@@ -23,7 +23,7 @@ An independent audit (session 14) checked every claim below against the repo and
 | tangosdev/sm64ds-decomp | 100% matched, LLM-driven, CW "2004/b56". Ideas + portable tools | MIT (port with attribution) |
 | sturmds/advance-wars-dual-strike-decomp | 100%, dsd-based, LLM-driven; docs/data-tool.md, bss-tool.md, issues/ | CC0 |
 | Yokimitsuro/khdays-decomp | 100% linked incl. asm stubs (main 96% C) | CC0 |
-| zcanann/FFCC-Decomp (GameCube) | names / struct / file-format reference only | CC0 |
+| **arcnid/ffc-decomp** (same game, same ROM; active 2026-10-13) | see "Parallel FFC decomp" below | **none: do not copy code** |
 | pret/pokeplatinum, pokeheartgold, pokediamond, pmd-sky | SDK in C, technique reference | **none (all rights reserved): do not copy code** |
 | GoldieLeGenie/DQIV-DECOMP | technique reference | **none: do not copy code** |
 | taxicat1/dsprot (21 version branches) | DS Protect reference | **none: do not copy code** |
@@ -35,6 +35,25 @@ Compiler caveat: every reference repo uses CodeWarrior *for DS* (2.0/spXpY, 1.2/
 1.2p2. The version numbers are not comparable, so codegen notes and SDK code transfer only where `tools/try` says so.
 awesome-decomp-games "Tools" section: recompilers and launchers only, nothing for matching.
 
+## Parallel FFC decomp: arcnid/ffc-decomp (added session 14)
+Independent matching decomp of Fossil Fighters Champions (USA), the same ROM. LLM agent waves, ov002 (battle) first:
+1,141 / 1,382 ov002 functions in C (82.6%), the rest asm fallback. Full 22-module relink via its own patched dsd.
+Compiler: CW for DSi **1.1 build 1018** (FFC: 1.2p2). Per-function flags `-O4` or `-O4,p`. No license.
+Cross-check against our queue.csv (by address, ov002):
+- their C functions: 557 already done here, 70 our fail_sonnet, 16 our todo, 498 not found under our names
+  (different function boundaries or naming; unexplained).
+- Of the 86 they have and we lack: 46 marked plain `-O4`, 40 `-O4,p`. FFC compiles everything with `-O4,p`
+  (ffclib CC_FLAGS) and never tries plain `-O4`. But 450 of our done functions are `-O4` in their manifest, so their
+  flag labels are "what matched on their compiler", not proof. Test it (Phase 1.0).
+Use (reference only, no code copying):
+- docs/PLAYBOOK.md + PLAYBOOK_WAVE3.md: mwccarm idioms found on this exact game (`-O4,p` vs `-O4` epilogue/jump-table
+  tells, volatile ordering pins, struct-temp tricks). Fold the ones that hold under 1.2p2 into tools/prompt.
+- `tools/try_variants.py` idea: compile 10-20 candidates (both flag sets) in one batched wine call. Consider the same
+  for tools/try in match_opus.js.
+- docs/BATTLE_FLOW.md, DAMAGE_FORMULA.md, STATUS.md names: ov002 names/struct research for a naming pass.
+- **Human decision:** two parallel decomps of the same game. Contacting arcnid to coordinate (or license their work)
+  could save the 86 functions and future duplicate effort. Do not contact them without the human.
+
 ## Phase 0: measure (no spending)
 1. Find FFC's TWL/Nitro SDK and MSL versions (build strings in `main`). **Count the non-done functions inside
    SDK/MSL address ranges.** If small, skip Phase 1.1 and 1.2.
@@ -42,7 +61,12 @@ awesome-decomp-games "Tools" section: recompilers and launchers only, nothing fo
    `tools/try` must fail). No gate needed.
 3. Licenses are recorded above. Code may only be copied from MIT/CC0 sources; ask the human about anything else.
 
-## Phase 1: free wins (no LLM) — only if Phase 0.1 shows enough SDK work
+## Phase 1: free wins (no LLM)
+0. **Plain `-O4` retry (cheap, do first):** recompile every fail_sonnet best attempt in pending/ with
+   `/* cflags: -noO4,p -O4 */` (check ffclib.cc_flags_for drops `-O4,p` correctly) via tools/try; bank matches.
+   Gate: if it matches near zero, drop the idea. If it works, add the flag variant to mkwave/match prompts.
+
+Phase 1.1-1.3 only if Phase 0.1 shows enough SDK work.
 Run 1.1 and 1.2 in a child session, or with no children running as an explicit exception (like `clone.py run`):
 they touch src/ and config/.
 1. **SDK import.** No reference repo is TWL-SDK and the pret repos are unlicensed, so expect little. Use only
