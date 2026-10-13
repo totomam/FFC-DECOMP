@@ -64,6 +64,7 @@
   377 blocked. No children running. Next: Opus phase below - waits on the human's go-ahead (cost).
 
 ## Next phase: Opus tier (planned session 13; not started)
+**Superseded in detail by docs/LONGTAIL_PLAN.md (audited session 14): read it first.** Group counts below are stale.
 Remaining (queue at 6f1c47d5): fail_sonnet main 588 / ov0-3 674 / ov4-18 387; opus todo 138 / 177 / 202;
 blocked 377; haiku+sonnet todo held back by busy shapes (clear themselves via clone passes).
 1. Tools: `tools/workflows/match_opus.js` - one Opus fn-matcher per function, prompt carries the best prior attempt
