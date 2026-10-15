@@ -38,10 +38,14 @@ def file_flags(path: Path) -> list[str]:
 def cc_flags_for(path: Path) -> list[str]:
     extra = file_flags(path)
     flags = list(CC_FLAGS)
+    keep = []
     for tok in extra:
         if tok.startswith("-no") and ("-" + tok[3:]) in flags:
             flags.remove("-" + tok[3:])
-    return flags + extra
+            if tok.startswith("-noO"):  # `-noO4,p` only drops the default; not an mwcc flag
+                continue
+        keep.append(tok)
+    return flags + keep
 
 
 def module_dirs():
