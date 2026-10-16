@@ -1,4 +1,7 @@
-# GOAL (human, session 17): PC port + browser port
+# GOAL (human, session 17): Windows + browser port, personal use only
+Decisions (human, session 17): native source port (Windows exe + Emscripten/wasm); provenance/licence of libntr,
+ntrtwl SDK trees, melonDS (GPL) code is NOT a concern (personal use) -> reuse freely. Roadmap and phases:
+reports/DS PC port approaches.md (P0-P6). Done = matched C or oracle-verified equivalent C; 32-bit host first.
 Browser = the same port built with Emscripten (wasm32). Design constraints from day one: 32-bit pointers (matches
 the 32-bit host plan), renderer on GLES3/WebGL2 (no desktop-GL-only or compute features), single-threaded main
 loop (fibers/asyncify, no reliance on pthreads), SDL audio/input, user picks the ROM, saves in IndexedDB/OPFS.
