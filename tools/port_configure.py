@@ -45,11 +45,15 @@ TARGETS = {  # cc, flags, link flags, executable suffix
 LIFT_CHUNKS = 32
 EMSDK = os.environ.get("EMSDK", "/home/user/emsdk")
 MODULES = ["main", "itcm", "dtcm"] + [f"ov{i:03d}" for i in range(19)]
-CFLAGS = ["-O1", "-g0", "-fno-pic", "-ffreestanding", "-fno-builtin", "-fno-strict-aliasing", "-fwrapv", "-fms-extensions",
+CFLAGS = ["-O1", "-g0", "-fno-omit-frame-pointer", "-funwind-tables", "-fno-pic", "-ffreestanding", "-fno-builtin", "-fno-strict-aliasing", "-fwrapv", "-fms-extensions",
           "-w", "-Wno-error=int-conversion", "-Wno-error=implicit-function-declaration", "-Wno-error=implicit-int",
           "-Wno-error=return-type", "-Wno-error=incompatible-function-pointer-types",
           "-Wno-error=address-of-temporary", "-ffunction-sections", "-fdata-sections",
           "-Dmain=ffc_main", "-Iinclude", "-Iport/include", "-include", "port/include/cw_compat.h"]
+
+
+# A function definition at top level: `T func_X(args) {` (args may span lines).
+DEF_RE = re.compile(r"^[A-Za-z_][^;\n{}()=]*?\b(func_\w+)\s*\([^;{}]*\)\s*\{", re.M)
 
 
 def is_asm_stub(text: str) -> bool:
@@ -67,10 +71,15 @@ def main():
              "rule list", "  command = cp $out.rsp $out", "  rspfile = $out.rsp", "  rspfile_content = $in_newline", ""]
     objs, skipped, fixed = [], [], []
     fnames = function_names()
+    # Functions port/src overrides (sdk_override.c): a src/ TU defining one is left out (its other functions get
+    # lifted like any undefined function).
+    overrides = set()
+    for c in (ROOT / "port" / "src").glob("*.c"):
+        overrides |= set(DEF_RE.findall(c.read_text()))
     for c in sorted((ROOT / "src").rglob("*.c")):
         rel = c.relative_to(ROOT)
         head = c.read_text(errors="replace")
-        if is_asm_stub(head):
+        if is_asm_stub(head) or overrides & set(DEF_RE.findall(head)):
             skipped.append(str(rel))
             continue
         lang = "-x c++ -std=gnu++03 -fno-exceptions -fno-rtti" if "-lang c++" in head[:200] else "-x c -std=gnu99"
@@ -95,7 +104,7 @@ def main():
     for c in sorted((ROOT / "port" / "src").glob("*.c")):
         o = f"{out}/port/{c.stem}.o"
         rts.append(o)
-        lines.append(f"build {o}: cc_rt port/src/{c.name} | port/src/hal.h")
+        lines.append(f"build {o}: cc_rt port/src/{c.name} | " + " ".join(f"port/src/{h.name}" for h in sorted((ROOT / "port" / "src").glob("*.h"))))
     lls = [f"{gen}/{m}.ll" for m in MODULES] + [f"{gen}/standins.ll"]
     # Thumb functions no TU defines are lifted to C (tools/port_lift.py) instead of becoming trap stand-ins.
     lift = f"{out}/lift"
@@ -105,7 +114,7 @@ def main():
               "rule lift", f"  command = NM={nm} python3 tools/port_lift.py --objs $in --out {lift} --chunks {LIFT_CHUNKS}",
               "  description = port_lift", "",
               f"build {' '.join(lift_cs)}: lift {out}/objs.txt | tools/port_lift.py", "",
-              "rule cc_lift", f"  command = $cc {' '.join(tflags)} -O1 -g0 -w -fno-pic -ffreestanding -fno-builtin "
+              "rule cc_lift", f"  command = $cc {' '.join(tflags)} -O1 -g0 -fno-omit-frame-pointer -funwind-tables -w -fno-pic -ffreestanding -fno-builtin "
               "-fno-strict-aliasing -fwrapv -ffunction-sections -c $in -o $out", "  description = cc $in", ""]
     lines += [f"build {o}: cc_lift {c}" for c, o in zip(lift_cs, lift_os)]
     lines += ["", f"build {out}/objs_all.txt: list {' '.join(objs + rts + lift_os)}", "",
@@ -124,7 +133,7 @@ def main():
     (ROOT / "port").mkdir(exist_ok=True)
     (ROOT / "port" / f"build.{a.target}.ninja").write_text("\n".join(lines))
     (ROOT / "port" / f"skipped.{a.target}.txt").write_text("".join(s + "\n" for s in skipped))
-    print(f"{len(objs)} TUs ({len(fixed)} with function-as-data decls rewritten), {len(skipped)} asm stubs skipped -> port/build.{a.target}.ninja")
+    print(f"{len(objs)} TUs ({len(fixed)} with function-as-data decls rewritten), {len(skipped)} asm stubs/overridden TUs skipped -> port/build.{a.target}.ninja")
 
 
 if __name__ == "__main__":

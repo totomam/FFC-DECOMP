@@ -60,6 +60,32 @@ static void map_region(uint32_t base, uint32_t size)
     }
 }
 
+const uint8_t *ffc_rom;
+uint32_t ffc_rom_size;
+
+static void load_rom(void)
+{
+    const char *path = getenv("FFC_ROM") ? getenv("FFC_ROM") : "rom/baserom_usa.nds";
+    FILE *f = fopen(path, "rb");
+    uint8_t *buf;
+    long n;
+    if (!f) {
+        fprintf(stderr, "ffc: cannot open ROM %s (set FFC_ROM)\n", path);
+        exit(1);
+    }
+    fseek(f, 0, SEEK_END);
+    n = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    buf = malloc((size_t)n);
+    if (!buf || fread(buf, 1, (size_t)n, f) != (size_t)n) {
+        fprintf(stderr, "ffc: cannot read ROM %s\n", path);
+        exit(1);
+    }
+    fclose(f);
+    ffc_rom = buf;
+    ffc_rom_size = (uint32_t)n;
+}
+
 void ffc_hal_init(void)
 {
     size_t i;
@@ -73,6 +99,12 @@ void ffc_hal_init(void)
     FFC_REG16(FFC_REG_EXTKEYIN) = 0x007f;
     /* Shared area the ARM7/BIOS fill in on hardware (HW_* in 0x027ffc00 / 0x02fffc00). */
     FFC_REG16(0x027ffc10u) = 0x5835;     /* HW_BOOT_CHECK_INFO_BUF-ish marker, harmless */
+    /* What the IPL leaves behind: ROM header copy (HW_ROM_HEADER_BUF, both the NTR and TWL-era mirror) and the
+     * card ID (HW_BOOT_CHECK_INFO_BUF). */
+    load_rom();
+    memcpy((void *)(uintptr_t)0x027ffe00u, ffc_rom, 0x160);
+    memcpy((void *)(uintptr_t)0x02fffe00u, ffc_rom, 0x160);
+    FFC_REG32(0x027ffc00u) = FFC_REG32(0x02fffc00u) = 0x00001fc2u;
     hal_ready = 1;
 }
 
@@ -81,12 +113,18 @@ uint64_t ffc_hal_frame(void)
     return frames;
 }
 
+extern uint32_t ffc_cpsr;
+extern uint16_t data_02141510; /* OSi_ThreadInfo.isNeedRescheduling */
+extern void func_02086c78(void); /* OSi_RescheduleThread */
+
 void ffc_hal_raise_irq(uint32_t mask)
 {
-    uint32_t pending, bit;
+    uint32_t pending, bit, cpsr;
     hal_if |= mask;
-    if (!(FFC_REG16(FFC_REG_IME) & 1))
+    if (!(FFC_REG16(FFC_REG_IME) & 1) || (ffc_cpsr & 0x80))
         return;
+    cpsr = ffc_cpsr;
+    ffc_cpsr = (cpsr & ~0x1fu) | 0x92; /* IRQ mode, IRQs off: thread switches are deferred */
     while ((pending = hal_if & FFC_REG32(FFC_REG_IE)) != 0) {
         for (bit = 0; !(pending & (1u << bit)); bit++)
             ;
@@ -97,6 +135,12 @@ void ffc_hal_raise_irq(uint32_t mask)
             data_02fe0020[bit]();
         FFC_REG16(FFC_REG_IME) = 1;
         FFC_REG32(FFC_REG_IF) = 0;
+    }
+    ffc_cpsr = cpsr;
+    /* OS_IrqHandler_ThreadSwitch */
+    if (data_02141510) {
+        data_02141510 = 0;
+        func_02086c78();
     }
 }
 
@@ -114,4 +158,35 @@ void ffc_hal_vblank(void)
         hal_if |= FFC_IRQ_VBLANK;
     FFC_REG16(FFC_REG_DISPSTAT) &= ~1;
     FFC_REG16(FFC_REG_VCOUNT) = 0;
+}
+
+/* DMA channel ch (0-3) after its SAD/DAD/CNT registers were written: immediate and GX-FIFO transfers run at once
+ * (and clear the enable bit), repeating V/HBlank transfers are left armed and not run. */
+void ffc_hal_dma_kick(uint32_t ch)
+{
+    uint32_t r = 0x040000b0u + ch * 12;
+    uint32_t cnt = FFC_REG32(r + 8), src = FFC_REG32(r), dst = FFC_REG32(r + 4);
+    uint32_t n = cnt & 0x1fffff, timing = (cnt >> 27) & 7, unit = (cnt & (1u << 26)) ? 4 : 2;
+    int32_t ds, ss;
+    if (!(cnt & 0x80000000u))
+        return;
+    if (cnt & (1u << 25)) {
+        if (getenv("FFC_TRACE"))
+            fprintf(stderr, "ffc: dma%u repeat timing %u not emulated\n", ch, timing);
+        return;
+    }
+    if (n == 0)
+        n = 0x200000;
+    ds = ((cnt >> 21) & 3) == 2 ? 0 : ((cnt >> 21) & 3) == 1 ? -(int32_t)unit : (int32_t)unit;
+    ss = ((cnt >> 23) & 3) == 2 ? 0 : ((cnt >> 23) & 3) == 1 ? -(int32_t)unit : (int32_t)unit;
+    if (dst >= 0x01000000u) /* the SDK's dummy DMA to address 0 is skipped */
+        for (; n; n--, src += ss, dst += ds) {
+            if (unit == 4)
+                FFC_REG32(dst) = FFC_REG32(src);
+            else
+                FFC_REG16(dst) = FFC_REG16(src);
+        }
+    FFC_REG32(r + 8) = cnt & ~0x80000000u;
+    if (cnt & (1u << 30))
+        ffc_hal_raise_irq(1u << (8 + ch));
 }

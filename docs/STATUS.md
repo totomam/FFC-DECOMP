@@ -4,6 +4,30 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 22) — host boots into FS_Init, $0 model spend
+- Bootstrap OK (branch claude/ffc-port-continue-3y9arg, from rxibxu). Extras installed (i386/multilib/mingw, emsdk).
+  **22/22 NOT confirmed**: ROM ninja was still at 15975/15978 (final link/check) at the context guard. Re-run ninja.
+- **port/src/sdk_override.c** (new): PXI_InitFifo (func_02089100, no handshake, ARM7 handler bits all set),
+  PXI_SendWordByFifo (func_02089218 -> ffc_arm7_recv stub + reply queue delivered via data_021418c8 =
+  FifoRecvCallbackTable; no tags emulated yet), OSi_SyncWithOtherProc (func_020867f4, no-op),
+  **OS threads via host coroutines** (port/src/coro.c: ucontext / Win32 fibers / emscripten fibers):
+  OS_InitContext 020872d8, OS_SaveContext 02087344 (notes the running coroutine, returns 0), OS_LoadContext
+  02087390 (switch; resumed thread returns from it = SaveContext's TRUE); MIi_DmaSetParameters 01ff8f28 ->
+  ffc_hal_dma_kick (hal.c: immediate DMA, repeat DMA ignored, dummy DMA to 0 skipped); CARD: ReadRomWithCPU
+  0207d67c (memcpy from ROM file), IsRomDmaAvailable 0207d830=0, ReadRomIDCore 0207d55c, ReadRomStatusCore,
+  RefreshRomCore no-ops.
+- **port_configure**: a src/ TU defining a function that port/src defines is skipped (DEF_RE); its other functions
+  get lifted. Host/lift built with -fno-omit-frame-pointer -funwind-tables: gdb bt now works.
+- hal.c: loads ROM (FFC_ROM, default rom/baserom_usa.nds), copies header to 0x027ffe00/0x02fffe00, card ID at
+  0x02fffc00; IRQ dispatch runs in IRQ mode (ffc_cpsr) and does OS_IrqHandler_ThreadSwitch (data_02141510 ->
+  func_02086c78).
+- **Host run**: first thread starts; now **segfaults in FS_Init** (func_0207fe54 -> FSi_InitRomArchive 0207fd30 ->
+  FS_SetCurrentDirectory -> FSi_FindPathDefault 0207f078, NULL path/FNT). Cause: OS_GetBootType (func_02088a2c)
+  is probably not 1 (ROM) -> no ROM archive tables loaded. Next: make OS_GetBootType return 1 (override, or set
+  the IPL boot-type word it reads), then continue trapping. Debug scripts: run under `gdb -batch -ex run -ex bt`.
+- Not done: steps 2 (recover_funcs/import_arcnid) and 3 (wasm rebuild, win32) — blocked on 22/22 first.
+- Cost: $0 model spend; orchestrator context only (~185k).
+
 ## Done (session 21) — lifter wired + ARM mode, host boots to PXI handshake, $0 model spend
 - Bootstrap OK (branch claude/ffc-port-continue-rxibxu, from 6zcx73). **22/22 confirmed** (ninja EXIT 0).
   cwmsl (MSL headers + CW libs) NOT set up.
