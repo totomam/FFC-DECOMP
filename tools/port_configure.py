@@ -36,7 +36,7 @@ def main():
     a = ap.parse_args()
     cc, tflags, lflags, exe = TARGETS[a.target]
     out = f"build/port/{a.target}"
-    lines = [f"cc = {cc}", f"cflags = {' '.join(tflags + CFLAGS)}", "",
+    lines = [f"builddir = {out}", f"cc = {cc}", f"cflags = {' '.join(tflags + CFLAGS)}", "",
              "rule cc", "  command = $cc $cflags $lang -c $in -o $out", "  description = cc $in", "",
              "rule list", "  command = cp $out.rsp $out", "  rspfile = $out.rsp", "  rspfile_content = $in_newline", ""]
     objs, skipped = [], []
