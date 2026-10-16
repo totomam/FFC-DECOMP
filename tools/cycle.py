@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tools/cycle.py <N> <wave N task .output> ... [--next 240] [--next-n M] [--tier haiku] [--group G] [--bg] [--no-push]
+"""tools/cycle.py <N> <wave N task .output> ... [--next 240] [--next-n M] [--tier haiku] [--status todo] [--group G] [--bg] [--no-push]
 One matching cycle, ~3 lines of output:
   1. mkwave for wave N+1 (unless --next 0): <count> dedup names -> work/wave<N+1>_<i>.json, 60 per Workflow
   2. wave N results + clone pass (wave matches serve as donors) -> ONE tools/integrate (one link)
@@ -23,18 +23,19 @@ ROOT = ffclib.ROOT
 PER_WORKFLOW = 60
 
 
-def mkwave(n, count, tier, group=None):
+def mkwave(n, count, tier, group=None, status="todo"):
     out = subprocess.run([sys.executable, str(ROOT / "tools/mkwave.py"), tier, str(count), "--dedup", "--names",
-                          *(["--group", group] if group else [])],
+                          *(["--group", group] if group else []), "--status", status],
                          cwd=ROOT, capture_output=True, text=True, check=True).stdout
     names = json.loads(out)
     (ROOT / "work" / f"wave{n}.json").write_text(json.dumps(names))
     files = []
     for i in range(0, len(names), PER_WORKFLOW):
         p = ROOT / "work" / f"wave{n}_{i // PER_WORKFLOW}.json"
-        p.write_text(json.dumps(names[i:i + PER_WORKFLOW]))
+        chunk = names[i:i + PER_WORKFLOW]  # re-runs of failed rows skip Haiku (match_wave.js object form)
+        p.write_text(json.dumps(chunk if status == "todo" else {"names": chunk, "tier": "sonnet"}))
         files.append(str(p.relative_to(ROOT)))
-    print(f"wave {n}: {len(names)} {tier} names -> {' '.join(files)}")
+    print(f"wave {n}: {len(names)} {tier} {status} names -> {' '.join(files)}")
 
 
 def git(*a):
@@ -86,6 +87,7 @@ def main():
     ap.add_argument("--next", type=int, default=240)
     ap.add_argument("--next-n", type=int, help="number of the next wave (default N+1)")
     ap.add_argument("--tier", default="haiku")
+    ap.add_argument("--status", default="todo", help="mkwave rows to pick (fail_sonnet: Sonnet-only re-run)")
     ap.add_argument("--group", choices=ffclib.GROUPS, help="mkwave + clone only in this module group")
     ap.add_argument("--bg", action="store_true")
     ap.add_argument("--no-push", action="store_true")
@@ -93,7 +95,7 @@ def main():
     a = ap.parse_args()
     if not a.integrate_only:
         if a.next:
-            mkwave(a.next_n or a.n + 1, a.next, a.tier, a.group)
+            mkwave(a.next_n or a.n + 1, a.next, a.tier, a.group, a.status)
         if not a.outputs:  # mkwave only
             return
         if a.bg:

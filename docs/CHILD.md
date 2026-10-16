@@ -1,25 +1,26 @@
 # Child-session prompt (parallel sessions)
-Fill in BRANCH, T (haiku | sonnet: queue tier), G (main | ov0-3 | ov4-18) and waves A B C (unique across sessions; A-1 is any number);
+Fill in ORCH (orchestrator branch), BRANCH, T (haiku | sonnet: queue tier), S (todo | fail_sonnet: fail_sonnet = Sonnet-only re-run), G (main | ov0-3 | ov4-18) and waves A B C (unique across sessions; A-1 is any number);
 paste as the create_session prompt (source_url totomam/FFC-DECOMP, source_revision = orchestrator branch,
 outcome_branch BRANCH).
 
 ```
 FFC matching decomp, child session: waves A, B, C in module group G only. Repo totomam/ffc-decomp.
-1. git checkout -B BRANCH origin/claude/ffc-matching-decomp-wave7-mt7q4y. Attach totomam/ffc-assets (add_repo,
+1. git checkout -B BRANCH origin/ORCH. Attach totomam/ffc-assets (add_repo,
    read), clone it to /home/user/ffc-assets, ln -sfn /home/user/ffc-assets .assets, then run the "Fresh-session
    bootstrap" in docs/STATUS.md (skip fetch_assets' clone but DO run tools/fetch_assets.sh: it assembles
-   rom/baserom_usa.nds). ninja must end with 22/22 modules OK.
-2. python3 tools/cycle.py A-1 --next 240 --next-n A --group G --tier T   (mkwave only: work/waveA_{0..3}.json)
+   rom/baserom_usa.nds). tools/setup.sh is approved by the human. ninja must end with 22/22 modules OK
+   (cold ninja ~45 min: run it in the background with a 2 h timeout).
+2. python3 tools/cycle.py A-1 --next 240 --next-n A --group G --tier T --status S   (mkwave only: work/waveA_{0..3}.json)
    git add queue.csv; commit "Queue wave A (G)"; git push -u origin BRANCH.
 3. For W = A, B, C (NEXT = the following wave; none after C):
    a. I explicitly ask you to use the Workflow tool: run 4 Workflows concurrently,
-      {scriptPath: tools/workflows/match_wave.js, args: <JSON array from work/waveW_i.json>}, i = 0..3.
+      {scriptPath: tools/workflows/match_wave.js, args: <JSON from work/waveW_i.json, as is>}, i = 0..3.
       Wait for all 4 notifications (no polling). Afterwards `git checkout -- tools` (workers sometimes edit tools/try).
    b. python3 tools/save_wave.py W <the 4 task output files>.
    c. Wait until no cycle runs: a background Bash `while pgrep -f "^python3 tools/cycle" >/dev/null; do sleep 30; done`.
       Check the previous work/cycle_*.log ends with "pushed"; if it says "integrate failed", run ninja, report, stop.
    d. git add pending queue.csv; commit "Save wave W (G)"; push.
-   e. W < C: python3 tools/cycle.py W pending/waveW/result.json --next 240 --next-n NEXT --group G --tier T --bg
+   e. W < C: python3 tools/cycle.py W pending/waveW/result.json --next 240 --next-n NEXT --group G --tier T --status S --bg
       (integrates W in the background while you go straight on to a. for NEXT).
       W = C: same with --next 0 and --bg too (a foreground integrate can exceed the 600 s tool limit), then wait
       with the pgrep loop from c. If mkwave yields 0 names, skip the remaining waves.
