@@ -15,6 +15,12 @@
   ~26 min wall for 60 (52-wide).
 - Misses: 7 near-misses >=93% (regalloc/order), ov009 STL-sort cluster (stack temps, <20%), 3 DS Protect asm stubs
   (func_ov015_021d5450, _021d6304, ...) and 1 this-adjust veneer (func_0209923c) -> should be `blocked`, not fail.
+- Widening (human OK 2026-10-16), budget ~$48: dedup shapes in fail_sonnet = main 909 / ov0-3 623 / ov4-18 691, so
+  one 240-wave per group (`cycle.py --status fail_sonnet`, Sonnet-only). Children spawned 06:09 UTC:
+  wave 60 main session_01UjpRRQzS8qBgHr6GumNmae (claude/ffc-wave60-main), 61 ov0-3 session_01Rs2FNGiQ4fSZuqpWMdJ5P7
+  (claude/ffc-wave61-ov0-3), 62 ov4-18 session_01Qbbe4FZL7Hrwaa5ezqU74j (claude/ffc-wave62-ov4-18).
+  Merge: `python3 tools/merge_queue.py origin/claude/ffc-wave60-main:main origin/claude/ffc-wave61-ov0-3:ov0-3
+  origin/claude/ffc-wave62-ov4-18:ov4-18`, ninja, `tools/clone.py run`. More waves (~$145 for 3x3) need the human's OK.
 
 ## Done (session 15)
 - Bootstrap: `tools/setup.sh` needed the human's OK (auto-mode blocks external code). Cold ninja ~45 min, mwld link
