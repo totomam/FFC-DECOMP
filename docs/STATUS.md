@@ -4,6 +4,18 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 17) — goal changed to a port
+- Human decision: target = **Windows + browser (Emscripten) port, personal use**; licence/provenance of libntr,
+  ntrtwl SDK trees and melonDS code is not a concern. Paid matching stops. See docs/LONGTAIL_PLAN.md (top) and
+  reports/DS PC port approaches.md (roadmap P0-P6, gates) + reports/DS decomp long tail strategy.md (free tiers).
+- Research notes: research_notes/ (8 files). No waves run, $0 model spend on matching; research ~1M subagent tokens.
+- Started P0: ffc-assets cloned + .assets symlinked; bootstrap chain (setup, fetch_assets, CW stage, extract,
+  configure, ninja) launched in the background -> work/setup.log, work/ninja.log ("EXIT 0" + 22/22 = done).
+  A new session must redo it (container-local). Reference clones (container-local): /home/user/ref/{cybervisi0n_libntr,
+  cybervisi0n_libntrsystem, cybervisi0n_pokeplatinum}, /home/user/arcnid/ffc-decomp.
+- libntr: meson, targets arm/linux/win64/nx (no wasm yet), sdk_version_major=5 + hardware_type=twl_hyb for DSi;
+  353 .c files / 145k lines; libntrsystem = NitroSystem (fnd, g2d, g3d, gfd, snd).
+
 ## Done (session 16)
 - Bootstrap OK (22/22). New: match_wave.js takes `{names, tier: 'sonnet'}` to skip Haiku (fail_sonnet re-runs).
 - **Sonnet pilot, wave 59** (`mkwave sonnet 60 --status fail_sonnet --dedup`, new prompt: plain -O4 + arcnid idioms):
