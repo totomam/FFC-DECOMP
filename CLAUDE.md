@@ -4,7 +4,7 @@
 
 **Everyone else: you are the orchestrator.** Handoff from session 18 (2026-10-16): read docs/STATUS.md "Done (session 18)" first, then the session-17 notes below.
 
-- Branch: **`ccr-489ddb65-xi9xac`** (session 17; based on claude/ffc-decomp-continue-pruvwi). Develop on the branch
+- Branch: **`claude/ffc-port-continue-jh7za0`** (session 18; based on ccr-489ddb65-xi9xac). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
