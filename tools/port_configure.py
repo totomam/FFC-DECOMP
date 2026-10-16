@@ -40,7 +40,7 @@ TARGETS = {  # cc, flags, link flags, executable suffix
     # wasm: -flto makes the whole game one LLVM module, so WebAssemblyFixFunctionBitcasts adapts calls whose
     # prototype differs between TUs (plain wasm-ld rejects them: "function signature mismatch").
     "wasm": ("$emsdk/upstream/bin/clang", ["--target=wasm32-unknown-emscripten", "-flto"],
-             ["-flto", "-O1", "-sGLOBAL_BASE=0x10000000", "-sINITIAL_MEMORY=512MB", "-sALLOW_MEMORY_GROWTH=1", "-sSTACK_SIZE=1048576", "-sERROR_ON_UNDEFINED_SYMBOLS=1"], ".js"),
+             ["-flto", "-O1", "-sGLOBAL_BASE=256MB", "-sINITIAL_MEMORY=512MB", "-sALLOW_MEMORY_GROWTH=1", "-sSTACK_SIZE=1048576", "-sERROR_ON_UNDEFINED_SYMBOLS=1"], ".js"),
 }
 EMSDK = os.environ.get("EMSDK", "/home/user/emsdk")
 MODULES = ["main", "itcm", "dtcm"] + [f"ov{i:03d}" for i in range(19)]

@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 19 (2026-10-16): read docs/STATUS.md "Done (session 19)" first (bootstrap extras, P1 gate met, P2 host link), then session 18/17.
+**Everyone else: you are the orchestrator.** Handoff from session 20 (2026-10-16): read docs/STATUS.md "Done (session 20)" first, then 19/18/17.
 
-- Branch: **`claude/ffc-port-continue-jyx4n9`** (session 19; based on claude/ffc-port-continue-jh7za0). Develop on the branch
+- Branch: **`claude/ffc-port-continue-6zcx73`** (session 20; based on claude/ffc-port-continue-jyx4n9). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -16,6 +16,9 @@
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
 - Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
+- Session 20: wasm links (LTO + data-decl rewrite), HAL memory map + C BIOS, host boots to first trap
+  (__sinit), tools/port_lift.py written (not run), recover_funcs --apply broke delink -> reverted. Next: (a) wire +
+  run port_lift on host; (b) wasm 17 KB/ENV issue; (c) win32 build; (d) fix recover_funcs split, re-apply, 22/22.
 - Session 19: P1 gate met (82%), P2 host i386 link works, recover_funcs fixed but not applied, wasm link fails on type
   mismatches. Next: (a) recover_funcs --apply, configure, ninja, 22/22, import_arcnid on recovered ov002; (b) wasm link;
   (c) win32 (mingw) target; (d) P3 bring-up (HAL shim, SDK init, boot loop).

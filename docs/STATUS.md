@@ -4,6 +4,43 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 20) — wasm links, P3 HAL started, Thumb lifter written, $0 model spend
+- Bootstrap OK (branch claude/ffc-port-continue-6zcx73). Extras as session 19, plus `apt-get update` first (else
+  gcc-multilib "no candidate") and `apt-get install gcc-mingw-w64-i686` for win32. **22/22 not re-confirmed** this
+  session: the only ROM ninja ran with recover_funcs applied and failed (below); tree is reverted to the session-19
+  config, which was 22/22.
+- **recover_funcs --apply breaks dsd delink** (commit df1fb23c, reverted in 11f33df4): 4 BL relocs in ov002
+  (from 0x021b140c/0x021b1458/0x021b14aa/...) target 0x021bbe84, which now falls inside recovered func_ov002_021bbe78
+  (dsd: "No symbol found ... use to:0x021bbe78 add:0x8"). Fix in recover_funcs.py: a reloc/BL target strictly inside
+  a candidate must split it (start a new function there) or drop the candidate; then re-apply (`git revert 11f33df4`
+  is the quick way back), configure, ninja (~75 min), 22/22, then import_arcnid. Log: work/ninja_recover_fail.log.
+- **wasm link fixed (gate met)**: (1) 9 TUs declare functions as data (`extern uint8_t func_X[];`, address-only use)
+  -> port_configure compiles a rewritten copy (build/port/<t>/fix/) with `void func_X();`; (2) cross-TU prototype
+  mismatches -> wasm built with **-flto** (one LLVM module; WebAssemblyFixFunctionBitcasts writes adapters);
+  (3) `-sGLOBAL_BASE=256MB` (emcc wants a size suffix) keeps DS addresses below 0x10000000 free.
+  `ninja -f port/build.wasm.ninja` -> build/port/wasm/ffc.{js,wasm} links with 0 warnings. **Open: ffc.wasm is only
+  17 KB** — LTO dropped the game: under node `getenv("FFC_RUN")` is not process env (emscripten ENV), and probably
+  the whole call graph from ffc_main got pruned or main never references it at runtime. Next: run boot path
+  unconditionally on wasm (or `-sENVIRONMENT=node` + `ENV` preRun), check wasm size (~tens of MB expected).
+- **win32**: not built yet. Toolchain verified: `clang --target=i686-w64-windows-gnu -fuse-ld=lld -static` makes a
+  PE32 (needs gcc-mingw-w64-i686). Target flags are in port_configure (image base 0x40000000). Next: build, fix.
+- **P3 started**: port/src/hal.c maps the DS address space at its real addresses (ITCM, 16 MB main RAM incl. DTCM
+  0x02fe0000, WRAM, I/O, palette, VRAM, OAM, GBA slot=0xff) via mmap/VirtualAlloc; host exe linked at 0x40000000
+  (`-Wl,-Ttext-segment`). VBlank/IRQ emulation dispatches through OS_IRQTable (= data_02fe0020, from sdk_map's
+  OS_SetIrqFunction), IF owned by the HAL, HW_INTR_CHECK_BUF 0x02fe3ff8. port/src/bios.c = C for all 18 swi stubs.
+  gendata now emits `ffc_ctors` (main + overlay .ctor tables); runtime.c runs main's ctors then ffc_main.
+  gendata no longer counts libc refs of port/src objects as game undefineds (they had become zero-data globals).
+  **Host run**: `FFC_RUN=1 build/port/host/ffc` -> maps OK, first trap `__sinit_020a6638` (163 __sinit funcs are
+  queue-blocked: never decompiled).
+- **tools/port_lift.py (written, NOT yet run/compiled)**: Thumb->C static recompiler for every Thumb function no
+  TU defines (2,180 stand-ins, 727 KB; 129 ARM stay traps). Uniform ABI `u32 f(r0..r3, s0..s5)`, r1 via ffc_r1,
+  local stack array, relocs -> host symbol addresses, pc values point into a static copy of the function bytes,
+  `add/mov pc` dispatch via switch. Still to add: `ffc_r1` + `ffc_lift_swi()` in port/src (runtime.c/bios.c),
+  ninja wiring in port_configure (lift step after src objs: `port_lift.py --objs objs.txt --out <t>/lift`, compile
+  lift_*.c, add to the gendata objs and link), then test on host: expect C compile fixes first, then the boot trace.
+  This replaces paid LLM waves for the boot path (P4 can later swap lifted fns for real C one by one).
+- Cost: $0 model spend; orchestrator context only (~190k).
+
 ## Done (session 19) — P1 gate met, P2 host link, $0 model spend
 - Bootstrap OK, **22/22** (cold ninja + mwld ~75 min on 4 cores). Branch claude/ffc-port-continue-jyx4n9.
   Container-local extras: ref repos are now at /home/user/ref/{libntr,libntrsystem,pokeplatinum} (sdk_compile.py
