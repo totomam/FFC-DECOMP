@@ -5,7 +5,7 @@
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 18) — P0 + P1 start, $0 model spend
-- Bootstrap: setup/fetch/extract/configure OK; ninja was at 15975/15978 (link pending) at handoff -> **re-check 22/22**.
+- Bootstrap: setup/fetch/extract/configure OK; ninja EXIT 0, **22/22 OK**.
   Extra container-local deps: MSL headers from cw_dsi-1_1 zip -> /home/user/cwmsl/msl
   (`unzip -qo .assets/cw/cw_dsi-1_1-patch1-20090525.zip "*ARM_EABI_Support/msl/*"`, move msl/ there);
   libntr needs tools/patches/libntr-twl.patch (`git -C /home/user/ref/libntr apply`; nitro/memorymap.h defers to twl/).
