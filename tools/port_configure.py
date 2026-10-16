@@ -42,6 +42,7 @@ TARGETS = {  # cc, flags, link flags, executable suffix
     "wasm": ("$emsdk/upstream/bin/clang", ["--target=wasm32-unknown-emscripten", "-flto"],
              ["-flto", "-O1", "-sGLOBAL_BASE=256MB", "-sINITIAL_MEMORY=512MB", "-sALLOW_MEMORY_GROWTH=1", "-sSTACK_SIZE=1048576", "-sERROR_ON_UNDEFINED_SYMBOLS=1"], ".js"),
 }
+LIFT_CHUNKS = 32
 EMSDK = os.environ.get("EMSDK", "/home/user/emsdk")
 MODULES = ["main", "itcm", "dtcm"] + [f"ov{i:03d}" for i in range(19)]
 CFLAGS = ["-O1", "-g0", "-fno-pic", "-ffreestanding", "-fno-builtin", "-fno-strict-aliasing", "-fwrapv", "-fms-extensions",
@@ -96,10 +97,21 @@ def main():
         rts.append(o)
         lines.append(f"build {o}: cc_rt port/src/{c.name} | port/src/hal.h")
     lls = [f"{gen}/{m}.ll" for m in MODULES] + [f"{gen}/standins.ll"]
+    # Thumb functions no TU defines are lifted to C (tools/port_lift.py) instead of becoming trap stand-ins.
+    lift = f"{out}/lift"
+    lift_cs = [f"{lift}/lift_{k:03d}.c" for k in range(LIFT_CHUNKS)]
+    lift_os = [c[:-2] + ".o" for c in lift_cs]
     lines += ["", f"build {out}/objs.txt: list {' '.join(objs + rts)}", "",
+              "rule lift", f"  command = NM={nm} python3 tools/port_lift.py --objs $in --out {lift} --chunks {LIFT_CHUNKS}",
+              "  description = port_lift", "",
+              f"build {' '.join(lift_cs)}: lift {out}/objs.txt | tools/port_lift.py", "",
+              "rule cc_lift", f"  command = $cc {' '.join(tflags)} -O1 -g0 -w -fno-pic -ffreestanding -fno-builtin "
+              "-fno-strict-aliasing -fwrapv -ffunction-sections -c $in -o $out", "  description = cc $in", ""]
+    lines += [f"build {o}: cc_lift {c}" for c, o in zip(lift_cs, lift_os)]
+    lines += ["", f"build {out}/objs_all.txt: list {' '.join(objs + rts + lift_os)}", "",
               "rule gendata", f"  command = NM={nm} python3 tools/port_gendata.py --objs $in --out {gen}",
               "  description = port_gendata", "",
-              f"build {' '.join(lls)}: gendata {out}/objs.txt | tools/port_gendata.py", "",
+              f"build {' '.join(lls)}: gendata {out}/objs_all.txt | tools/port_gendata.py", "",
               "rule ll", "  command = $cc $cflags -Wno-override-module -c -x ir $in -o $out", "",
               f"rule link", f"  command = {ld} {' '.join(lflags)} @$out.rsp -o $out",
               "  rspfile = $out.rsp", "  rspfile_content = $in_newline", "  description = link $out", ""]
@@ -108,7 +120,7 @@ def main():
         o = ll[:-3] + ".o"
         gobjs.append(o)
         lines.append(f"build {o}: ll {ll}")
-    lines += [f"build {out}/ffc{exe}: link {' '.join(objs + gobjs + rts)}", f"default {out}/ffc{exe}", ""]
+    lines += [f"build {out}/ffc{exe}: link {' '.join(objs + gobjs + rts + lift_os)}", f"default {out}/ffc{exe}", ""]
     (ROOT / "port").mkdir(exist_ok=True)
     (ROOT / "port" / f"build.{a.target}.ninja").write_text("\n".join(lines))
     (ROOT / "port" / f"skipped.{a.target}.txt").write_text("".join(s + "\n" for s in skipped))

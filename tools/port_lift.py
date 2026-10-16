@@ -44,6 +44,8 @@ typedef uint64_t u64;
 extern u32 ffc_r1;
 extern void ffc_trap(const char *);
 extern void ffc_lift_swi(u32 n, u32 *r);
+extern u32 ffc_cpsr;
+static inline u32 clz32(u32 x) { return x ? (u32)__builtin_clz(x) : 32; }
 typedef u32 (*ffc_fn)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
 #define P(a) ((uintptr_t)(u32)(a))
 #define L8(a) (*(volatile uint8_t *)P(a))
@@ -201,7 +203,7 @@ class Lifter:
         return f"{int.from_bytes(whole[off:off + 4], 'little'):#x}u"
 
     def reg(self, i):
-        return ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "sp", "lr", "pc"][i]
+        return ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "sp", "lr", "A(fcode)"][i]
 
     def pcv(self, off):
         return f"(A(fcode) + {off}u)"
@@ -222,11 +224,16 @@ class Lifter:
 
     def lift(self):
         b, n = self.b, len(self.b)
-        pools = ffclib.pool_offsets(b, self.base, "thumb")
+        arm = self.s.mode == "arm"
+        pools = ffclib.pool_offsets(b, self.base, self.s.mode)
         insns = []
         off = 0
-        while off + 2 <= n:
+        while off + (4 if arm else 2) <= n:
             if off in pools:
+                off += 4
+                continue
+            if arm:
+                insns.append((off, int.from_bytes(b[off:off + 4], "little"), 4))
                 off += 4
                 continue
             hw = int.from_bytes(b[off:off + 2], "little")
@@ -239,8 +246,9 @@ class Lifter:
             off += size
         self.offs = [o for o, _, _ in insns]
         body = []
+        self.prev_lr_pc = False
         for off, hw, size in insns:
-            body.append((off, self.one(off, hw, size)))
+            body.append((off, self.one_arm(off, hw) if arm else self.one(off, hw, size)))
         lines = []
         name = cname(self.s.name)
         lines.append(f"u32 {name}(u32 a0, u32 a1, u32 a2, u32 a3, u32 s0, u32 s1, u32 s2, u32 s3, u32 s4, u32 s5)")
@@ -249,9 +257,9 @@ class Lifter:
         lines.append("    u32 stk[512];")
         lines.append("    u32 r0 = a0, r1 = a1, r2 = a2, r3 = a3, r4 = 0, r5 = 0, r6 = 0, r7 = 0, r8 = 0, r9 = 0, "
                      "r10 = 0, r11 = 0, r12 = 0, lr = LRMAGIC, sp = A(&stk[506]), n = 0, z = 0, c = 0, v = 0, t;")
-        lines.append("    u64 w;")
+        lines.append("    u64 w; u32 o2, sc;")
         lines.append("    stk[506] = s0; stk[507] = s1; stk[508] = s2; stk[509] = s3; stk[510] = s4; stk[511] = s5;")
-        lines.append("    (void)fcode; (void)t; (void)w; (void)n; (void)z; (void)c; (void)v;")
+        lines.append("    (void)fcode; (void)t; (void)w; (void)n; (void)z; (void)c; (void)v; (void)o2; (void)sc;")
         for off, code in body:
             if off in self.labels or self.computed:
                 lines.append(f"L_{off:x}:;")
@@ -447,6 +455,283 @@ class Lifter:
         self.ok = False
         return f"ffc_trap(\"{self.s.name}: undecoded {hw:#06x}\");"
 
+
+    # ---- ARM mode -------------------------------------------------------------------------------------------
+    def op2_shift(self, off, w, want_c):
+        """(code, expr) for the data-processing / LDR register operand of w; sets sc when want_c."""
+        R = self.reg
+        rm = w & 15
+        m = self.pcv(off + 8) if rm == 15 else R(rm)
+        kind = (w >> 5) & 3
+        fn = ["lsl_c", "lsr_c", "asr_c", "ror_c"][kind]
+        if w & 0x10:  # shift by register
+            rs = R((w >> 8) & 15)
+            return f"sc = c; o2 = {fn}({m}, {rs}, &sc);", "o2"
+        imm = (w >> 7) & 31
+        if kind == 0 and imm == 0:
+            return ("sc = c;" if want_c else ""), m
+        if kind == 3 and imm == 0:  # rrx
+            return f"sc = {m} & 1; o2 = ({m} >> 1) | (c << 31);", "o2"
+        if kind in (1, 2) and imm == 0:
+            imm = 32
+        return f"sc = c; o2 = {fn}({m}, {imm}, &sc);", "o2"
+
+    def one_arm(self, off, w):
+        prev, self.prev_lr_pc = self.prev_lr_pc, False
+        cond = w >> 28
+        code = self.arm_body(off, w, prev)
+        if cond == 14 or cond == 15:
+            return code
+        return f"if ({CONDS[cond]}) {{ {code} }}"
+
+    def arm_pc_write(self, expr, prev):
+        """pc <- expr; after `mov lr, pc` it is a call that returns to the next instruction."""
+        if prev:
+            return f"t = {expr}; CALL(((ffc_fn)P(t)));"
+        self.computed = True
+        return f"t = {expr}; if (t == LRMAGIC) RET(); goto dispatch;"
+
+    def arm_body(self, off, w, prev):
+        R = self.reg
+        nm = self.s.name
+        pc8 = off + 8
+        if w >> 28 == 15:
+            if (w >> 25) & 7 == 5:  # blx imm
+                tgt = self.base + pc8 + (sx(w & 0xffffff, 24) << 2) + ((w >> 23) & 2)
+                return self.arm_call(off, tgt)
+            if (w & 0x0d70f000) == 0x0550f000:
+                return ";"  # pld
+            self.ok = False
+            return f'ffc_trap("{nm}: undecoded arm {w:#010x}");'
+        if (w & 0x0ffffff0) == 0x012fff10:  # bx
+            rm = w & 15
+            if rm == 14:
+                return "RET();"
+            if prev:
+                return f"CALL(((ffc_fn)P({R(rm)})));"
+            return f"if ({R(rm)} == LRMAGIC) RET(); {{ CALL(((ffc_fn)P({R(rm)}))); RET(); }}"
+        if (w & 0x0ffffff0) == 0x012fff30:  # blx reg
+            return f"CALL(((ffc_fn)P({R(w & 15)})));"
+        if (w & 0x0fff0ff0) == 0x016f0f10:
+            return f"{R((w >> 12) & 15)} = clz32({R(w & 15)});"
+        if (w & 0x0fbf0fff) == 0x010f0000:  # mrs
+            return f"{R((w >> 12) & 15)} = ffc_cpsr;" if not w & (1 << 22) else f"{R((w >> 12) & 15)} = 0;"
+        if (w & 0x0fb0fff0) == 0x0120f000 or (w & 0x0fb0f000) == 0x0320f000:  # msr
+            if w & (1 << 22):
+                return ";"
+            if w & (1 << 25):
+                rot = ((w >> 8) & 15) * 2
+                v = w & 0xff
+                v = ((v >> rot) | (v << (32 - rot))) & 0xffffffff if rot else v
+                src = f"{v:#x}u"
+            else:
+                src = R(w & 15)
+            mask = 0
+            for i in range(4):
+                if w >> (16 + i) & 1:
+                    mask |= 0xff << (8 * i)
+            code = f"ffc_cpsr = (ffc_cpsr & ~{mask:#x}u) | ({src} & {mask:#x}u);"
+            if mask & 0xff000000:
+                code += " n = ffc_cpsr >> 31; z = (ffc_cpsr >> 30) & 1; c = (ffc_cpsr >> 29) & 1; v = (ffc_cpsr >> 28) & 1;"
+            return code
+        if (w >> 24) & 15 == 15:  # swi
+            return (f"{{ u32 rr[4] = {{r0, r1, r2, r3}}; ffc_lift_swi({(w >> 16) & 0xff}u, rr); "
+                    f"r0 = rr[0]; r1 = rr[1]; r2 = rr[2]; r3 = rr[3]; }}")
+        if (w >> 24) & 15 == 14:  # cdp / mcr / mrc
+            if w & 0x10 and w & (1 << 20):
+                rd = (w >> 12) & 15
+                return ";" if rd == 15 else f"{R(rd)} = 0;"
+            return ";"
+        if (w >> 25) & 7 == 6:
+            return ";"  # ldc/stc
+        if (w >> 25) & 7 == 5:  # b / bl
+            tgt_off = pc8 + (sx(w & 0xffffff, 24) << 2)
+            if w & (1 << 24):
+                return self.arm_call(off, self.base + tgt_off)
+            return self.branch(off, tgt_off)
+        if (w >> 25) & 7 == 4:
+            return self.arm_ldm(w, prev)
+        if (w & 0x0fc000f0) == 0x00000090:  # mul / mla
+            d, rn, rs, rm = R((w >> 16) & 15), R((w >> 12) & 15), R((w >> 8) & 15), R(w & 15)
+            e = f"{rm} * {rs}" + (f" + {rn}" if w & (1 << 21) else "")
+            return f"{d} = {e};" + (f" NZ({d});" if w & (1 << 20) else "")
+        if (w & 0x0f8000f0) == 0x00800090:  # long multiply
+            hi, lo, rs, rm = R((w >> 16) & 15), R((w >> 12) & 15), R((w >> 8) & 15), R(w & 15)
+            signed, acc = w & (1 << 22), w & (1 << 21)
+            e = f"(u64)((int64_t)(s32){rm} * (s32){rs})" if signed else f"(u64){rm} * {rs}"
+            if acc:
+                e += f" + (((u64){hi} << 32) | {lo})"
+            code = f"w = {e}; {lo} = (u32)w; {hi} = (u32)(w >> 32);"
+            if w & (1 << 20):
+                code += f" n = {hi} >> 31; z = w == 0;"
+            return code
+        if (w & 0x0f900090) == 0x01000080:  # DSP multiplies
+            op = (w >> 21) & 3
+            d, rn, rs, rm = R((w >> 16) & 15), R((w >> 12) & 15), R((w >> 8) & 15), R(w & 15)
+            x, y = (w >> 5) & 1, (w >> 6) & 1
+            hx = f"(s32)(int16_t)({rm} >> 16)" if x else f"(s32)(int16_t){rm}"
+            hy = f"(s32)(int16_t)({rs} >> 16)" if y else f"(s32)(int16_t){rs}"
+            if op == 0:
+                return f"{d} = (u32)({hx} * {hy}) + {rn};"
+            if op == 1:
+                p_ = f"(u32)(((int64_t)(s32){rm} * {hy}) >> 16)"
+                return f"{d} = {p_};" if x else f"{d} = {p_} + {rn};"
+            if op == 2:
+                return f"w = (((u64){d} << 32) | {rn}) + (u64)(int64_t)({hx} * {hy}); {rn} = (u32)w; {d} = (u32)(w >> 32);"
+            return f"{d} = (u32)({hx} * {hy});"
+        if (w & 0x0e000090) == 0x00000090 and (w >> 5) & 3:  # ldrh/strh/ldrsb/ldrsh/ldrd/strd
+            return self.arm_half(off, w)
+        if (w & 0x0fb00ff0) == 0x01000090:  # swp
+            d, rn, rm = R((w >> 12) & 15), R((w >> 16) & 15), R(w & 15)
+            if w & (1 << 22):
+                return f"t = L8({rn}); L8({rn}) = (uint8_t){rm}; {d} = t;"
+            return f"t = L32({rn}); L32({rn}) = {rm}; {d} = t;"
+        if (w >> 26) & 3 == 1:
+            return self.arm_ldr(off, w, prev)
+        if (w >> 26) & 3 == 0:
+            return self.arm_dp(off, w, prev)
+        self.ok = False
+        return f'ffc_trap("{nm}: undecoded arm {w:#010x}");'
+
+    def arm_call(self, off, tgt):
+        r = self.w.rel[self.mod].get(self.base + off)
+        name = None
+        if r and r[0] in ("arm_call", "arm_call_thumb", "arm_branch"):
+            name = self.w.func_at(self.w.cands(self.mod, r[2]), r[1])
+        if name is None:
+            name = self.w.func_at([self.mod, "main", "itcm", "dtcm"], tgt)
+        if name is None:
+            return f'ffc_trap("{self.s.name}: call to {tgt:#x}");'
+        self.need[name] = "function"
+        return self.call_named(name)
+
+    def arm_dp(self, off, w, prev):
+        R = self.reg
+        op, sflag = (w >> 21) & 15, (w >> 20) & 1
+        rn_i, rd_i = (w >> 16) & 15, (w >> 12) & 15
+        rn = self.pcv(off + 8) if rn_i == 15 else R(rn_i)
+        logical = op in (0, 1, 8, 9, 12, 13, 14, 15)
+        pre = ""
+        if w & (1 << 25):
+            rot = ((w >> 8) & 15) * 2
+            v = w & 0xff
+            v = ((v >> rot) | (v << (32 - rot))) & 0xffffffff if rot else v
+            b = f"{v:#x}u"
+            if sflag and logical and rot:
+                pre = f"sc = {v >> 31}u;"
+            elif sflag and logical:
+                pre = "sc = c;"
+        else:
+            pre, b = self.op2_shift(off, w, sflag and logical)
+        if op in (8, 9, 10, 11):  # tst teq cmp cmn
+            if op == 8:
+                return f"{pre} t = {rn} & {b}; NZ(t); c = sc;"
+            if op == 9:
+                return f"{pre} t = {rn} ^ {b}; NZ(t); c = sc;"
+            return pre + " " + self.addsub(None, rn, b, op == 10)
+        if logical:
+            e = {0: f"{rn} & {b}", 1: f"{rn} ^ {b}", 12: f"{rn} | {b}", 13: b, 14: f"{rn} & ~{b}", 15: f"~{b}"}[op]
+            if rd_i == 15:
+                if rn_i == 14 or b == "lr":
+                    pass
+                return pre + " " + self.arm_pc_write(e, prev)
+            if op == 13 and rd_i == 14 and b == self.pcv(off + 8):
+                self.prev_lr_pc = True
+            code = f"{pre} {R(rd_i)} = {e};"
+            if sflag:
+                code += f" NZ({R(rd_i)}); c = sc;"
+            return code
+        # arithmetic: sub rsb add adc sbc rsc
+        a_, b_ = (b, rn) if op in (3, 7) else (rn, b)
+        if op in (2, 3, 4):
+            if not sflag or rd_i == 15:  # `subs pc, lr, #4` = exception return
+                e = f"{a_} - {b_}" if op != 4 else f"{a_} + {b_}"
+                return pre + " " + (self.arm_pc_write(e, prev) if rd_i == 15 else f"{R(rd_i)} = {e};")
+            return pre + " " + self.addsub(R(rd_i), a_, b_, op != 4)
+        if op == 5:  # adc
+            code = (f"w = (u64){a_} + {b_} + c; t = (u32)w;" +
+                    (f" v = (~({a_} ^ {b_}) & ({a_} ^ t)) >> 31; c = (u32)(w >> 32); NZ(t);" if sflag else ""))
+        else:  # sbc / rsc
+            code = (f"w = (u64){a_} - {b_} - !c; t = (u32)w;" +
+                    (f" v = (({a_} ^ {b_}) & ({a_} ^ t)) >> 31; c = !(u32)(w >> 32); NZ(t);" if sflag else ""))
+        return f"{pre} {code} {R(rd_i)} = t;"
+
+    def arm_addr(self, off, w, offs_expr):
+        """(pre, address, writeback) for a load/store with base rn."""
+        R = self.reg
+        rn_i = (w >> 16) & 15
+        P, U, W = (w >> 24) & 1, (w >> 23) & 1, (w >> 21) & 1
+        sign = "+" if U else "-"
+        rn = self.pcv(off + 8) if rn_i == 15 else R(rn_i)
+        if P:
+            a = f"({rn} {sign} {offs_expr})"
+            wb = f"{R(rn_i)} = {a};" if W else ""
+            return a, wb
+        return rn, f"{R(rn_i)} = {rn} {sign} {offs_expr};"
+
+    def arm_ldr(self, off, w, prev):
+        R = self.reg
+        rd_i, rn_i = (w >> 12) & 15, (w >> 16) & 15
+        L, B = (w >> 20) & 1, (w >> 22) & 1
+        pre = ""
+        if w & (1 << 25):
+            pre, o = self.op2_shift(off, w & ~0x10, False)
+        else:
+            o = f"{w & 0xfff}u"
+        if rn_i == 15 and not w & (1 << 25) and L and not B and (w >> 24) & 1:
+            addr = self.base + off + 8 + ((w & 0xfff) if (w >> 23) & 1 else -(w & 0xfff))
+            val = self.pool_word(addr) if 0 <= addr - self.base < len(self.b) else f"L32({addr:#x}u)"
+            return self.arm_pc_write(val, prev) if rd_i == 15 else f"{R(rd_i)} = {val};"
+        a, wb = self.arm_addr(off, w, o)
+        if L:
+            ld = f"L8({a})" if B else f"L32({a})"
+            if rd_i == 15:
+                return f"{pre} o2 = {ld}; {wb} " + self.arm_pc_write("o2", prev)
+            return f"{pre} t = {ld}; {wb} {R(rd_i)} = t;"
+        st = f"L8({a}) = (uint8_t){R(rd_i)};" if B else f"L32({a}) = {self.pcv(off + 12) if rd_i == 15 else R(rd_i)};"
+        return f"{pre} {st} {wb}"
+
+    def arm_half(self, off, w):
+        R = self.reg
+        rd_i = (w >> 12) & 15
+        L, sh = (w >> 20) & 1, (w >> 5) & 3
+        o = f"{((w >> 4) & 0xf0) | (w & 15)}u" if w & (1 << 22) else R(w & 15)
+        a, wb = self.arm_addr(off, w, o)
+        rd = R(rd_i)
+        if L:
+            ld = {1: f"L16({a})", 2: f"LS8({a})", 3: f"LS16({a})"}[sh]
+            return f"t = {ld}; {wb} {rd} = t;"
+        if sh == 1:
+            return f"L16({a}) = (uint16_t){rd}; {wb}"
+        if sh == 2:  # ldrd
+            return f"t = {a}; {rd} = L32(t); {R(rd_i + 1)} = L32(t + 4u); {wb}"
+        return f"t = {a}; L32(t) = {rd}; L32(t + 4u) = {R(rd_i + 1)}; {wb}"
+
+    def arm_ldm(self, w, prev):
+        R = self.reg
+        rn_i, rl = (w >> 16) & 15, w & 0xffff
+        P, U, W, L = (w >> 24) & 1, (w >> 23) & 1, (w >> 21) & 1, (w >> 20) & 1
+        regs = [i for i in range(16) if rl >> i & 1]
+        k = len(regs)
+        start = {(0, 1): 0, (1, 1): 4, (0, 0): -4 * k + 4, (1, 0): -4 * k}[(P, U)]
+        code = [f"t = {R(rn_i)};"]
+        pc_load = None
+        for i, r in enumerate(regs):
+            a = f"t + {start + 4 * i}u" if start + 4 * i >= 0 else f"t - {-(start + 4 * i)}u"
+            if L:
+                if r == 15:
+                    pc_load = f"L32({a})"
+                else:
+                    code.append(f"{R(r)} = L32({a});")
+            else:
+                code.append(f"L32({a}) = {R(r)};")
+        if W and not (L and rn_i in regs):
+            code.append(f"{R(rn_i)} = t {'+' if U else '-'} {4 * k}u;")
+        if pc_load:
+            code.insert(1, f"o2 = {pc_load};")
+            code.append("RET();" if rn_i == 13 else self.arm_pc_write("o2", prev))
+        return " ".join(code)
+
     @staticmethod
     def addsub(d, a, b, sub):
         if sub:
@@ -468,7 +753,7 @@ def main():
     w = World()
     todo = []
     for name, s in w.byname.items():
-        if s.kind != "function" or s.mode != "thumb" or not s.size or cname(name) in defined or name in defined:
+        if s.kind != "function" or s.mode not in ("thumb", "arm") or not s.size or cname(name) in defined or name in defined:
             continue
         if not IDENT.fullmatch(name) or (a.only and name not in a.only):
             continue
@@ -505,7 +790,7 @@ def main():
         if not p.exists() or p.read_text() != text:
             p.write_text(text)
     (a.out / "lifted.txt").write_text("".join(s.name + "\n" for s in todo))
-    print(f"lifted {len(todo)} Thumb functions ({stats['ok']} clean, {stats['partial']} with traps) "
+    print(f"lifted {len(todo)} functions ({stats['ok']} clean, {stats['partial']} with traps) "
           f"-> {a.out}/lift_*.c", file=sys.stderr)
 
 

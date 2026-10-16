@@ -4,6 +4,34 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 21) — lifter wired + ARM mode, host boots to PXI handshake, $0 model spend
+- Bootstrap OK (branch claude/ffc-port-continue-rxibxu, from 6zcx73). ROM ninja (background, work/bootstrap.log)
+  was at 15975/15978 (final mwld) at handoff: **22/22 not yet confirmed** — check `tail work/bootstrap.log` /
+  rerun `ninja && tools/bin/dsd check modules ...` (see configure output). cwmsl (MSL headers + CW libs) NOT set up.
+- **port_lift wired** (port_configure: lift step after src objs -> build/port/<t>/lift/lift_0NN.c, 32 chunks,
+  compiled with cc_lift, added to gendata objs (objs_all.txt) and the link). ffc_r1, ffc_cpsr in runtime.c,
+  ffc_lift_swi in bios.c. gendata counts undefineds from lift objs too.
+- **ARM mode added to port_lift** (data processing w/ shifter carry, ldr/str/ldrh/ldrd, ldm/stm, mul/long/DSP mul,
+  swp, clz, mrs/msr -> ffc_cpsr, mcr/mrc -> 0, swi, b/bl/blx/bx, conditional exec, `mov lr,pc` + pc write = call,
+  `subs pc, lr` = return). Result: **3438 functions lifted (5 partial), stand-ins 2354 -> 107** (rest = abs symbols
+  with no module: 0x01ffxxxx/0x021dxxxx, plus *_unk). Host compiles + links clean.
+- Boot: ROM `Entry` (crt0) lifted runs ITCM-copied probe stubs -> crash; replaced by C `ffc_crt0` in runtime.c:
+  NitroStartUp (func_02056898) -> ctors -> func_02004da0 -> ffc_main. **Now hangs in func_02089100 = PXI init
+  handshake** (polls REG_PXI_CNT/SYNC 0x04000180/184 for ARM7). Next: port/src/sdk_override.c — any symbol defined
+  in port/src is skipped by the lifter, so override PXI init (no-op), then PXI_SendWordByFifo (0x02089218) / FIFO
+  callbacks with an ARM7 stand-in (FS/CARD rom reads -> read the ROM file, RTC -> host clock, sound -> nop),
+  OS_GetBootType etc. as traps appear. Debug: `FFC_RUN=1 build/port/host/ffc &` then `gdb -p` + bt (lift code has no
+  frame pointers; consider -fno-omit-frame-pointer in cc_lift).
+- **recover_funcs.py fixed (not yet applied)**: BL targets of candidates (+ all relocs) inside a candidate split it
+  (Thumb) or drop it (ARM); uncovered call targets pull an adjacent candidate start back (<=4 bytes, varargs
+  `push {r0-r3}`) or become new candidates. Real cause of the session-20 failure: target 0x021bbe84 = `push {r0-r3}`
+  2 bytes before arcnid's 0x021bbe86. Dry-run before the 2nd rule: 559 -> 568 candidates; re-run the dry run
+  (check `grep moved work/recover_funcs.txt` shows bbe84), then `git revert 11f33df4` is NOT right anymore (old
+  symbols) — instead run `recover_funcs.py --apply`, configure, ninja, 22/22, import_arcnid.
+- wasm: runtime boots unconditionally on emscripten (FFC_RUN=0 disables); not rebuilt. win32 not built.
+- Pitfall: `pkill -f tools/recover_funcs.py` killed the shell (pattern in own cmdline) — kill by PID.
+- Cost: $0 model spend; orchestrator context only (~185k).
+
 ## Done (session 20) — wasm links, P3 HAL started, Thumb lifter written, $0 model spend
 - Bootstrap OK (branch claude/ffc-port-continue-6zcx73). Extras as session 19, plus `apt-get update` first (else
   gcc-multilib "no candidate") and `apt-get install gcc-mingw-w64-i686` for win32. **22/22 not re-confirmed** this

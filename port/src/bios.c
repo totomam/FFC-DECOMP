@@ -3,7 +3,10 @@
 #include "hal.h"
 
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
+
+void ffc_trap(const char *);
 
 int Div(int number, int denom)
 {
@@ -237,4 +240,39 @@ int HuffUnCompReadByCallback(const void *src, void *dest, const void *param, con
     (void)src, (void)dest, (void)param, (void)callbacks;
     ffc_trap("HuffUnCompReadByCallback");
     return -1;
+}
+
+/* `swi` inside code lifted by tools/port_lift.py: r[0..3] in/out. */
+void ffc_lift_swi(uint32_t n, uint32_t *r)
+{
+    const void *p0 = (const void *)(uintptr_t)r[0], *p1 = (const void *)(uintptr_t)r[1];
+    const void *p2 = (const void *)(uintptr_t)r[2], *p3 = (const void *)(uintptr_t)r[3];
+    switch (n) {
+    case 0x00: SoftReset(); break;
+    case 0x03: WaitByLoop((int32_t)r[0]); break;
+    case 0x04: IntrWait((int)r[0], r[1]); break;
+    case 0x05: VBlankIntrWait(); break;
+    case 0x06: Halt(); break;
+    case 0x09: {
+        int q = Div((int)r[0], (int)r[1]), m = Mod((int)r[0], (int)r[1]);
+        r[0] = (uint32_t)q; r[1] = (uint32_t)m; r[3] = (uint32_t)(q < 0 ? -q : q);
+        break;
+    }
+    case 0x0b: CpuSet(p0, (void *)p1, r[2]); break;
+    case 0x0c: CpuFastSet(p0, (void *)p1, r[2]); break;
+    case 0x0d: r[0] = Sqrt(r[0]); break;
+    case 0x0e: r[0] = GetCRC16(r[0], p1, r[2]); break;
+    case 0x0f: r[0] = (uint32_t)IsDebugger(); break;
+    case 0x10: BitUnPack(p0, (void *)p1, p2); break;
+    case 0x11: LZ77UnCompReadNormalWrite8bit(p0, (void *)p1); break;
+    case 0x12: r[0] = (uint32_t)LZ77UnCompReadByCallbackWrite16bit(p0, (void *)p1, p2, p3); break;
+    case 0x13: r[0] = (uint32_t)HuffUnCompReadByCallback(p0, (void *)p1, p2, p3); break;
+    case 0x14: RLUnCompReadNormalWrite8bit(p0, (void *)p1); break;
+    case 0x15: r[0] = (uint32_t)RLUnCompReadByCallbackWrite16bit(p0, (void *)p1, p2, p3); break;
+    default: {
+        char msg[32];
+        snprintf(msg, sizeof msg, "swi %#x", (unsigned)n);
+        ffc_trap(msg);
+    }
+    }
 }

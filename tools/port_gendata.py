@@ -69,7 +69,7 @@ def nm_defined(objs):
                 continue
             name, typ = parts[1], parts[2]
             if typ == "U":
-                if "/obj/" in parts[0]:  # game TUs only: port runtime objects (port/src) use the host libc
+                if "/obj/" in parts[0] or "/lift/" in parts[0]:  # game TUs + lifted code only: port runtime objects (port/src) use the host libc
                     undef.add(name)
             elif typ not in ("a", "N", "n"):
                 defined.add(name)

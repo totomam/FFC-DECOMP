@@ -88,6 +88,30 @@ def thumb_end(b: bytes, base: int, start: int, limit: int):
     return None
 
 
+def bl_calls(mod, t, e):
+    """(from, to, blx) for every BL/BLX pair in the Thumb code [t, e) of mod."""
+    b = ffclib._bin(mod)
+    base = ffclib.module_ranges()[mod][0]
+    pools = ffclib.pool_offsets(b[t - base:e - base], t, "thumb")
+    out = []
+    off = 0
+    while t + off + 4 <= e:
+        if off in pools:
+            off += 4
+            continue
+        hi, lo = struct.unpack_from("<HH", b, t - base + off)
+        if hi & 0xF800 == 0xF000 and lo & 0xE800 == 0xE800:
+            v = ((hi & 0x7FF) << 12 | (lo & 0x7FF) << 1)
+            v = (v ^ 0x400000) - 0x400000
+            to = t + off + 4 + v
+            blx = lo & 0xF800 == 0xE800
+            out.append((t + off, to & ~3 if blx else to, blx))
+            off += 4
+            continue
+        off += 2
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--arcnid", type=Path, default=Path("/home/user/arcnid/ffc-decomp"))
@@ -150,6 +174,72 @@ def main():
                 continue
             new.append((mod, t, e, cs[t]))
 
+    # A call target strictly inside a candidate (dsd: "No symbol found ... use to:X add:N") starts a function of its
+    # own: split the candidate there (Thumb targets) or drop it (ARM-mode targets into Thumb code).
+    targets = defaultdict(dict)  # mod -> addr -> thumb?
+    for mod, _ in ffclib.module_dirs():
+        for frm, (kind, to, tmod) in ffclib.relocs(mod).items():
+            tm = tmod or mod_of_addr(to & ~1, mod)
+            if tm and (kind in ("thumb_call", "arm_call_thumb", "thumb_call_arm", "arm_call", "arm_branch")
+                       or kind == "load" and to & 1):
+                targets[tm][to & ~1] = bool(to & 1) or kind in ("thumb_call", "arm_call_thumb")
+    for mod, t, e, src in new:
+        for frm, to, blx in bl_calls(mod, t, e):
+            tm = mod_of_addr(to, mod)
+            if tm:
+                targets[tm].setdefault(to, not blx)
+    # A call target covered by no function or candidate: a candidate starting just after it (varargs `push {r0-r3}`
+    # before the arcnid start) begins there instead; otherwise it is a candidate of its own.
+    while True:
+        starts = {(mod, t): i for i, (mod, t, e, src) in enumerate(new)}
+        added = 0
+        for mod in sorted({m for m, *_ in new}):
+            cov = sorted([(t, e) for m, t, e, _ in new if m == mod] + funcs[mod])
+            b = ffclib._bin(mod)
+            base = ffclib.module_ranges()[mod][0]
+            for x, thumb in targets[mod].items():
+                if not thumb or not any(lo <= x < hi for lo, hi in code_ranges(mod)):
+                    continue
+                i = bisect.bisect_right(cov, (x, 1 << 40)) - 1
+                if i >= 0 and cov[i][0] <= x < cov[i][1]:
+                    continue
+                nxt = cov[i + 1][0] if i + 1 < len(cov) else None
+                if nxt is not None and nxt - x <= 4 and (mod, nxt) in starts:
+                    k = starts[(mod, nxt)]
+                    m_, t_, e_, s_ = new[k]
+                    new[k] = (m_, x, e_, f"{s_}, start moved to call target")
+                else:
+                    limit = nxt if nxt is not None else next(y for lo, y in code_ranges(mod) if lo <= x < y)
+                    e = thumb_end(b, base, x, limit)
+                    if e is None:
+                        rejected.append((mod, x, "uncovered call target, no thumb return"))
+                        targets[mod][x] = False
+                        continue
+                    new.append((mod, x, e, "uncovered call target"))
+                    for frm, to, blx in bl_calls(mod, x, e):
+                        tm = mod_of_addr(to, mod)
+                        if tm:
+                            targets[tm].setdefault(to, not blx)
+                added += 1
+                break  # coverage changed: rescan
+            if added:
+                break
+        if not added:
+            break
+    new.sort()
+    split = []
+    for mod, t, e, src in new:
+        inner = sorted(x for x in targets[mod] if t < x < e)
+        if any(not targets[mod][x] for x in inner):
+            rejected.append((mod, t, "arm call target inside"))
+            continue
+        bounds = [t] + inner + [e]
+        for i in range(len(bounds) - 1):
+            split.append((mod, bounds[i], bounds[i + 1], src if i == 0 else f"split from {t:#x}"))
+    if len(split) != len(new):
+        print(f"split/dropped at inner call targets: {len(new)} -> {len(split)} candidates")
+    new = split
+
     by = defaultdict(int)
     for mod, t, e, src in new:
         by[mod] += 1
@@ -171,34 +261,18 @@ def main():
         if nm in names:
             continue
         sym_add[mod].append(f"{nm} kind:function(thumb,size={e - t:#x}) addr:{t:#010x}")
-        b = ffclib._bin(mod)
-        base = ffclib.module_ranges()[mod][0]
         rel = ffclib.relocs(mod)
-        pools = ffclib.pool_offsets(b[t - base:e - base], t, "thumb")
-        off = 0
-        while t + off + 4 <= e:
-            if off in pools:
-                off += 4
+        for frm, to, blx in bl_calls(mod, t, e):
+            if frm in rel:
                 continue
-            hi, lo = struct.unpack_from("<HH", b, t - base + off)
-            if hi & 0xF800 == 0xF000 and lo & 0xE800 == 0xE800 and t + off not in rel:
-                v = ((hi & 0x7FF) << 12 | (lo & 0x7FF) << 1)
-                v = (v ^ 0x400000) - 0x400000
-                to = t + off + 4 + v
-                blx = lo & 0xF800 == 0xE800
-                if blx:
-                    to &= ~3
-                tm = mod_of_addr(to, mod)
-                if tm is None:
-                    prev = [r for r in rel.values() if r[1] == to and r[2]]
-                    tm = prev[0][2] if prev else None
-                if tm:
-                    mt = "main" if tm == "main" else tm if tm in ("itcm", "dtcm") else f"overlay({int(tm[2:])})"
-                    rel_add[mod].append(f"from:{t + off:#010x} kind:{'thumb_call_arm' if blx else 'thumb_call'} "
-                                        f"to:{to:#010x} module:{mt}")
-                off += 4
-                continue
-            off += 2
+            tm = mod_of_addr(to, mod)
+            if tm is None:
+                prev = [r for r in rel.values() if r[1] == to and r[2]]
+                tm = prev[0][2] if prev else None
+            if tm:
+                mt = "main" if tm == "main" else tm if tm in ("itcm", "dtcm") else f"overlay({int(tm[2:])})"
+                rel_add[mod].append(f"from:{frm:#010x} kind:{'thumb_call_arm' if blx else 'thumb_call'} "
+                                    f"to:{to:#010x} module:{mt}")
         rows.append(nm)
     for mod, lines in sym_add.items():
         with (dirs[mod] / "symbols.txt").open("a") as f:
