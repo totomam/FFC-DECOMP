@@ -2,7 +2,7 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator, resuming after a pause.** Handoff from session 15 (2026-10-16):
+**Everyone else: you are the orchestrator, resuming after a pause.** Handoff from session 15 (2026-10-16), updated session 16:
 
 - Branch: **`ccr-81f17e51-wopsoo`** (session 15 work; `claude/ffc-matching-decomp-wave7-mt7q4y` is behind it,
   the repo's default branch is stale). Develop on the branch your session is given, starting from this one.
@@ -18,7 +18,8 @@
 - Key findings: plain `-O4` (= -O4,s) is used by this game (`/* cflags: -noO4,p -O4 */`, now in the prompt);
   arcnid's idioms are in the mkwave prompt; ~500 ov002 vtable-only functions are missing from our symbols
   (ov002 33% of .text uncovered) — outside queue.csv.
-- **Next (APPROVED by the human 2026-10-16):** Sonnet pilot wave (~60) over fail_sonnet with the new prompt:
+- **Session 16: pilot done (wave 59): 15/60 Sonnet + clone +83, ~$4. See STATUS "Done (session 16)". Widening awaits the human.**
+- (was) **Next (APPROVED by the human 2026-10-16):** Sonnet pilot wave (~60) over fail_sonnet with the new prompt:
   `mkwave sonnet 60 --status fail_sonnet --dedup` (any tier now picked), record match rate and
   $/match in STATUS, then widen (ask before widening if the rate is near zero).
   Opus (docs/LONGTAIL_PLAN.md Phase 2-3) only for what Sonnet leaves.

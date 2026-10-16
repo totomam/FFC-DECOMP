@@ -4,6 +4,18 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 16)
+- Bootstrap OK (22/22). New: match_wave.js takes `{names, tier: 'sonnet'}` to skip Haiku (fail_sonnet re-runs).
+- **Sonnet pilot, wave 59** (`mkwave sonnet 60 --status fail_sonnet --dedup`, new prompt: plain -O4 + arcnid idioms):
+  **15/60 matched (25%)**, 0 of the 15 used plain -O4 (2 C++, 1 ARM). cycle clone pass **+83** (dedup picks big
+  shape groups) -> +98 done; integrated 98/99. Standalone `clone.py run` after: +0.
+  Queue: 15,765 done, 2,223 fail_sonnet, 1,035 todo, 377 blocked.
+- Cost (from subagent transcripts, Sonnet 5.5 rates): 7.69M cache-read, 0.87M cache-write, ~14k output tokens
+  (output likely undercounted) -> ~$4 for 60 functions, ~$0.26 per wave match, ~$0.04 per function done incl. clones.
+  ~26 min wall for 60 (52-wide).
+- Misses: 7 near-misses >=93% (regalloc/order), ov009 STL-sort cluster (stack temps, <20%), 3 DS Protect asm stubs
+  (func_ov015_021d5450, _021d6304, ...) and 1 this-adjust veneer (func_0209923c) -> should be `blocked`, not fail.
+
 ## Done (session 15)
 - Bootstrap: `tools/setup.sh` needed the human's OK (auto-mode blocks external code). Cold ninja ~45 min, mwld link
   ~25-30 min on this container (STATUS said 8.7 min); give background builds a 2 h timeout.
