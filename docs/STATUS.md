@@ -5,9 +5,8 @@
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 21) — lifter wired + ARM mode, host boots to PXI handshake, $0 model spend
-- Bootstrap OK (branch claude/ffc-port-continue-rxibxu, from 6zcx73). ROM ninja (background, work/bootstrap.log)
-  was at 15975/15978 (final mwld) at handoff: **22/22 not yet confirmed** — check `tail work/bootstrap.log` /
-  rerun `ninja && tools/bin/dsd check modules ...` (see configure output). cwmsl (MSL headers + CW libs) NOT set up.
+- Bootstrap OK (branch claude/ffc-port-continue-rxibxu, from 6zcx73). **22/22 confirmed** (ninja EXIT 0).
+  cwmsl (MSL headers + CW libs) NOT set up.
 - **port_lift wired** (port_configure: lift step after src objs -> build/port/<t>/lift/lift_0NN.c, 32 chunks,
   compiled with cc_lift, added to gendata objs (objs_all.txt) and the link). ffc_r1, ffc_cpsr in runtime.c,
   ffc_lift_swi in bios.c. gendata counts undefineds from lift objs too.
