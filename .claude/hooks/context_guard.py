@@ -7,7 +7,7 @@ HANDOFF_AT. The model itself has no reliable view of its context size.
 """
 import json, os, sys
 
-HANDOFF_AT = int(os.environ.get("FFC_HANDOFF_AT", "180000"))
+HANDOFF_AT = int(os.environ.get("FFC_HANDOFF_AT", "200000"))
 
 def context_tokens(path):
     try:
