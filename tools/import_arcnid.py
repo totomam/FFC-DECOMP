@@ -64,6 +64,12 @@ def remap(dst: Path, name: str, func: str, addr: int):
             return f"name clash {new}"
     text = re.sub(r"\b(" + "|".join(map(re.escape, sorted(ren, key=len, reverse=True))) + r")\b",
                   lambda m: ren[m[1]], text)
+    # other functions of their multi-function unit: make them static so the object defines only `func`
+    for s in e.syms:
+        n = s["name"]
+        if s["type"] == 2 and s["bind"] == 1 and s["shndx"] not in (0, 0xFFF1, 0xFFF2) and n != name:
+            text = re.sub(rf'^(?:extern "C" )?([A-Za-z_][\w \*]*[ \*]){re.escape(n)}\(',
+                          lambda m: f"static {m[1]}{n}(", text, flags=re.M)
     dst.write_text(text)
     return None
 
