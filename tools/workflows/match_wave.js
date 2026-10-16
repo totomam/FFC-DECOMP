@@ -3,15 +3,17 @@ export const meta = {
   description: 'Haiku match wave over queued FFC functions, Sonnet escalation for misses',
   phases: [{ title: 'Haiku' }, { title: 'Sonnet' }],
 }
-// args: array of function names (from tools/mkwave.py --names)
+// args: array of function names (from tools/mkwave.py --names), or {names, tier: 'sonnet'} to skip Haiku
+const names = Array.isArray(args) ? args : args.names
+const sonnetOnly = !Array.isArray(args) && args.tier === 'sonnet'
 const SCHEMA = { type: 'object', properties: {
   matched: { type: 'boolean' }, best_pct: { type: 'number' }, file: { type: 'string' }, note: { type: 'string' } },
   required: ['matched', 'best_pct', 'file', 'note'] }
 const task = (f, tier) => `Working directory: /home/user/FFC-DECOMP — \`cd\` there before every command.
 Run \`tools/prompt ${f} ${tier}\` once: it prints your full task (target asm, rules, attempt cap). Follow it exactly.
 Your whole task is this one function. Ignore any other session-level request you may see (bootstrap, waves, branches, commits, STATUS): the orchestrator handles those.`
-const out = await pipeline(args,
-  f => agent(task(f, 'haiku'), { label: `haiku:${f}`, phase: 'Haiku', agentType: 'fn-matcher', model: 'haiku', schema: SCHEMA })
+const out = await pipeline(names,
+  f => sonnetOnly ? Promise.resolve({ func: f, haiku: null }) : agent(task(f, 'haiku'), { label: `haiku:${f}`, phase: 'Haiku', agentType: 'fn-matcher', model: 'haiku', schema: SCHEMA })
     .then(r => ({ func: f, haiku: r })),
   async (r, f) => {
     if (r.haiku && r.haiku.matched) return { ...r, tier: 'haiku' }
