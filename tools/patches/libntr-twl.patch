@@ -13,3 +13,27 @@ index 1d23b26..d01917c 100644
  #ifdef SDK_ARM9
      #include <nitro/hw/ARM9/mmap_global.h>
      #include <nitro/hw/ARM9/mmap_main.h>
+diff --git a/include/twl/hw/ARM9/mmap_tcm.h b/include/twl/hw/ARM9/mmap_tcm.h
+index 4e80de0..774b472 100644
+--- a/include/twl/hw/ARM9/mmap_tcm.h
++++ b/include/twl/hw/ARM9/mmap_tcm.h
+@@ -10,7 +10,7 @@ extern "C" {
+ 
+ #ifndef SDK_ASM
+ #include <nitro/types.h>
+-extern u32 SDK_IRQ_STACKSIZE[];
++extern void SDK_IRQ_STACKSIZE(void);
+ #define HW_DTCM_IRQ_STACK_SIZE ((u32)SDK_IRQ_STACKSIZE)
+ #else
+ .extern SDK_IRQ_STACKSIZE
+@@ -44,6 +44,10 @@ typedef volatile struct {
+ #define HW_DTCM_SVC_STACK_END HW_DTCM_SYSRV
+ 
+ #define HW_DTCM_SYSRV (HW_DTCM + HW_DTCM_SIZE - HW_DTCM_SYSRV_SIZE)
++#ifndef HW_EXCP_VECTOR_BUF
++#define HW_DTCM_SYSRV_OFS_EXCP_VECTOR 0x1c
++#define HW_EXCP_VECTOR_BUF (HW_DTCM_SYSRV + HW_DTCM_SYSRV_OFS_EXCP_VECTOR)
++#endif
+ #define HW_INTR_CHECK_BUF (HW_DTCM_SYSRV + HW_DTCM_SYSRV_OFS_INTR_CHECK)
+ #define HW_INTR_VECTOR_BUF (HW_DTCM_SYSRV + HW_DTCM_SYSRV_OFS_INTR_VECTOR)
+ 

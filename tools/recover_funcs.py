@@ -81,7 +81,8 @@ def thumb_end(b: bytes, base: int, start: int, limit: int):
         off = nxt
         if ret and base + off > far:
             # extend over the literal pool and alignment padding
-            while off in pools or (off % 4 and off + 2 <= lim and b[off:off + 2] == b"\0\0"):
+            # padding (0000 or nop 46c0) is part of the function only when a pool follows it (dsd convention)
+            while off in pools or (off % 4 and off + 2 in pools and b[off:off + 2] in (b"\0\0", b"\xc0\x46")):
                 off += 4 if off in pools else 2
             return base + off
     return None
@@ -121,11 +122,13 @@ def main():
                 continue
             cands[tm].setdefault(t, f"{kind} from {mod}:{frm:#x}" + ("" if to & 1 or "thumb" in kind else " ARM"))
     man = a.arcnid / "config/ov002/manifest.csv"
+    asize = {}  # arcnid's split sizes win over the sweep (they agree on 529/559 C+asm; the rest are asm)
     if man.exists():
         for r in csv.DictReader(man.open()):
             t = int(r["address"], 16)
             if not inside("ov002", t):
                 cands["ov002"].setdefault(t, "arcnid")
+                asize[t] = int(r["size"])
 
     new = []  # (mod, start, end, src)
     rejected = []
@@ -140,6 +143,8 @@ def main():
             i = bisect.bisect_right(starts, t)
             limit = starts[i] if i < len(starts) else next(y for x, y in code_ranges(mod) if x <= t < y)
             e = thumb_end(b, base, t, limit)
+            if mod == "ov002" and t in asize and t + asize[t] <= limit:
+                e = t + asize[t]
             if e is None:
                 rejected.append((mod, t, "no thumb return before next start"))
                 continue
