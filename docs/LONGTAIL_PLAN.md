@@ -1,3 +1,54 @@
+# 90% cut plan (session 17, 2026-10-16) — supersedes the phase order below; needs the human's OK on D1-D3
+
+## Why the current pace doesn't scale (queue at 2f95dc16)
+- Left: 2,050 fail_sonnet + 1,000 todo + 377 blocked + ~500 ov002 functions missing from symbols.
+- By bytes, the remaining code is **bigger than what's done**: done 0.90 MB, fail_sonnet 0.42 MB, todo 0.64 MB
+  (189 todo >= 1 KB, 514 opus-tier). Function count (84%) overstates progress.
+- Sonnet re-runs: 25% per round, falling each round. fail_sonnet best_pct: 544 >= 90%, ~885 < 50% after 2 Sonnet passes.
+- Fixed overhead per session: ~45 min cold bootstrap + approval stall, ~25-30 min mwld per integrate, an Opus
+  orchestrator that wakes up for every wave (its tokens are not in the ~$45 STATUS figure).
+- Keep going like this: ~15-20 more sessions, hundreds to thousands of dollars, and the hard tail never converges.
+
+## Decisions for the human
+- **D1. Define "done".** The ROM already relinks 22/22 (unmatched code stays as delinked asm). Proposal: done =
+  every function is matched C **or** an asm fallback (khdays-decomp model: 100% linked, ~96% C). LLM spend only
+  where expected yield is high; everything else stays asm until tools get cheaper. This is the biggest lever.
+- **D2. LLM budget cap** for everything below: <= $100 total, no Opus (or a 30-function Opus pilot max).
+- **D3. Move the orchestrator to Sonnet** (or run whole wave loops as one Workflow script, so nobody waits per wave).
+
+## Step 1: free (CPU only, no LLM), do first
+1. **Prebuilt toolchain.** Put tools/bin (dsd, wibo, 7zz), the staged tools/mwccarm and extract/ into
+   totomam/ffc-assets as a tarball; setup.sh untars it if it's present. Add an environment setup script / SessionStart
+   hook so the approval stall goes away. Optional: ship a build/ cache too. Bootstrap 45 min -> ~5 min; children work again.
+2. **One link per session.** Bank matches with tools/try only; integrate + clone once at the end (integrate already
+   pins breakers by byte diff). Saves ~25 min per wave.
+3. **Triage = blocked.** Mark the non-C misses as blocked (DS Protect ov015 stubs/tables, clz soft-float, 8-reg
+   ldm/stm copies, epilogue-only fragments, this-adjust veneers): they stop costing LLM attempts.
+4. **CPU variant search on the 544 near misses (>= 90%).** `tools/variants.py`: take the best saved attempt in
+   pending/, apply mechanical mutations (statement/declaration order, temp add/remove, signed/unsigned, u8/u16/int
+   widths, `-O4` vs `-O4,p`, volatile pins, loop form), compile in batched wibo calls (~50 ms each, 4 cores =
+   ~250k tries/hour), keep the first MATCH. Zero tokens. It doesn't feed back into the LLM (Lewis's noise warning).
+   Gate: < 5% of the 544 matched -> drop it.
+5. **Clone extension + fuzzy donors** (Phase 1.3 / 2.3): register-renamed and one-instruction-different donors, coddog
+   ratio. Each new match fans out to siblings for free.
+6. **arcnid:** recheck their repo, fix the 3 duplicate-prototype imports, then add the missing symbols
+   (tail-call targets 0x0216b128, 0x021553c4, ...; the ~500 ov002 vtable-only functions arcnid already has) and
+   import their C for them. That gets new functions matched without inventing anything.
+
+## Step 2: targeted LLM, cheap tier only, ranked by expected matches per dollar
+- Candidates: todo haiku/sonnet tier (486, never tried), and fail_sonnet 80-89% with a classified miss the prompt can
+  name. Rank by (clone siblings unlocked) x P(match). **Skip** < 50% fail_sonnet and >= 1 KB functions (D1: asm).
+- Lower per-attempt cost: cap tools/try runs at 8 (most matches come early; measure from transcripts first, gate:
+  keep the cap only if the match rate drops < 3 points), trim the prompt's examples, give the classified diff of the
+  previous attempt instead of a cold start.
+- Run as one Workflow per group per session, at the end of Step 1 (so free matches are clone donors first).
+
+## Expected effect (estimates, check after Step 1)
+- Wall time: ~1 h less overhead per session (bootstrap + per-wave links); the free steps run unattended.
+- Money: Step 1 ~$0 in LLM; Step 2 <= $100 vs the open-ended Sonnet+Opus long tail (~$1-3k estimated).
+- Matches: Step 1 targets several hundred (near misses + clones + arcnid + missing symbols) for no LLM spend.
+- Record actual results and cost per step in STATUS.
+
 # Long-tail plan (drafted + audited session 14, 2026-10-13; NOT started)
 
 Deferred plan for everything after the Sonnet tier. Supersedes and extends "Next phase: Opus tier" in STATUS.md.
