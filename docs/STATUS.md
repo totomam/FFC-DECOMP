@@ -4,6 +4,28 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 18) — P0 + P1 start, $0 model spend
+- Bootstrap: setup/fetch/extract/configure OK; ninja was at 15975/15978 (link pending) at handoff -> **re-check 22/22**.
+  Extra container-local deps: MSL headers from cw_dsi-1_1 zip -> /home/user/cwmsl/msl
+  (`unzip -qo .assets/cw/cw_dsi-1_1-patch1-20090525.zip "*ARM_EABI_Support/msl/*"`, move msl/ there);
+  libntr needs tools/patches/libntr-twl.patch (`git -C /home/user/ref/libntr apply`; nitro/memorymap.h defers to twl/).
+- **P0 versions** (arm9 module params @0x02000fcc): SDK word 0x05047531 = **TwlSDK 5.4, relstep 30001**;
+  `[SDK+NINTENDO:DWC5.3.30054.20100706.1000_TWLDWC_5_3_PATCH1_SSLGDB4]`, `[SDK+NINTENDO:WiFi3.3.30052.201006221129]`,
+  `[SDK+Actimagine:Mobiclip SDK V1.2.1]`, UBIQUITOUS CPS/SSL, MSL C++ (Metrowerks:: streambufs). No NitroSystem string.
+- **P0 MMIO** (`tools/mmio_count.py --sdk-map docs/sdk_map.txt`): literal-pool I/O refs: game 244 funcs / 365 words
+  (mostly 0x0400020x IME/IE/IF, 0x04000000 DISPCNT, 0x04001000 sub DISPCNT), SDK 98 / 175. Small -> HAL shim is cheap.
+  (Not yet split: some "game" hits are unnamed SDK funcs in 0x02090000-0x0209d000.)
+- **P1 SDK naming**: `tools/sdk_compile.py` (libntr twl_hyb + libntrsystem, our mwcc 1.2p2; `--thumb` = SDK_CODE_THUMB,
+  FFC links the **Thumb** libs) + `tools/sdk_match.py` (symmetric BL/pool masking, reloc-target disambiguation)
+  -> side map **docs/sdk_map.txt** (no config renames). ARM 320/353 + Thumb 317/353 files compile.
+  Result: 2307 FFC funcs hit, 872 unique. Main SDK range 0x02077000-0x02090000: 1269 funcs, **753 unique (59%)** +
+  117 ambiguous. Gate (80%) **not met yet**. 0x02090000-0x0209d2b4 (~400 funcs, 0 hits) = probably MSL/CW runtime
+  (+ DWC/Mobiclip): compile MSL sources next. Overlay "ambiguous" hits are mostly tiny game funcs (noise).
+- **P1b ov002 recovery**: arcnid manifest vs our ov002: our functions cover 169 KB of 252 KB .text; 570 arcnid starts
+  (78.6 KB, 498 of them C in arcnid) fall in gaps no symbol covers. `tools/recover_funcs.py` written (reloc-target +
+  arcnid candidates, Thumb end sweep, adds symbols + BL relocs + queue rows with --apply) but **not run** yet.
+- Cost: $0 model spend; orchestrator context only.
+
 ## Done (session 17) — goal changed to a port
 - Human decision: target = **Windows + browser (Emscripten) port, personal use**; licence/provenance of libntr,
   ntrtwl SDK trees and melonDS code is not a concern. Paid matching stops. See docs/LONGTAIL_PLAN.md (top) and

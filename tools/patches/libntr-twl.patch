@@ -1,0 +1,15 @@
+diff --git a/include/nitro/memorymap.h b/include/nitro/memorymap.h
+index 1d23b26..d01917c 100644
+--- a/include/nitro/memorymap.h
++++ b/include/nitro/memorymap.h
+@@ -5,7 +5,9 @@
+ extern "C" {
+ #endif
+ 
+-#ifndef SDK_PORT
++#if defined(SDK_TWL) && !defined(SDK_PORT)
++#include <twl/memorymap.h>
++#elif !defined(SDK_PORT)
+ #ifdef SDK_ARM9
+     #include <nitro/hw/ARM9/mmap_global.h>
+     #include <nitro/hw/ARM9/mmap_main.h>

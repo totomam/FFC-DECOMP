@@ -2,7 +2,7 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 17 (2026-10-16):
+**Everyone else: you are the orchestrator.** Handoff from session 18 (2026-10-16): read docs/STATUS.md "Done (session 18)" first, then the session-17 notes below.
 
 - Branch: **`ccr-489ddb65-xi9xac`** (session 17; based on claude/ffc-decomp-continue-pruvwi). Develop on the branch
   your session is given, starting from this one.
@@ -16,7 +16,11 @@
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
 - Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
-- **Next (P0/P1, all ~$0):**
+- Session 18 did P0 (versions, MMIO) and P1 tooling (tools/sdk_compile.py, sdk_match.py, docs/sdk_map.txt: 59% of
+  main SDK range unique). Next: (a) confirm 22/22; (b) raise SDK coverage: compile MSL C/C++ runtime + -O4,s variant,
+  tighten ambiguous; (c) `tools/recover_funcs.py` (dry run, inspect work/recover_funcs.txt, then --apply, configure,
+  ninja, 22/22) then `tools/import_arcnid.py` on the recovered ov002 funcs; (d) P2.
+- **Old next list (P0/P1, all ~$0):**
   1. Find SDK/NitroSystem/MSL version strings in arm9 (extract/usa/arm9/arm9.bin); count raw MMIO (0x04000000)
      accesses in game code.
   2. SDK naming (P1): compile libntr's arm-target SDK sources (sdk_version_major=5, twl_hyb) and libntrsystem with
