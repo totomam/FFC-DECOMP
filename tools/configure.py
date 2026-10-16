@@ -183,7 +183,8 @@ def main():
             n.build(str(obj), "mwcc", str(src), implicit=mwcc_implicit, variables={
                 "post": post,
                 "base_flags": base_cc_flags(extra),
-                "cc_flags": extra,
+                # `-noO4,p` only drops the default (base_cc_flags); it is not an mwcc flag
+                "cc_flags": " ".join(t for t in extra.split() if not t.startswith("-noO")),
                 "basedir": str(obj.parent),
                 "basefile": str(obj.with_suffix("")),
             })
