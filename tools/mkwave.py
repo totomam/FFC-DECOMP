@@ -52,6 +52,9 @@ Rules:
 - Calls: r0-r3 not written before a `bl` means the caller's own params pass straight through (declare them!); `str rX, [sp]`/`[sp, #4]` before a `bl` is the callee's 5th/6th argument, not a local. `adds r3, r0, #0` before a call = param a moved to callee arg 4.
 - Entry `push {{r0, r1, r2, r3}}` (or `push {{r1, r2}}` etc.) then loads from `[sp, #0x14]`-ish = a struct passed BY VALUE in registers (e.g. `typedef struct {{ uint32_t a, b; }} S;` as a parameter), not separate ints. A word stored to [p] right after an allocator call is a vtable pointer (inlined C++ ctor).
 - `subs rX, rX, rX` (an unfolded x - x; C always folds it to `movs rX, #0`), often with an unexplained 4-byte stack frame: compile as C++ (first line `/* cflags: -lang c++ */`, declare every extern and the function itself `extern "C"`) and route the value through an inline helper taking a class with an empty destructor by const reference: `struct Num {{ int v; Num(int x) : v(x) {{}} ~Num() {{}} }}; inline int diff(const Num &a, int b) {{ return a.v - b; }}` then `int n = p->size; p->size = diff(n, n);`.
+- Optimization flag: the default is `-O4,p`, but this game also has functions built with plain `-O4` (size). Add `-noO4,p -O4` to the first-line cflags (e.g. `/* cflags: -noO4,p -O4 */`, combinable with other flags). Try it early when the diff is only register numbering, epilogue layout (one merged epilogue vs duplicated early-return epilogues), jump-table form, or the output is a few bytes too big.
+- Virtual calls (`blx rN` on a pointer loaded from `[obj]`): `typedef void (*Fn)(void*); (*(Fn**)obj)[slot](obj);` with slot = load offset / 4 (mwcc vtables have no header). The register of `blx` tells the arg count (blx r1: 1 arg, r2: 2, r3: 3). A `delete` that moves the object into r0 before the vtable load needs C++: `struct X {{ virtual ~X(); }};` and `delete p;`. `movs #1; asrs; tst` before a `blx` = pointer-to-member call: C++ `(self->*self->mf)();` (8-byte PTMF {{fn_or_vtoff, delta<<1|virtual}}).
+- Shapes from this game: guarded count-down loop `if (n != 0) {{ do {{ ... }} while (--n != 0); }}`; null-checked upcast `b = p; if (b != 0) b = (uint8_t*)b + OFF;` (not a ternary); whole-struct copy `*(Pair*)(q + OFF) = pr;` instead of member stores; separate `extern` globals instead of `&base + k` when the target loads each address from its own pool word.
 {extra}
 Return: matched (bool), best_pct (number from tools/try, 100 if MATCH), file (path of best attempt), note (one line: what blocks a match, or empty)."""
 
@@ -150,7 +153,7 @@ def main():
 
 
 def pick_items(a, rows):
-    pick = [r for r in rows if r["status"] == a.status and r["tier"] == a.tier
+    pick = [r for r in rows if r["status"] == a.status and (r["tier"] == a.tier or a.status != "todo")
             and (not a.module or r["tu"] == a.module)
             and (not a.group or r["tu"] in ffclib.GROUPS[a.group]) and int(r["difficulty"]) >= a.min_diff
             and "unaligned" not in r["note"]]
@@ -159,7 +162,7 @@ def pick_items(a, rows):
         import clone
         sh = clone.shapes()
         tried = set(json.loads(clone.TRIED.read_text())) if clone.TRIED.exists() else set()
-        busy = {sh[r["func"]][0] for r in rows if r["func"] in sh and r["status"] not in ("todo", "done")}
+        busy = {sh[r["func"]][0] for r in rows if r["func"] in sh and r["status"] not in ("todo", "done", a.status)}
         done = {}
         for r in rows:
             if r["func"] in sh and r["status"] == "done":
