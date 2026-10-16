@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 18 (2026-10-16): read docs/STATUS.md "Done (session 18)" first, then the session-17 notes below.
+**Everyone else: you are the orchestrator.** Handoff from session 19 (2026-10-16): read docs/STATUS.md "Done (session 19)" first (bootstrap extras, P1 gate met, P2 host link), then session 18/17.
 
-- Branch: **`claude/ffc-port-continue-jh7za0`** (session 18; based on ccr-489ddb65-xi9xac). Develop on the branch
+- Branch: **`claude/ffc-port-continue-jyx4n9`** (session 19; based on claude/ffc-port-continue-jh7za0). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -16,6 +16,9 @@
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
 - Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
+- Session 19: P1 gate met (82%), P2 host i386 link works, recover_funcs fixed but not applied, wasm link fails on type
+  mismatches. Next: (a) recover_funcs --apply, configure, ninja, 22/22, import_arcnid on recovered ov002; (b) wasm link;
+  (c) win32 (mingw) target; (d) P3 bring-up (HAL shim, SDK init, boot loop).
 - Session 18 did P0 (versions, MMIO) and P1 tooling (tools/sdk_compile.py, sdk_match.py, docs/sdk_map.txt: 59% of
   main SDK range unique). Next: (a) confirm 22/22; (b) raise SDK coverage: compile MSL C/C++ runtime + -O4,s variant,
   tighten ambiguous; (c) `tools/recover_funcs.py` (dry run, inspect work/recover_funcs.txt, then --apply, configure,

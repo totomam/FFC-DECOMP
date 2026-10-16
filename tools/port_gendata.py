@@ -13,6 +13,7 @@ usage: port_gendata.py --objs build/port/host/objs.txt [--out build/port/gen]
 """
 import argparse
 import bisect
+import os
 import re
 import subprocess
 import sys
@@ -60,7 +61,7 @@ def module_syms(d: Path, mod):
 def nm_defined(objs):
     defined, undef = set(), set()
     for i in range(0, len(objs), 500):
-        r = subprocess.run(["nm", "-A", "--format=posix"] + objs[i:i + 500], capture_output=True, text=True)
+        r = subprocess.run([os.environ.get("NM", "nm"), "-A", "--format=posix"] + objs[i:i + 500], capture_output=True, text=True)
         for line in r.stdout.splitlines():
             p = line.rsplit(" ", 3)
             parts = line.split()

@@ -4,6 +4,39 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 19) — P1 gate met, P2 host link, $0 model spend
+- Bootstrap OK, **22/22** (cold ninja + mwld ~75 min on 4 cores). Branch claude/ffc-port-continue-jyx4n9.
+  Container-local extras: ref repos are now at /home/user/ref/{libntr,libntrsystem,pokeplatinum} (sdk_compile.py
+  expects these names); MSL headers/sources at /home/user/cwmsl/msl; **prebuilt CW libs** (MSL_C/CPP/Extras,
+  NITRO_Runtime, A/Ai/T) extracted with `unzip -qjo .assets/cw/cw_dsi-1_1-patch1-20090525.zip "*.a"` + `ar x`
+  per lib into /home/user/cwmsl/obj/<lib>/ (rename members without .o suffix to *.o); `apt-get install
+  libc6-dev-i386 gcc-multilib` for the host link; emsdk at /home/user/emsdk (`./emsdk install latest`, activate).
+- **P1 SDK naming, gate met: main SDK range 1036/1269 = 82% named** (807 unique byte matches + 95 layout + 134
+  fuzzy), MSL/runtime range 0x02090000-0x0209d2b4: 284/354 (181 unique + 26 layout + 77 fuzzy). docs/sdk_map.txt.
+  How: prebuilt CW MSL/Runtime libs as extra --objs (MSL range 0 -> 51% unique); libntr TCM header fix
+  (SDK_IRQ_STACKSIZE type, HW_EXCP_VECTOR_BUF; in tools/patches/libntr-twl.patch) -> os_thread/os_arena/
+  os_interrupt/os_reset/os_exception compile (+35 unique); new **tools/sdk_layout.py** (object function order between
+  anchors: exact-count gaps = "layout", order-preserving DP alignment with masked-token similarity >=0.8 = "fuzzyNN";
+  scoped to main 0x02077000-0x0209d2b4 + itcm/dtcm, game-range anchors are noise); **tools/sdk_cov.py** = coverage.
+  -O4,s variant adds nothing (SDK is -O4,p). Rebuild: `sdk_compile.py --thumb --out build/sdk_t` and
+  `--out build/sdk_a`, then `sdk_match.py --objs build/sdk_t/obj build/sdk_a/obj /home/user/cwmsl/obj --out X`,
+  `sdk_layout.py --objs (same) --map X --out docs/sdk_map.txt`. Still failing ARM9 files: libntr asm blocks mangled
+  by clang-format (os_system, mi_memory, os_systemCall, mi_secureuncompress), fs_command/card_request (missing defs).
+- **P1b recover_funcs**: dry run checked (work/recover_funcs.txt): 559 ov002 candidates, 11 rejected. Fixed the end
+  sweep (pad 0000/46c0 belongs to a function only if a pool follows = dsd convention; arcnid sizes win when they
+  fit). **--apply NOT run yet** (ROM ninja was busy) -> next.
+- **P2 host skeleton: links (gate met)**. `python3 tools/port_configure.py [--target host|wasm|win32]` then
+  `ninja -f port/build.<target>.ninja`. 15,954/15,972 src TUs compile (18 BIOS asm stubs skipped, port supplies C)
+  with clang -m32 (-ffreestanding, -Dmain=ffc_main, C++ TUs via `-lang c++` cflags). **tools/port_gendata.py**
+  emits LLVM IR per module: one blob per section (ROM bytes, bss zero), 13,455 data pointer words relocated
+  (relocs.txt `load`) to function symbols or blob+offset, 9,328 data-symbol aliases, 2,354 trap stand-ins
+  (`ffc_trap`, port/src/runtime.c). Result build/port/host/ffc (i386 ELF, 5.5 MB) runs ("linked");
+  FFC_RUN=1 calls the game main -> segfault (no HAL/SDK init yet = P3).
+  **wasm**: all TUs compile (1 min); wasm-ld fails on *symbol type mismatch* (func_* declared as data/var in some
+  TUs vs function elsewhere, plus __stack_pointer/__indirect_function_table from -ffreestanding objects?) -> next.
+  Expect also wasm signature mismatches (same func, different prototypes across TUs) -> stand-in traps at call.
+- Cost: $0 model spend; orchestrator context only (~185k).
+
 ## Done (session 18) — P0 + P1 start, $0 model spend
 - Bootstrap: setup/fetch/extract/configure OK; ninja was at 15975/15978 (link pending) at handoff -> **re-check 22/22**.
   Extra container-local deps: MSL headers from cw_dsi-1_1 zip -> /home/user/cwmsl/msl
