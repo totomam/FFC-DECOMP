@@ -18,8 +18,9 @@
 - Key findings: plain `-O4` (= -O4,s) is used by this game (`/* cflags: -noO4,p -O4 */`, now in the prompt);
   arcnid's idioms are in the mkwave prompt; ~500 ov002 vtable-only functions are missing from our symbols
   (ov002 33% of .text uncovered) — outside queue.csv.
-- **Next (waits on the human's OK, costs credits):** Sonnet pilot wave (~60) over fail_sonnet with the new prompt:
-  `mkwave sonnet 60 --status fail_sonnet --dedup` (any tier now picked), record match rate, then widen.
+- **Next (APPROVED by the human 2026-10-16):** Sonnet pilot wave (~60) over fail_sonnet with the new prompt:
+  `mkwave sonnet 60 --status fail_sonnet --dedup` (any tier now picked), record match rate and
+  $/match in STATUS, then widen (ask before widening if the rate is near zero).
   Opus (docs/LONGTAIL_PLAN.md Phase 2-3) only for what Sonnet leaves.
 - Free leftovers: 24 arcnid funcs not imported (3 duplicate-prototype compile errors -> hand-fix; ~16 targets
   missing from symbols; 1 at 96%). Recheck arcnid's repo for new matches (`tools/import_arcnid.py`).
