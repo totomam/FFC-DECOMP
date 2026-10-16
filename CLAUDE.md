@@ -18,7 +18,7 @@
 - Key findings: plain `-O4` (= -O4,s) is used by this game (`/* cflags: -noO4,p -O4 */`, now in the prompt);
   arcnid's idioms are in the mkwave prompt; ~500 ov002 vtable-only functions are missing from our symbols
   (ov002 33% of .text uncovered) — outside queue.csv.
-- **Session 16: pilot done (wave 59): 15/60 Sonnet + clone +83, ~$4. See STATUS "Done (session 16)". Widening: waves 60-62 (one Sonnet fail_sonnet wave per group, 675 funcs) run in the orchestrator (children were blocked on setup.sh and archived); work/wave6{0,1,2}_*.json, see STATUS "Done (session 16)". Further waves need the human's OK.**
+- **Session 16: pilot done (wave 59): 15/60 Sonnet + clone +83, ~$4. See STATUS "Done (session 16)". Waves 60-62 done in the orchestrator: 172/675 Sonnet (25%) + 36 clone = +208, ~$45. Queue 15,972 done / 2,050 fail_sonnet / 1,001 todo. Nothing running. Next waves or Opus need the human's OK; see STATUS "Done (session 16)".**
 - (was) **Next (APPROVED by the human 2026-10-16):** Sonnet pilot wave (~60) over fail_sonnet with the new prompt:
   `mkwave sonnet 60 --status fail_sonnet --dedup` (any tier now picked), record match rate and
   $/match in STATUS, then widen (ask before widening if the rate is near zero).

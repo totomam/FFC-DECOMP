@@ -25,6 +25,20 @@
   archived. Human chose: run waves 60-62 in the orchestrator (already bootstrapped). The 45 wave-59 failures were
   dropped from the picks -> 675 functions (main 219, ov0-3 236, ov4-18 220). Children need the human to approve
   setup.sh in each child chat; prefer running waves in an already-bootstrapped session.
+- **Waves 60-62 results** (Sonnet-only over fail_sonnet, 675 funcs, orchestrator, integrate overlapped with the next wave):
+  | wave | group | Sonnet | clone | integrated |
+  |---|---|---|---|---|
+  | 60 | main | 47/219 (21%) | +6 | 53/53 |
+  | 61 | ov0-3 | 62/236 (26%) | +6 | 67/68 (1 skip_integrate) |
+  | 62 | ov4-18 | 63/220 (29%) | +23 | 86/87 |
+  Total 172/675 (25%) + 35 clone; final `clone.py run` +1 -> +207 done. Cost ~$45 (90.5M cache-read, 10.2M cache-write,
+  0.18M output, Sonnet 5.5 rates) = ~$0.26 per Sonnet match, ~$0.22 per function done. Wall ~2.5 h for 3 waves.
+  Queue: 15,972 done, 2,050 fail_sonnet, 1,001 todo, 377 blocked, 10 skip_integrate.
+- Recurring miss classes (for Opus / tooling): register-allocation-only near misses (many >=90%); mwcc CSE of a global
+  address the target reloads from a second pool word (ov006 cluster); unexplained dead stack frames; tail calls to
+  addresses with no symbol (pool word unresolved: e.g. 0x0216b128, 0x021553c4, 0x021c85d4, 0x021c8634 -> the
+  missing-symbols gap, config work); non-code/asm (DS Protect ov015 stubs + data tables, clz soft-float, ldm/stm
+  8-reg copies, epilogue-only fragments) -> candidates for `blocked`.
 
 ## Done (session 15)
 - Bootstrap: `tools/setup.sh` needed the human's OK (auto-mode blocks external code). Cold ninja ~45 min, mwld link
