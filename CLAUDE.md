@@ -17,7 +17,7 @@
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
 - Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
 - Session 22: sdk_override.c (PXI, OS threads as host coroutines, DMA, CARD from ROM file); host reaches FS_Init
-  and segfaults (OS_GetBootType != ROM?). 22/22 not confirmed (ninja unfinished). Next: (a) 22/22; (b) boot type,
+  and segfaults (OS_GetBootType != ROM?). 22/22 confirmed. Next: (b) boot type,
   more traps toward title; (c) recover_funcs --apply + import_arcnid; (d) wasm (needs -sASYNCIFY for fibers) + win32.
 - Session 21: lifter wired + ARM mode (stand-ins 107), C crt0, host hangs in PXI init handshake; recover_funcs
   fixed (split + start-move), not applied. Next: (a) sdk_override.c (PXI/ARM7 stand-in, FS from ROM file);

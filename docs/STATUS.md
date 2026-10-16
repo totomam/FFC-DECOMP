@@ -6,7 +6,7 @@
 
 ## Done (session 22) — host boots into FS_Init, $0 model spend
 - Bootstrap OK (branch claude/ffc-port-continue-3y9arg, from rxibxu). Extras installed (i386/multilib/mingw, emsdk).
-  **22/22 NOT confirmed**: ROM ninja was still at 15975/15978 (final link/check) at the context guard. Re-run ninja.
+  **22/22 confirmed** (ninja EXIT 0, after the handoff).
 - **port/src/sdk_override.c** (new): PXI_InitFifo (func_02089100, no handshake, ARM7 handler bits all set),
   PXI_SendWordByFifo (func_02089218 -> ffc_arm7_recv stub + reply queue delivered via data_021418c8 =
   FifoRecvCallbackTable; no tags emulated yet), OSi_SyncWithOtherProc (func_020867f4, no-op),
