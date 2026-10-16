@@ -1,3 +1,9 @@
+# GOAL (human, session 17): PC port
+Every function must end up as C (matching or functionally equivalent); exact match is a means, not the end.
+Leftover hard functions -> NONMATCHING C verified by differential testing (emulated original vs our C), not
+endless matching rounds. SDK/hardware code is reimplemented by the port layer rather than decompiled.
+See reports/DS decomp long tail strategy.md for the matching-side tactics.
+
 # 90% cut plan (session 17, 2026-10-16) — supersedes the phase order below; needs the human's OK on D1-D3
 
 ## Why the current pace doesn't scale (queue at 2f95dc16)
