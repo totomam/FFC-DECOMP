@@ -10,7 +10,8 @@
 - **arcnid import (LONGTAIL Phase 1.00)**: `tools/import_arcnid.py <arcnid clone> <out> [funcs]`. arcnid's matcher
   masks relocs, so their externs are placeholders; the importer maps each reloc to our symbol via relocs.txt,
   renames, statics the other functions of a multi-function unit, and verifies with tools/try (both -O4 and -O4,p).
-  86 candidates -> 72 match exactly: 52 integrated (first batch) + 10 multi-function (second batch).
+  86 candidates -> 62 match exactly and are integrated (52 + 10 multi-function). Then clone.py +34.
+  Queue now: 15,667 done, 2,238 fail_sonnet, 1,118 todo, 377 blocked. Build 22/22.
   Not imported: 3 compile errors (two placeholder externs = one real function with different prototypes; hand-fix),
   1 at 96%, ~16 "no reloc"/C++-mangled (targets missing from our symbols, see below).
 - **Plain -O4 is real in this game**: ~half the arcnid matches need `/* cflags: -noO4,p -O4 */` (= -O4,s). Fixed
