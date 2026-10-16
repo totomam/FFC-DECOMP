@@ -4,6 +4,25 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 15)
+- Bootstrap: `tools/setup.sh` needed the human's OK (auto-mode blocks external code). Cold ninja ~45 min, mwld link
+  ~25-30 min on this container (STATUS said 8.7 min); give background builds a 2 h timeout.
+- **arcnid import (LONGTAIL Phase 1.00)**: `tools/import_arcnid.py <arcnid clone> <out> [funcs]`. arcnid's matcher
+  masks relocs, so their externs are placeholders; the importer maps each reloc to our symbol via relocs.txt,
+  renames, statics the other functions of a multi-function unit, and verifies with tools/try (both -O4 and -O4,p).
+  86 candidates -> 72 match exactly: 52 integrated (first batch) + 10 multi-function (second batch).
+  Not imported: 3 compile errors (two placeholder externs = one real function with different prototypes; hand-fix),
+  1 at 96%, ~16 "no reloc"/C++-mangled (targets missing from our symbols, see below).
+- **Plain -O4 is real in this game**: ~half the arcnid matches need `/* cflags: -noO4,p -O4 */` (= -O4,s). Fixed
+  ffclib.cc_flags_for and configure.py, which passed `-noO4,p` to mwcc (usage error). Re-flagging the saved
+  fail_sonnet attempts with -O4 matched 0/661 (attempts were tuned to -O4,p), so the flag goes into the prompt.
+- mkwave prompt: plain -O4 option + arcnid-proven idioms (vtable/PTMF/delete, loop/upcast/struct-copy shapes).
+  mkwave `--status fail_sonnet` now picks any tier and `--dedup` no longer drops the pick's own shape.
+- **Function discovery gap**: code not covered by any function symbol = 3.9% of all .text, but ov002 33% (~500
+  vtable-only functions arcnid has, absent from our symbols.txt), ov010 22%, ov014 18%, ov015/016 (DS Protect).
+  These are outside queue.csv, so "% done" overstates ov002. Adding them = config work (symbols + delinks).
+- Next (proposed to the human): Sonnet re-run over fail_sonnet with the new prompt before any Opus spend.
+
 ## Done (session 12)
 - Cycle 20 (waves 20-23, one link): 878/960, clone +7, 662 files (41daee4). First attempt hung ~2 h bisecting a
   `main` checksum failure: func_0208f404 (wave 22) passes try but breaks the main link (cause unknown; excluded in
