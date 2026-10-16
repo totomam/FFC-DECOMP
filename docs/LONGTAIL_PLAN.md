@@ -1,4 +1,7 @@
-# GOAL (human, session 17): PC port
+# GOAL (human, session 17): PC port + browser port
+Browser = the same port built with Emscripten (wasm32). Design constraints from day one: 32-bit pointers (matches
+the 32-bit host plan), renderer on GLES3/WebGL2 (no desktop-GL-only or compute features), single-threaded main
+loop (fibers/asyncify, no reliance on pthreads), SDL audio/input, user picks the ROM, saves in IndexedDB/OPFS.
 Every function must end up as C (matching or functionally equivalent); exact match is a means, not the end.
 Leftover hard functions -> NONMATCHING C verified by differential testing (emulated original vs our C), not
 endless matching rounds. SDK/hardware code is reimplemented by the port layer rather than decompiled.
