@@ -129,6 +129,7 @@ def main():
         return f"inttoptr (i32 {to} to ptr)", None
 
     emitted = set()
+    ctors = {}
     need_func = set()
     stats = defaultdict(int)
     for m, d in mods:
@@ -189,6 +190,9 @@ def main():
                 emitted.add(s.name)
                 L.append(f"{q(s.name)} = alias i8, getelementptr (i8, ptr {q(bn)}, i32 {s.addr - lo})")
                 stats["alias"] += 1
+        for name, lo, hi, kind in secs[m]:
+            if name == ".ctor":  # static initializers: runtime.c (main) / the overlay loader run them
+                ctors[m] = (blob(m, name), (hi - lo) // 4)
         L += [f"declare void {q(fn)}()" for fn in sorted(file_funcs)]
         L += [f"{q(b)} = external global i8" for b in sorted(used_blobs - own_blobs)]
         (a.out / f"{m}.ll").write_text("\n".join(L) + "\n")
@@ -203,6 +207,16 @@ def main():
     for i, n in enumerate(stand):
         L.append(f"@.s{i} = private constant [{len(n) + 1} x i8] c\"{n}\\00\"")
         L.append(f"define void {q(n)}() {{\n  call void @ffc_trap(ptr @.s{i})\n  unreachable\n}}")
+    # ffc_ctors[0] = main, [1 + n] = overlay n: { ptr to the .ctor blob (function pointers), count }
+    order = ["main"] + [f"ov{i:03d}" for i in range(len([m for m, _ in mods if m.startswith("ov")]))]
+    ent = []
+    for m in order:
+        if m in ctors:
+            L.append(f"{q(ctors[m][0])} = external global i8")
+            ent.append(f"{{ ptr, i32 }} {{ ptr {q(ctors[m][0])}, i32 {ctors[m][1]} }}")
+        else:
+            ent.append("{ ptr, i32 } zeroinitializer")
+    L.append(f"@ffc_ctors = constant [{len(ent)} x {{ ptr, i32 }}] [{', '.join(ent)}]")
     L.append("; undefined, not in symbols.txt: zero-filled data")
     for n in unknown:
         L.append(f"{q(n)} = global [64 x i8] zeroinitializer, align 4")
