@@ -21,6 +21,10 @@
   (claude/ffc-wave61-ov0-3), 62 ov4-18 session_01Qbbe4FZL7Hrwaa5ezqU74j (claude/ffc-wave62-ov4-18).
   Merge: `python3 tools/merge_queue.py origin/claude/ffc-wave60-main:main origin/claude/ffc-wave61-ov0-3:ov0-3
   origin/claude/ffc-wave62-ov4-18:ov4-18`, ninja, `tools/clone.py run`. More waves (~$145 for 3x3) need the human's OK.
+  **Children all blocked at once on tools/setup.sh** (auto mode ignores an approval relayed in the prompt; ~$0.40 each);
+  archived. Human chose: run waves 60-62 in the orchestrator (already bootstrapped). The 45 wave-59 failures were
+  dropped from the picks -> 675 functions (main 219, ov0-3 236, ov4-18 220). Children need the human to approve
+  setup.sh in each child chat; prefer running waves in an already-bootstrapped session.
 
 ## Done (session 15)
 - Bootstrap: `tools/setup.sh` needed the human's OK (auto-mode blocks external code). Cold ninja ~45 min, mwld link
