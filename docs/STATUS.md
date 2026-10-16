@@ -11,7 +11,7 @@
 - Research notes: research_notes/ (8 files). No waves run, $0 model spend on matching; research ~1M subagent tokens.
 - Started P0: ffc-assets cloned + .assets symlinked; bootstrap chain (setup, fetch_assets, CW stage, extract,
   configure, ninja) launched in the background -> work/setup.log, work/ninja.log ("EXIT 0" + 22/22 = done).
-  A new session must redo it (container-local). Reference clones (container-local): /home/user/ref/{cybervisi0n_libntr,
+  Finished: ninja EXIT 0, 22/22 modules OK. A new session must redo it (container-local). Reference clones (container-local): /home/user/ref/{cybervisi0n_libntr,
   cybervisi0n_libntrsystem, cybervisi0n_pokeplatinum}, /home/user/arcnid/ffc-decomp.
 - libntr: meson, targets arm/linux/win64/nx (no wasm yet), sdk_version_major=5 + hardware_type=twl_hyb for DSi;
   353 .c files / 145k lines; libntrsystem = NitroSystem (fnd, g2d, g3d, gfd, snd).
