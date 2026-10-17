@@ -9,6 +9,29 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 24) — free tiers integrated: +567 matched, recover_funcs applied, $0 model spend (Sonnet subagents only)
+- Branch claude/ffc-decomp-port-continue-8p6a9g (from lkc03y). Bootstrap OK, **baseline 22/22** (cold ninja ~2 h incl. setup).
+  pret clones must be named /home/user/ref/{pokediamond,pokeheartgold,pret_pokeplatinum} (xmatch.py paths).
+- **recover_funcs fixed + applied, 22/22**: real failure = 9 arcnid "functions" at 0x021d3368+ lie in our ov002 .rodata,
+  so their callers' BL relocs resolved to overlapping ov012 (dsd delink "No symbol found ... overlay 12"). Fix: skip
+  arcnid starts outside ov002 code; drop candidates that BL into their own non-code section. 0x021bbe84 is a start.
+  630 ov002 functions added (symbols, 3260 relocs, todo rows). Fast repro trick: a git worktree with extract/ + tools/bin
+  symlinked, `dsd delink --config-path config/usa/arm9/config.yaml` takes 1 s (no full ninja needed).
+- **import_arcnid** on the 630: **392 MATCH**, 93 SKIP, 4 NO (work/arcnid_import/, log work/arcnid_import.log).
+- **Integrated 567/571** (tools/integrate --list work/all_pairs.csv, one ninja, 37 min): arcnid 392 + sdk_import 146 +
+  xmatch 23 (1 dup) + permuter 6; 4 compile errors (ov002 021bf880/021c7e2c/021c7eb0/021c8124). queue.csv marked done.
+- **sdk_match bl/blx mask** (as xmatch.xmask) + sdk_layout rerun: unique 1223->1230, fuzzy100 156->159; import_sdk rerun
+  -> only 1 new (func_0208641c, already from xmatch). 2 old matches no longer reproduce (0207b684, 02085758; already done).
+- Queue after integration: **16,539 done** / 20,040 (82.5% funcs, 45.3% code bytes), 1,927 fail_sonnet, 1,230 todo,
+  333 blocked. Progress chart: https://claude.ai/artifact/2S63n827gd12BcrUgMoNU2 (data: git history of queue.csv).
+- **In flight at handoff** (check first):
+  1. `tools/clone.py run` (work/logs/clone1.log): "cloned 78 functions", then integrate+ninja. If it finished with 22/22
+     and updated queue.csv: commit config/ src/ queue.csv. If ninja is not 22/22: inspect, revert the clone TUs.
+  2. Permuter full run (Sonnet subagent; work/permuter/runs2/, matches -> work/permuter/matches2/, progress
+     work/permuter/REPORT2.md; nohup'd, ~9 h at 3 min cap, 3 parallel). Integrate matches2 with tools/integrate --list.
+- Not done: port step (passthrough calls via port_argcheck.py; host crash in func_0204f6b0) — untouched this session.
+- Cost: $0 model spend (2 Sonnet subagents); orchestrator context ~200k.
+
 ## Done (session 23b) — free decomp tiers measured, nothing integrated yet, $0 model spend (Sonnet subagents only)
 - Remaining at start: 3,438 non-done (2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate, 1 fail_haiku).
 - **tools/import_sdk.py** (libntr source -> our names via relocs, verify with tools/try; `--kinds`, `--jobs`):
