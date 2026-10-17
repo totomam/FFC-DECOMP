@@ -5,8 +5,7 @@
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
 ## Done (session 23) — host boots into ffc_main + game threads, $0 model spend
-- Bootstrap OK (branch claude/ffc-port-continue-lkc03y, from 3y9arg). ROM ninja ran in background; at handoff it was at
-  15975/15978 (log work/ninja_s23.log) — **22/22 not yet confirmed**: check `tail work/ninja_s23.log` for "NINJA EXIT 0".
+- Bootstrap OK (branch claude/ffc-port-continue-lkc03y, from 3y9arg). **22/22 confirmed** (ninja EXIT 0, work/ninja_s23.log).
 - Boot fixes (host, `FFC_RUN=1 build/port/host/ffc`):
   - hal.c: OSBootInfo.boot_type = 1 (ROM) at 0x027ffc40/0x02fffc40.
   - **port_configure rewrite_abs**: absolute DS addresses in src/ that fall in a data/rodata/bss section of the TU's

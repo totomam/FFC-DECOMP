@@ -17,8 +17,8 @@
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
 - Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
 - Session 23: boot type, abs-address rewrite, DTCM blob, passthrough overrides, port_argcheck (351 calls); host
-  reaches ffc_main + game thread, crashes in func_0204f6b0. 22/22 NOT confirmed (ninja was at 15975/15978).
-  Next: confirm 22/22; fix passthrough calls (auto-pad or overrides); trap on toward title; then (c), (d).
+  reaches ffc_main + game thread, crashes in func_0204f6b0. 22/22 confirmed.
+  Next: fix passthrough calls (auto-pad or overrides); trap on toward title; then (c), (d).
 - Session 22: sdk_override.c (PXI, OS threads as host coroutines, DMA, CARD from ROM file); host reaches FS_Init
   and segfaults (OS_GetBootType != ROM?). 22/22 confirmed. Next: (b) boot type,
   more traps toward title; (c) recover_funcs --apply + import_arcnid; (d) wasm (needs -sASYNCIFY for fibers) + win32.
