@@ -150,7 +150,7 @@ def main():
     if man.exists():
         for r in csv.DictReader(man.open()):
             t = int(r["address"], 16)
-            if not inside("ov002", t):
+            if not inside("ov002", t) and any(x <= t < y for x, y in code_ranges("ov002")):
                 cands["ov002"].setdefault(t, "arcnid")
                 asize[t] = int(r["size"])
 
@@ -257,6 +257,7 @@ def main():
 
     dirs = dict(ffclib.module_dirs())
     sym_add, rel_add, rows = defaultdict(list), defaultdict(list), []
+    skipped = 0
     for mod, t, e, src in new:
         prefix = "func_" if mod == "main" else f"func_{mod}_"
         nm = f"{prefix}{t:08x}"
@@ -271,6 +272,9 @@ def main():
             if tm is None:
                 prev = [r for r in rel.values() if r[1] == to and r[2]]
                 tm = prev[0][2] if prev else None
+            if tm and inside(tm, to) and not any(x == to for x, _ in funcs[tm][bisect.bisect_left(funcs[tm], (to, 0)):][:1]):
+                skipped += 1  # target is inside a symbolized function (dsd cannot name it); leave unrelocated
+                continue
             if tm:
                 mt = "main" if tm == "main" else tm if tm in ("itcm", "dtcm") else f"overlay({int(tm[2:])})"
                 rel_add[mod].append(f"from:{frm:#010x} kind:{'thumb_call_arm' if blx else 'thumb_call'} "
@@ -296,7 +300,7 @@ def main():
             q.append(dict(func=nm, tu=s.module, size=f"{s.size:#x}", difficulty=diff, status="todo", tier=tier,
                           attempts=0, best_pct="", note="recovered (recover_funcs.py)"))
     print(f"applied: {sum(map(len, sym_add.values()))} symbols, {sum(map(len, rel_add.values()))} relocs, "
-          f"{len(rows)} queue rows")
+          f"{len(rows)} queue rows, {skipped} interior-target BLs left unrelocated")
 
 
 if __name__ == "__main__":
