@@ -116,6 +116,7 @@ uint64_t ffc_hal_frame(void)
 }
 
 extern uint32_t ffc_cpsr;
+extern void ffc_cpsr_written(void);
 extern uint16_t data_02141510; /* OSi_ThreadInfo.isNeedRescheduling */
 extern void func_02086c78(void); /* OSi_RescheduleThread */
 extern void func_02087058(void *queue); /* OS_WakeupThread */
@@ -144,18 +145,78 @@ void ffc_hal_raise_irq(uint32_t mask)
     if (*(uint32_t *)data_02fe0544)
         func_02087058(data_02fe0544);
     ffc_cpsr = cpsr;
+    ffc_cpsr_written(); /* PXI replies to requests sent from IRQ handlers (e.g. alarms) */
     if (data_02141510) {
         data_02141510 = 0;
         func_02086c78();
     }
 }
 
+/* Timers 0-3 (OS_Tick uses TIMER0, OS_Alarm TIMER1), advanced once per frame by the frame's bus cycles. TMxCNT_L
+ * is plain memory holding the reload value the game wrote; the HAL writes the running counter there, so a value
+ * that differs from what the HAL last wrote is a new reload. Overflows raise TIMERx IRQs (coarse: at frame end). */
+#define FFC_FRAME_CYCLES 560190u /* 33.514 MHz / 59.826 Hz */
+static struct {
+    int on;
+    uint32_t cnt, reload, acc;
+    uint16_t shown;
+} tm[4];
+
+static void hal_timers(uint32_t cycles)
+{
+    static const uint32_t div[4] = {1, 64, 256, 1024};
+    uint32_t i, prev_ovf = 0, irq = 0;
+    for (i = 0; i < 4; i++) {
+        uint32_t reg = 0x04000100u + 4 * i, ctl = FFC_REG16(reg + 2), l = FFC_REG16(reg), ticks, total, ovf = 0;
+        if (!tm[i].on || l != tm[i].shown)
+            tm[i].reload = l;
+        if (!(ctl & 0x80)) {
+            tm[i].on = 0;
+            prev_ovf = 0;
+            continue;
+        }
+        if (!tm[i].on) {
+            tm[i].on = 1;
+            tm[i].cnt = tm[i].reload;
+            tm[i].acc = 0;
+        }
+        if (i > 0 && (ctl & 4)) {
+            ticks = prev_ovf;
+        } else {
+            tm[i].acc += cycles;
+            ticks = tm[i].acc / div[ctl & 3];
+            tm[i].acc %= div[ctl & 3];
+        }
+        total = tm[i].cnt + ticks;
+        if (total >= 0x10000u) {
+            uint32_t period = 0x10000u - tm[i].reload;
+            ovf = 1 + (total - 0x10000u) / period;
+            total = tm[i].reload + (total - 0x10000u) % period;
+        }
+        tm[i].cnt = total;
+        FFC_REG16(reg) = tm[i].shown = (uint16_t)total;
+        if (ovf && (ctl & 0x40))
+            irq |= 8u << i;
+        prev_ovf = ovf;
+    }
+    if (irq)
+        ffc_hal_raise_irq(irq);
+}
+
 void ffc_hal_vblank(void)
 {
+    static uint64_t dump_frame = ~0ull;
+    if (frames == 0 && getenv("FFC_DUMP_FRAME"))
+        dump_frame = strtoull(getenv("FFC_DUMP_FRAME"), NULL, 0);
     frames++;
     FFC_REG16(FFC_REG_VCOUNT) = 192;
     FFC_REG16(FFC_REG_DISPSTAT) |= 1;
+    hal_timers(FFC_FRAME_CYCLES);
     /* P3: present the two screens and poll input here. */
+    if (frames == dump_frame) {
+        extern void ffc_dump_threads(void);
+        ffc_dump_threads();
+    }
     if (getenv("FFC_TRACE_FRAMES") && frames % 60 == 0)
         fprintf(stderr, "ffc: frame %llu\n", (unsigned long long)frames);
     if (FFC_REG16(FFC_REG_DISPSTAT) & 0x20) /* VCount match IRQ enable (the match line is treated as reached) */

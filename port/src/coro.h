@@ -12,4 +12,7 @@ void ffc_coro_switch(struct ffc_coro *to);
 /* Free a coroutine that is not running. */
 void ffc_coro_free(struct ffc_coro *c);
 
+/* Debug: print the return addresses of a suspended coroutine (host i386 only). */
+void ffc_coro_backtrace(struct ffc_coro *c);
+
 #endif

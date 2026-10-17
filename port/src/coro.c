@@ -1,4 +1,5 @@
 /* Host coroutines (see coro.h). */
+#define _GNU_SOURCE /* REG_EBP / REG_EIP */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -164,5 +165,20 @@ void ffc_coro_free(struct ffc_coro *c)
         free(c->stack);
         free(c);
     }
+}
+
+/* Debug (FFC_DUMP_FRAME): the return addresses of a suspended coroutine, by its saved frame-pointer chain. */
+void ffc_coro_backtrace(struct ffc_coro *c)
+{
+#if defined(__i386__)
+    unsigned *fp = (unsigned *)c->uc.uc_mcontext.gregs[REG_EBP], esp = c->uc.uc_mcontext.gregs[REG_ESP];
+    int n;
+    fprintf(stderr, "  eip %#x", (unsigned)c->uc.uc_mcontext.gregs[REG_EIP]);
+    for (n = 0; n < 24 && fp && (unsigned)fp >= esp && (unsigned)fp < esp + 0x100000; n++) {
+        fprintf(stderr, " %#x", fp[1]);
+        fp = (unsigned *)fp[0];
+    }
+    fprintf(stderr, "\n");
+#endif
 }
 #endif

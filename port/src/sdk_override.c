@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "coro.h"
 #include "hal.h"
@@ -33,7 +34,7 @@ struct pxi_msg {
 };
 static struct pxi_msg reply_q[256];
 static unsigned reply_head, reply_tail;
-static int delivering;
+static struct ffc_coro *delivering; /* coroutine inside ffc_pxi_deliver (a callback may switch threads) */
 
 static void arm7_reply(uint32_t tag, uint32_t data, uint32_t err)
 {
@@ -56,9 +57,10 @@ void ffc_cpsr_written(void)
 
 void ffc_pxi_deliver(void)
 {
-    if (delivering)
+    struct ffc_coro *outer = delivering;
+    if (delivering == ffc_coro_self())
         return;
-    delivering = 1;
+    delivering = ffc_coro_self();
     while (reply_head != reply_tail) {
         struct pxi_msg m = reply_q[reply_head++ % 256];
         pxi_callback cb = data_021418c8[m.tag];
@@ -66,8 +68,9 @@ void ffc_pxi_deliver(void)
             fprintf(stderr, "ffc: pxi 7->9 tag %u data %#x err %u%s\n", m.tag, m.data, m.err, cb ? "" : " (dropped)");
         if (cb)
             cb(m.tag, m.data, m.err);
+        delivering = ffc_coro_self();
     }
-    delivering = 0;
+    delivering = outer;
 }
 
 /* SPI-style requests (TP, NVRAM, MIC, PM): a command starts with SPI_PXI_START_BIT (command in bits 8-14) and
@@ -82,11 +85,80 @@ static void spi_request(uint32_t tag, uint32_t data)
         arm7_reply(tag, 0x01000000u | 0x8000u | spi_cmd[tag] << 8, 0);
 }
 
+/* NVRAM (firmware flash, 256 KB): READ / FAST_READ copy from FFC_FIRMWARE (a firmware dump) or an all-zero image;
+ * words: START|cmd<<8|addr[23:16], addr[15:0], size[31:16], size[15:0], buf[31:16], END|buf[15:0]. PW / PP write
+ * into the image (in memory only); RDSR reads status 0; other commands (write enable, ...) just succeed. */
+static uint8_t *nvram;
+static uint32_t nvram_args[6];
+
+static void nvram_request(uint32_t data)
+{
+    uint32_t idx = (data >> 16) & 0xf;
+    if (data & 0x02000000u)
+        idx = 0;
+    if (idx < 6)
+        nvram_args[idx] = data & 0xffff;
+    spi_request(4, data);
+    if ((data & 0x01000000u) && spi_cmd[4] == 0x22) { /* RDSR: status register 0 (no write in progress) */
+        uint8_t *buf = (uint8_t *)(uintptr_t)((nvram_args[0] & 0xff) << 24 | nvram_args[1] << 8 | nvram_args[2] >> 8);
+        *buf = 0;
+    }
+    if ((data & 0x01000000u) && (spi_cmd[4] == 0x23 || spi_cmd[4] == 0x24 || spi_cmd[4] == 0x25 || spi_cmd[4] == 0x26)) {
+        int write = spi_cmd[4] >= 0x25; /* PW / PP: addr, size (16 bits), buf */
+        uint32_t addr = (nvram_args[0] & 0xff) << 16 | nvram_args[1];
+        uint32_t size = write ? nvram_args[2] : nvram_args[2] << 16 | nvram_args[3];
+        uint8_t *buf = (uint8_t *)(uintptr_t)(write ? nvram_args[3] << 16 | nvram_args[4] : nvram_args[4] << 16 | nvram_args[5]);
+        uint32_t i;
+        if (!nvram) {
+            FILE *f = getenv("FFC_FIRMWARE") ? fopen(getenv("FFC_FIRMWARE"), "rb") : NULL;
+            nvram = calloc(1, 0x40000);
+            if (f) {
+                fread(nvram, 1, 0x40000, f);
+                fclose(f);
+            }
+        }
+        if (trace())
+            fprintf(stderr, "ffc: nvram %s %#x+%#x %p\n", write ? "write" : "read", addr, size, (void *)buf);
+        for (i = 0; i < size; i++)
+            if (write)
+                nvram[(addr + i) & 0x3ffff] = buf[i];
+            else
+                buf[i] = nvram[(addr + i) & 0x3ffff];
+    }
+}
+
+/* RTC: command << 8; the ARM7 leaves RTCRawData (BCD date, time) in OSSystemWork.real_time_clock and replies
+ * RESULT_BIT | command << 8 | SUCCESS. Host local time; writes are acknowledged and dropped. */
+static uint32_t bcd(int v)
+{
+    return (uint32_t)(v / 10 << 4 | v % 10);
+}
+
+static void rtc_request(uint32_t data)
+{
+    uint32_t cmd = (data >> 8) & 0x7f;
+    time_t t = time(NULL);
+    struct tm *lt = localtime(&t);
+    uint32_t date = bcd(lt->tm_year % 100) | bcd(lt->tm_mon + 1) << 8 | bcd(lt->tm_mday) << 16 | (uint32_t)lt->tm_wday << 24;
+    uint32_t tim = bcd(lt->tm_hour) | (lt->tm_hour >= 12) << 6 | bcd(lt->tm_min) << 8 | bcd(lt->tm_sec) << 16;
+    if (cmd >= 0x10 && cmd < 0x20) {
+        FFC_REG32(0x027ffde8u) = FFC_REG32(0x02fffde8u) = cmd <= 0x11 ? date : cmd == 0x12 ? tim : 0;
+        FFC_REG32(0x027ffdecu) = FFC_REG32(0x02fffdecu) = cmd == 0x10 ? tim : 0;
+    }
+    arm7_reply(5, 0x8000u | cmd << 8, 0);
+}
+
 static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
 {
     if (trace())
         fprintf(stderr, "ffc: pxi 9->7 tag %u data %#x err %u\n", tag, data, err);
     switch (tag) {
+    case 4:
+        nvram_request(data);
+        break;
+    case 5:
+        rtc_request(data);
+        break;
     case 6: /* touch panel (this SDK's tag numbering): pen up; OSSystemWork.touch_panel stays 0 */
         spi_request(tag, data);
         break;
@@ -96,10 +168,14 @@ static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
     }
 }
 
-/* PXI_InitFifo: no handshake with the ARM7; every ARM7 FIFO handler counts as registered. */
+/* PXI_InitFifo (once): no handshake with the ARM7; every ARM7 FIFO handler counts as registered. */
 void func_02089100(void)
 {
+    static int done; /* like the SDK's FifoCtrlInit guard: later PXI_Init calls keep the registered callbacks */
     int i;
+    if (done)
+        return;
+    done = 1;
     PXI_HANDLE_CHECKER(0) = 0;
     PXI_HANDLE_CHECKER(1) = 0xffffffffu;
     for (i = 0; i < PXI_TAG_MAX; i++)
@@ -171,6 +247,23 @@ static void reap_zombie(void)
     if (zombie && zombie != ffc_coro_self()) {
         drop_coro(zombie);
         zombie = NULL;
+    }
+}
+
+/* Debug: every OS context with its thread words after the context (state, next, id, prio, ..., queue) and the
+ * host return addresses of its suspended coroutine (resolve with gdb `info symbol`). */
+void ffc_dump_threads(void)
+{
+    int i, j;
+    for (i = 0; i < nctxs; i++) {
+        fprintf(stderr, "ffc: ctx %#x%s:", ctxs[i].ctx, ctxs[i].coro == ffc_coro_self() ? " (running)" : "");
+        for (j = 0; j < 12; j++)
+            fprintf(stderr, " %x", FFC_REG32(ctxs[i].ctx + 0x64 + 4 * j));
+        fprintf(stderr, "\n");
+#if !defined(_WIN32) && !defined(__EMSCRIPTEN__)
+        if (ctxs[i].coro && ctxs[i].coro != ffc_coro_self())
+            ffc_coro_backtrace(ctxs[i].coro);
+#endif
     }
 }
 
@@ -376,4 +469,17 @@ void func_0207ed7c(uint32_t *info)
     if (trace())
         fprintf(stderr, "ffc: start overlay %u\n", info[0]);
     ffc_run_ctors(1 + (int)info[0]);
+}
+
+/* RtcWaitBusy (asm spin on RTCWork.lock): the ARM7 reply has to arrive while it spins. */
+extern uint32_t data_0214194c[]; /* RTCWork; lock is its first word */
+void func_020897f0(void)
+{
+    while (data_0214194c[0] == 1) {
+        if (trace())
+            fprintf(stderr, "ffc: rtc wait: %u replies queued, cpsr %#x\n", reply_tail - reply_head, ffc_cpsr);
+        ffc_pxi_deliver();
+        if (data_0214194c[0] == 1)
+            ffc_hal_vblank();
+    }
 }
