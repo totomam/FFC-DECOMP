@@ -602,7 +602,8 @@ void func_020897f0(void)
  * already-run plaintext code in place, zeroes the table, flushes the caches. Host code is native and the overlay's
  * DS code addresses are not writable code, so there is nothing to scramble. */
 uint32_t func_ov015_021d6504(uint32_t r0, uint32_t r1, uint32_t r2, uint32_t r3, uint32_t s0, uint32_t s1,
-                             uint32_t s2, uint32_t s3, uint32_t s4, uint32_t s5)
+                             uint32_t s2, uint32_t s3, uint32_t s4, uint32_t s5, uint32_t s6, uint32_t s7,
+                             uint32_t s8, uint32_t s9, uint32_t s10, uint32_t s11)
 {
     if (trace())
         fprintf(stderr, "ffc: skip code scrambler (table %#x)\n", r0);
@@ -610,7 +611,8 @@ uint32_t func_ov015_021d6504(uint32_t r0, uint32_t r1, uint32_t r2, uint32_t r3,
 }
 
 uint32_t func_ov016_02145928(uint32_t r0, uint32_t r1, uint32_t r2, uint32_t r3, uint32_t s0, uint32_t s1,
-                             uint32_t s2, uint32_t s3, uint32_t s4, uint32_t s5)
+                             uint32_t s2, uint32_t s3, uint32_t s4, uint32_t s5, uint32_t s6, uint32_t s7,
+                             uint32_t s8, uint32_t s9, uint32_t s10, uint32_t s11)
 {
     if (trace())
         fprintf(stderr, "ffc: skip code scrambler (table %#x)\n", r0);
