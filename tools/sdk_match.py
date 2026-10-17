@@ -31,7 +31,10 @@ def mask(b: bytes, addr: int, mode: str):
                 continue
             w, = struct.unpack_from("<I", b, off)
             if (w >> 25) & 7 == 5:  # B/BL/BLX(imm)
-                m[off:off + 3] = b"\0\0\0"
+                # unconditional BL and BLX(imm): mask the condition byte too, so a `bl` to an ARM callee in the
+                # source object equals the `blx` to a Thumb callee in the ROM (as xmatch.xmask)
+                n = 4 if (w >> 28) == 0xF or (w >> 24) == 0xEB else 3
+                m[off:off + n] = b"\0" * n
     else:
         off = 0
         while off < len(b) - 1:
