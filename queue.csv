@@ -71,7 +71,7 @@ func_02005db4,main,0xc,8,done,haiku,0,,
 func_02005dc0,main,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
 func_02005dc8,main,0xbc,110,done,sonnet,1,100,matched by haiku
 func_02005e84,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
-func_02005e88,main,0x72,89,fail_sonnet,sonnet,2,99.1,"Only diff is the operand order of the final `size = m + size` (target adds r5, r4, r5; ours adds r5, r5, r4). Tried size + m, size += m, and reorderin"
+func_02005e88,main,0x72,89,done,sonnet,2,99.1,"Only diff is the operand order of the final `size = m + size` (target adds r5, r4, r5; ours adds r5, r5, r4). Tried size + m, size += m, and reorderin s24 import"
 func_02005efc,main,0x1e,19,done,haiku,0,,
 func_02005f1c,main,0x1e,21,done,haiku,2,100,matched by sonnet
 func_02005f3c,main,0x2e,27,done,haiku,2,100,matched by sonnet
@@ -1915,7 +1915,7 @@ func_02017fd8,main,0xc,6,todo,haiku,0,,
 func_02017fe4,main,0xc,6,todo,haiku,0,,
 func_02017ff0,main,0xc,6,todo,haiku,0,,
 func_02017ffc,main,0xc,6,todo,haiku,0,,
-func_02018008,main,0xc,6,todo,haiku,0,,
+func_02018008,main,0xc,6,done,haiku,0,,s24 import
 func_02018014,main,0xc,6,todo,haiku,0,,
 func_02018020,main,0xc,6,todo,haiku,0,,
 func_0201802c,main,0xc,6,todo,haiku,0,,
@@ -6288,7 +6288,7 @@ func_02073ccc,main,0xc0,154,done,sonnet,2,100,matched by sonnet
 func_02073d8c,main,0x78,64,done,sonnet,1,100,matched by haiku
 func_02073e04,main,0x20,18,done,haiku,1,100,matched by haiku
 func_02073e24,main,0x82,89,fail_sonnet,sonnet,2,98.5,"Only diff: target emits ""adds r1, r0, #0"" after the func_ov007_021bf21c call, but mwcc emits ""cmp r0, #0"". Pointer vs int return type and a shared var"
-func_02073ea8,main,0xb8,163,fail_sonnet,sonnet,2,99.5,"Only one instruction differs: case 0 vtable load is `ldr r1,[r4]` in my output and `ldr r1,[r0]` in the target. Variants e.c and g.c (local copy, doub"
+func_02073ea8,main,0xb8,163,done,sonnet,2,99.5,"Only one instruction differs: case 0 vtable load is `ldr r1,[r4]` in my output and `ldr r1,[r0]` in the target. Variants e.c and g.c (local copy, doub s24 import"
 func_02073f60,main,0x3c,42,done,haiku,1,100,matched by haiku
 func_02073f9c,main,0x80,112,done,sonnet,1,100,matched by haiku
 func_0207401c,main,0xc,9,done,haiku,1,100,matched by haiku
@@ -6548,12 +6548,12 @@ func_02077c40,main,0x10,12,done,haiku,0,100,cloned from func_0204d9ec
 func_02077c50,main,0x1a,15,done,haiku,1,100,matched by haiku
 func_02077c6c,main,0x1c,24,done,haiku,1,100,matched by haiku
 func_02077c88,main,0x20,26,done,haiku,2,100,matched by haiku
-func_02077ca8,main,0x1a,15,fail_sonnet,haiku,4,69.2,"Registers match; the strh of the zero to [r3,#2] is scheduled before the end load/add instead of after `adds r0,#0x10`. Every reorder I tried either m"
+func_02077ca8,main,0x1a,15,done,haiku,4,69.2,"Registers match; the strh of the zero to [r3,#2] is scheduled before the end load/add instead of after `adds r0,#0x10`. Every reorder I tried either m s24 import"
 func_02077cc4,main,0x4c,38,done,haiku,1,100,matched by haiku
 func_02077d10,main,0xfc,146,fail_sonnet,sonnet,2,52.8,"Size 0xf8 vs 0xfc. Unresolved: u8-then-u16 narrowing of the flag word before the bit-0 test, the r1/r2/r3 values set before the func_020849e0 call, an"
-func_02077e0c,main,0x7e,91,fail_sonnet,sonnet,2,64.3,"Size matches (0x7e) and the logic is right. The remaining diffs are register allocation: the target keeps the flag in r7 and `best` in ip, while mine "
-func_02077e8c,main,0x76,87,fail_sonnet,sonnet,2,86.4,"Size matches and the mask is now hoisted out of the loop, but mwcc still assigns flag=r6, mask=r7, bestsize=r4, node=r5 instead of the target's flag=r"
-func_02077f04,main,0x8c,104,fail_sonnet,sonnet,2,94.3,Size matches (0x8c). r.c and t.c are both 94.3%. Remaining diff is the prologue: the target loads r->start into r1 for the stack store and then reload
+func_02077e0c,main,0x7e,91,done,sonnet,2,64.3,"Size matches (0x7e) and the logic is right. The remaining diffs are register allocation: the target keeps the flag in r7 and `best` in ip, while mine  s24 import"
+func_02077e8c,main,0x76,87,done,sonnet,2,86.4,"Size matches and the mask is now hoisted out of the loop, but mwcc still assigns flag=r6, mask=r7, bestsize=r4, node=r5 instead of the target's flag=r s24 import"
+func_02077f04,main,0x8c,104,done,sonnet,2,94.3,Size matches (0x8c). r.c and t.c are both 94.3%. Remaining diff is the prologue: the target loads r->start into r1 for the stack store and then reload s24 import
 func_02077f90,main,0x20,22,done,haiku,1,100,matched by haiku
 func_02077fb0,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_02077fb8,main,0x20,24,done,haiku,1,100,matched by haiku
@@ -6579,32 +6579,32 @@ func_0207838c,main,0x18,12,done,haiku,1,100,matched by haiku
 func_020783a4,main,0x2c,40,done,haiku,1,100,matched by haiku
 func_020783d0,main,0x30,46,done,haiku,1,100,matched by haiku
 func_02078400,main,0x68,86,fail_sonnet,sonnet,2,86.5,"Size matches (0x68). Remaining diff is allocation: target has rd in r7, w in r6, loop value c copied to r1; mine has rd in r6, w in r7, c in r0. The n"
-func_02078468,main,0x44,56,fail_sonnet,haiku,2,91.2,"Not matched. The size is right (0x44) and the tail matches. The remaining diff is scheduling in the prologue: the target has `ldr r5,[r7,#4]` and `add"
-func_020784ac,main,0x5a,63,fail_sonnet,sonnet,2,95.6,"Only diff left is the tail load order: target loads out ptr [sp] before loc.max [sp,#8], mwcc emits the reverse. Tried 7 tail variants (direct stores,"
+func_02078468,main,0x44,56,done,haiku,2,91.2,"Not matched. The size is right (0x44) and the tail matches. The remaining diff is scheduling in the prologue: the target has `ldr r5,[r7,#4]` and `add s24 import"
+func_020784ac,main,0x5a,63,done,sonnet,2,95.6,"Only diff left is the tail load order: target loads out ptr [sp] before loc.max [sp,#8], mwcc emits the reverse. Tried 7 tail variants (direct stores, s24 import"
 func_02078508,main,0xe8,150,fail_sonnet,sonnet,2,17.2,mwcc won't keep s1/s2 in the caller's stack-arg slots (spills or hoists the m2 mask); f.c (volatile copies) scores 17.2% but its frame is 0x10 vs 0x8;
 func_020785f0,main,0x14,10,done,haiku,1,100,matched by haiku
-func_02078604,main,0xcc,146,fail_sonnet,sonnet,2,48,"No match after 11 runs. Mask code in the f==4 branch gets a*4/c*4 register order and scheduling backwards, and the d.c variants that fix it come out 2"
+func_02078604,main,0xcc,146,done,sonnet,2,48,"No match after 11 runs. Mask code in the f==4 branch gets a*4/c*4 register order and scheduling backwards, and the d.c variants that fix it come out 2 s24 import"
 func_020786d0,main,0x1ae,305,fail_sonnet,sonnet,2,21.9,"No match after about 11 tools/try runs. Best is 21.9% (size 0x1ac vs 0x1ae). Loop structure, the separate Rd locals per branch and unsigned loop count"
-func_02078880,main,0x12c,206,fail_sonnet,sonnet,2,14.2,"No match. Best is m.c at 14.2% (size 0x12e vs 0x12c). The compiler spills base to the stack, but the target keeps it in ip. The spill slots for fl and"
-func_020789ac,main,0x13c,216,fail_sonnet,sonnet,2,37.5,"Size 0x140 vs 0x13c; target pushes r3 with an 8-byte-larger frame, and cnt/ip register roles and load order (ip loaded after cnt, interleaved with cmp"
+func_02078880,main,0x12c,206,done,sonnet,2,14.2,"No match. Best is m.c at 14.2% (size 0x12e vs 0x12c). The compiler spills base to the stack, but the target keeps it in ip. The spill slots for fl and s24 import"
+func_020789ac,main,0x13c,216,done,sonnet,2,37.5,"Size 0x140 vs 0x13c; target pushes r3 with an 8-byte-larger frame, and cnt/ip register roles and load order (ip loaded after cnt, interleaved with cmp s24 import"
 func_02078ae8,main,0x34,32,done,haiku,2,100,matched by sonnet
-func_02078b1c,main,0x5e,67,fail_sonnet,sonnet,2,79.8,"Size matches (0x5e). The stride multiplier m lands in r0 and the stride loads in r1, but the target has m in r1 and the loads in r0. I tried reorderin"
-func_02078b7c,main,0x118,184,fail_sonnet,sonnet,2,97.1,"Only the stack slots for mode, bpp and row_adv differ. The target has mode at 0x14, row_adv at 0x18 and bpp at 0x1c. k.c puts them at 0x1c, 0x14 and 0"
-func_02078c94,main,0x13a,203,fail_sonnet,sonnet,2,10.4,No match. I ran tools/try 4 times and none beat the Haiku 10.4%. The code is 0x148 bytes against the target's 0x13a. mwcc uses a 0x5c frame and keeps 
-func_02078dd0,main,0x14,12,fail_sonnet,haiku,4,55,"Size matches (0x14), but the scheduler loads the stack arg d into r1 after storing e. The target loads it into r2 before that store. No statement orde"
+func_02078b1c,main,0x5e,67,done,sonnet,2,79.8,"Size matches (0x5e). The stride multiplier m lands in r0 and the stride loads in r1, but the target has m in r1 and the loads in r0. I tried reorderin s24 import"
+func_02078b7c,main,0x118,184,done,sonnet,2,97.1,"Only the stack slots for mode, bpp and row_adv differ. The target has mode at 0x14, row_adv at 0x18 and bpp at 0x1c. k.c puts them at 0x1c, 0x14 and 0 s24 import"
+func_02078c94,main,0x13a,203,done,sonnet,2,10.4,No match. I ran tools/try 4 times and none beat the Haiku 10.4%. The code is 0x148 bytes against the target's 0x13a. mwcc uses a 0x5c frame and keeps  s24 import
+func_02078dd0,main,0x14,12,done,haiku,4,55,"Size matches (0x14), but the scheduler loads the stack arg d into r1 after storing e. The target loads it into r2 before that store. No statement orde s24 import"
 func_02078de4,main,0xb4,145,fail_sonnet,sonnet,2,19,"Local array/struct holding res and the dead pointer gets the right call and stack layout, but mwcc spills r7 instead of ctx. That gives a 0x18 frame w"
 func_02078e98,main,0x1c,14,done,haiku,1,100,matched by haiku
 func_02078eb4,main,0x78,68,done,sonnet,2,100,matched by sonnet
 func_02078f2c,main,0x8c,106,done,sonnet,2,100,matched by sonnet
-func_02078fb8,main,0x40,60,fail_sonnet,haiku,2,75,Size matches (0x40) but the register allocation differs. The target copies w into r4 and puts top in r0 and v in r1 (after the copy). Mine puts top in
-func_02078ff8,main,0x4e,41,fail_sonnet,haiku,4,47.4,"Size matches (0x4e) but register allocation differs. Target computes a2=(a&4)>>2 and b2=(b&4)>>2 later, after the first multiply, and I could not make"
+func_02078fb8,main,0x40,60,done,haiku,2,75,Size matches (0x40) but the register allocation differs. The target copies w into r4 and puts top in r0 and v in r1 (after the copy). Mine puts top in s24 import
+func_02078ff8,main,0x4e,41,done,haiku,4,47.4,"Size matches (0x4e) but register allocation differs. Target computes a2=(a&4)>>2 and b2=(b&4)>>2 later, after the first multiply, and I could not make s24 import"
 func_02079048,main,0x218,348,todo,opus,0,,
-func_02079260,main,0x7c,92,fail_sonnet,sonnet,2,87.1,"I used about 16 tools/try runs, which is over the cap of 15, so I stopped. n2.c (87.1%, size 0x7a vs 0x7c) takes `&arg` through a pointer `ap` and rea"
-func_020792dc,main,0xe0,138,fail_sonnet,sonnet,2,27.4,"No match after 15 tries. q.c scores 27.4% but multiplies unsigned bytes, so it is semantically wrong. o.c (8.7%) is the best signed version. Passing t"
-func_020793bc,main,0xb4,106,fail_sonnet,sonnet,2,6.7,"No match. The target frame is 0x2c, and the Vec2 result is copied twice (sp+0x14 and sp+0x24). The 5th arg to func_020784ac is f1, loaded from [sp+0x4"
+func_02079260,main,0x7c,92,done,sonnet,2,87.1,"I used about 16 tools/try runs, which is over the cap of 15, so I stopped. n2.c (87.1%, size 0x7a vs 0x7c) takes `&arg` through a pointer `ap` and rea s24 import"
+func_020792dc,main,0xe0,138,done,sonnet,2,27.4,"No match after 15 tries. q.c scores 27.4% but multiplies unsigned bytes, so it is semantically wrong. o.c (8.7%) is the best signed version. Passing t s24 import"
+func_020793bc,main,0xb4,106,done,sonnet,2,6.7,"No match. The target frame is 0x2c, and the Vec2 result is copied twice (sp+0x14 and sp+0x24). The 5th arg to func_020784ac is f1, loaded from [sp+0x4 s24 import"
 func_02079470,main,0x84,78,done,sonnet,2,100,matched by sonnet
 func_020794f4,main,0x118,226,done,sonnet,2,100,matched by sonnet
-func_0207960c,main,0x90,106,fail_sonnet,sonnet,2,34,"Size now matches (0x90), but register allocation differs. The target keeps the base pointer in r1 and the loop counter in r0, with e in r6. My output "
+func_0207960c,main,0x90,106,done,sonnet,2,34,"Size now matches (0x90), but register allocation differs. The target keeps the base pointer in r1 and the loop counter in r0, with e in r6. My output  s24 import"
 func_0207969c,main,0x40,48,done,haiku,2,100,matched by sonnet
 func_020796dc,main,0xc,8,done,haiku,1,100,matched by haiku
 func_020796e8,main,0x54,46,done,haiku,1,100,matched by haiku
@@ -6648,10 +6648,10 @@ func_02079bf8,main,0x118,192,done,sonnet,2,100,matched by sonnet
 func_02079d10,main,0x68,70,done,sonnet,1,100,matched by haiku
 func_02079d78,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_02079d80,main,0x40,40,done,haiku,2,100,matched by sonnet
-func_02079dc0,main,0x36,39,fail_sonnet,haiku,4,16.7,"Logic is right, but mwcc won't copy r1 to r2 early, keep the separate cmp r4,#0, or use r1 for the 0x2c byte load; also puts the flag==0 call after th"
+func_02079dc0,main,0x36,39,done,haiku,4,16.7,"Logic is right, but mwcc won't copy r1 to r2 early, keep the separate cmp r4,#0, or use r1 for the 0x2c byte load; also puts the flag==0 call after th s24 import"
 func_02079df8,main,0x22,23,done,haiku,1,100,matched by haiku
 func_02079e1c,main,0x3c,36,done,haiku,1,100,matched by haiku
-func_02079e58,main,0x3e,35,fail_sonnet,haiku,4,38.7,Size matches but register allocation differs: the target keeps p in r5 and uses r0 as the address temp with zero in r1. Mine uses p in r0/r4 with temp
+func_02079e58,main,0x3e,35,done,haiku,4,38.7,Size matches but register allocation differs: the target keeps p in r5 and uses r0 as the address temp with zero in r1. Mine uses p in r0/r4 with temp s24 import
 func_02079e98,main,0x36,49,done,haiku,1,100,matched by haiku
 func_02079ed0,main,0x3c,50,done,haiku,1,100,matched by haiku
 func_02079f0c,main,0x30,30,done,haiku,1,100,matched by haiku
@@ -6718,7 +6718,7 @@ func_0207ae20,main,0x12,13,done,haiku,0,100,cloned from func_020366d4
 func_0207ae34,main,0x9a,153,done,sonnet,1,100,matched by haiku
 func_0207aed0,main,0x50,58,done,haiku,1,100,matched by haiku
 func_0207af20,main,0x3c,44,done,haiku,1,100,matched by haiku
-func_0207af5c,main,0xd8,156,fail_sonnet,sonnet,2,97.2,"Size matches (0xd8). Only the loop-head ldrh/0xffff compare differs: target does ldrh into r0 and loads 0xffff into r1, mine does the reverse. I tried"
+func_0207af5c,main,0xd8,156,done,sonnet,2,97.2,"Size matches (0xd8). Only the loop-head ldrh/0xffff compare differs: target does ldrh into r0 and loads 0xffff into r1, mine does the reverse. I tried s24 import"
 func_0207b034,main,0x5c,66,done,sonnet,1,100,matched by haiku
 func_0207b090,main,0x64,66,done,sonnet,1,100,matched by haiku
 func_0207b0f4,main,0x44,50,done,haiku,1,100,matched by haiku
@@ -6746,11 +6746,11 @@ func_0207b830,main,0x36,33,done,haiku,1,100,matched by haiku
 func_0207b868,main,0x16,15,done,haiku,1,100,matched by haiku
 func_0207b880,main,0x1a,19,done,haiku,0,100,cloned from func_020782c8
 func_0207b89c,main,0x10,12,done,haiku,2,100,matched by sonnet
-func_0207b8ac,main,0x20,22,fail_sonnet,haiku,4,78.1,"A volatile first load of *self (to stop CSE) gives the right shape and size, but the temp register is r2 where the target uses r3. Without the volatil"
+func_0207b8ac,main,0x20,22,done,haiku,4,78.1,"A volatile first load of *self (to stop CSE) gives the right shape and size, but the temp register is r2 where the target uses r3. Without the volatil s24 import"
 func_0207b8cc,main,0x6,5,done,haiku,0,100,cloned from func_02053234
 func_0207b8d4,main,0x12,13,done,haiku,1,100,matched by haiku
 func_0207b8e8,main,0x2c,28,done,haiku,1,100,matched by haiku
-func_0207b914,main,0x140,198,fail_sonnet,sonnet,2,93.4,Not matched. Stack frame and instruction count already match. The remaining diffs are register allocation: the flags word should sit in r1 with the bi
+func_0207b914,main,0x140,198,done,sonnet,2,93.4,Not matched. Stack frame and instruction count already match. The remaining diffs are register allocation: the flags word should sit in r1 with the bi s24 import
 func_0207ba54,main,0x74,68,done,sonnet,1,100,matched by haiku
 func_0207bac8,main,0x26,23,done,haiku,1,100,matched by haiku
 func_0207baf0,main,0x200,325,fail_sonnet,sonnet,2,93.2,"n.c gets registers and control flow right (bitfield flags at 0x118, switch on 0xc8), but the Fl temp copy `t` lives on the stack (frame 0x1c vs 0x14),"
@@ -6815,7 +6815,7 @@ func_0207ce78,main,0x38,42,done,haiku,1,100,matched by haiku
 func_0207ceb0,main,0x28,22,done,haiku,1,100,matched by haiku
 func_0207ced8,main,0xd4,208,done,sonnet,2,100,matched by sonnet
 func_0207cfac,main,0x158,260,done,sonnet,2,100,matched by sonnet
-func_0207d104,main,0x26c,392,todo,opus,0,,
+func_0207d104,main,0x26c,392,done,opus,0,,s24 import
 func_0207d370,main,0x30,26,done,haiku,2,100,matched by haiku
 func_0207d3a0,main,0x38,36,done,haiku,1,100,matched by haiku
 func_0207d3d8,main,0x48,38,done,haiku,1,100,matched by haiku
@@ -6835,7 +6835,7 @@ func_0207d644,main,0x38,36,done,haiku,1,100,matched by haiku
 func_0207d67c,main,0xd8,150,fail_sonnet,sonnet,2,75,"Instructions match the target, including the leading b-to-test loop, but the file is 4 bytes larger (0xdc vs 0xd8) because of an extra literal-pool wo"
 func_0207d754,main,0x64,68,done,sonnet,1,100,matched by haiku
 func_0207d7b8,main,0x54,49,done,haiku,1,100,matched by haiku
-func_0207d80c,main,0x24,24,fail_sonnet,haiku,4,91.7,"Only the final store differs: target uses movs r2/ldr r1,[r0]/str r2,[r1] where mine uses r1/r0/r1. I tried about 20 variants (-O4, struct, volatile, "
+func_0207d80c,main,0x24,24,done,haiku,4,91.7,"Only the final store differs: target uses movs r2/ldr r1,[r0]/str r2,[r1] where mine uses r1/r0/r1. I tried about 20 variants (-O4, struct, volatile,  s24 import"
 func_0207d830,main,0x80,88,done,sonnet,1,100,matched by haiku
 func_0207d8b0,main,0x3c,35,done,haiku,1,100,matched by haiku
 func_0207d8ec,main,0x130,183,fail_sonnet,sonnet,2,93.8,"Register allocation: the 0x508 index value gets r1 and its offset constant gets r0, the reverse of the target. The +0x28 store is also scheduled befor"
@@ -6849,13 +6849,13 @@ func_0207db14,main,0xc,6,todo,haiku,0,,
 func_0207db20,main,0x44,54,done,haiku,1,100,matched by haiku
 func_0207db64,main,0x30,30,done,haiku,1,100,matched by haiku
 func_0207db94,main,0x2e,43,done,haiku,1,100,matched by haiku
-func_0207dbc4,main,0x40,17,fail_sonnet,haiku,4,11.8,"Target uses ldm from r1 and stm r0! (writeback) with only r4 pushed. mwcc instead moves dst to lr, pushes {r3,lr} and uses str for the 8-byte copy; th"
-func_0207dc04,main,0x3c,16,fail_sonnet,haiku,4,30,"Size matches (0x3c), but mwcc copies the source pointer to lr and pushes {r3,lr}. It also emits a plain ldr/ldr/str/str pair for the last 8 bytes inst"
+func_0207dbc4,main,0x40,17,done,haiku,4,11.8,"Target uses ldm from r1 and stm r0! (writeback) with only r4 pushed. mwcc instead moves dst to lr, pushes {r3,lr} and uses str for the 8-byte copy; th s24 import"
+func_0207dc04,main,0x3c,16,done,haiku,4,30,"Size matches (0x3c), but mwcc copies the source pointer to lr and pushes {r3,lr}. It also emits a plain ldr/ldr/str/str pair for the last 8 bytes inst s24 import"
 func_0207dc40,main,0x20,20,done,haiku,1,100,matched by haiku
 func_0207dc60,main,0x66,83,done,sonnet,1,100,matched by haiku
 func_0207dcc8,main,0x40,54,done,haiku,1,100,matched by haiku
-func_0207dd08,main,0x21c,679,todo,opus,0,,jumptable
-func_0207df24,main,0x11c,224,fail_sonnet,sonnet,2,98.2,Only diff left: first block flags value goes in r1 (target r2) with 0x20 const in r0 (target r1); size matches at 0x11c.
+func_0207dd08,main,0x21c,679,done,opus,0,,jumptable s24 import
+func_0207df24,main,0x11c,224,done,sonnet,2,98.2,Only diff left: first block flags value goes in r1 (target r2) with 0x20 const in r0 (target r1); size matches at 0x11c. s24 import
 func_0207e040,main,0x54,72,done,haiku,2,100,matched by sonnet
 func_0207e094,main,0x60,82,done,sonnet,1,100,matched by haiku
 func_0207e0f4,main,0xd8,160,done,sonnet,2,100,matched by sonnet
@@ -6870,12 +6870,12 @@ func_0207e5c4,main,0xc,10,done,haiku,0,,
 func_0207e5d0,main,0x2a,25,done,haiku,0,,
 func_0207e5fc,main,0x78,96,done,sonnet,1,100,matched by haiku
 func_0207e674,main,0x6e,91,done,sonnet,2,100,matched by sonnet
-func_0207e6e4,main,0x42,51,fail_sonnet,haiku,2,84.8,"Size and control flow match, but mwcc puts the flag load in r1 and the mask in r0, where the target has the load in r2 and the mask in r1. Inline help"
-func_0207e728,main,0x48,52,fail_sonnet,haiku,2,83.3,"mwcc assigns a/b to r5/r6 (target r6/r5) and copies b before the flags load (target loads flags into r2 first); volatile, type changes, aliasing, earl"
+func_0207e6e4,main,0x42,51,done,haiku,2,84.8,"Size and control flow match, but mwcc puts the flag load in r1 and the mask in r0, where the target has the load in r2 and the mask in r1. Inline help s24 import"
+func_0207e728,main,0x48,52,done,haiku,2,83.3,"mwcc assigns a/b to r5/r6 (target r6/r5) and copies b before the flags load (target loads flags into r2 first); volatile, type changes, aliasing, earl s24 import"
 func_0207e770,main,0x74,100,done,sonnet,2,100,matched by sonnet
 func_0207e7e4,main,0x2a,39,done,haiku,1,100,matched by haiku
 func_0207e810,main,0x38,52,done,haiku,2,100,matched by sonnet
-func_0207e848,main,0x1c,32,fail_sonnet,haiku,4,64.3,"Target copies the call result into r1 (adds r1,r0,#0; bmi) and returns it with a final adds r0,r1,#0; mine tests r0 directly and loads into r1, so it "
+func_0207e848,main,0x1c,32,done,haiku,4,64.3,"Target copies the call result into r1 (adds r1,r0,#0; bmi) and returns it with a final adds r0,r1,#0; mine tests r0 directly and loads into r1, so it  s24 import"
 func_0207e864,main,0x2a,31,done,haiku,1,100,matched by haiku
 func_0207e890,main,0x1a,15,done,haiku,1,100,matched by haiku
 func_0207e8ac,main,0x2e,31,done,haiku,2,100,matched by sonnet
@@ -6910,19 +6910,19 @@ func_0207ef1c,main,0x34,37,done,haiku,1,100,matched by haiku
 func_0207ef50,main,0x18,12,done,haiku,1,100,matched by haiku
 func_0207ef68,main,0x64,56,done,sonnet,1,100,matched by haiku
 func_0207efcc,main,0xac,108,done,sonnet,2,100,matched by sonnet
-func_0207f078,main,0x168,300,fail_sonnet,sonnet,2,53.6,"No match. Best is 53.6% (f.c, size 0x16e vs 0x168). The compare loop now has the right shape, but i/diff land in swapped registers (r0/r1) and the `bl"
+func_0207f078,main,0x168,300,done,sonnet,2,53.6,"No match. Best is 53.6% (f.c, size 0x16e vs 0x168). The compare loop now has the right shape, but i/diff land in swapped registers (r0/r1) and the `bl s24 import"
 func_0207f1e0,main,0x24c,478,todo,opus,0,,
 func_0207f42c,main,0x48,44,done,haiku,1,100,matched by haiku
 func_0207f474,main,0x12,11,done,haiku,1,100,matched by haiku
-func_0207f488,main,0x18,15,fail_sonnet,haiku,4,29.2,"Target keeps p in r0 and uses r4-r6 as temps (o in r6, vtable in r5, fn in r4); mine moves p to r3 or r4. I couldn't find the source shape that produc"
-func_0207f4a0,main,0x18,15,todo,haiku,0,,
+func_0207f488,main,0x18,15,done,haiku,4,29.2,"Target keeps p in r0 and uses r4-r6 as temps (o in r6, vtable in r5, fn in r4); mine moves p to r3 or r4. I couldn't find the source shape that produc s24 import"
+func_0207f4a0,main,0x18,15,done,haiku,0,,s24 import
 func_0207f4b8,main,0x4,4,done,haiku,0,100,cloned from func_0207fd2c
 func_0207f4bc,main,0x94,104,fail_sonnet,sonnet,2,5.4,"No match after 2 tries. The compiler folds away the 0x100 compare chain, which looks like inlined code with a variable 'one'. It also keeps a0, the bi"
 func_0207f550,main,0x26,23,done,haiku,1,100,matched by haiku
 func_0207f578,main,0x26,23,done,haiku,1,100,matched by haiku
 func_0207f5a0,main,0x38,32,done,haiku,2,100,matched by sonnet
-func_0207f5d8,main,0xe2,133,fail_sonnet,sonnet,2,98.7,Size matches (0xe2). The only remaining diff is that the sp+0x24 field is loaded into r0 instead of r2. That also shifts the early-exit branch offset 
-func_0207f6bc,main,0x50,48,fail_sonnet,haiku,2,91.2,"f.c matches at 91.2% with the right size (0x50). The only remaining diff is in the tail, where the target uses r1 for the reloaded stack arg and the l"
+func_0207f5d8,main,0xe2,133,done,sonnet,2,98.7,Size matches (0xe2). The only remaining diff is that the sp+0x24 field is loaded into r0 instead of r2. That also shifts the early-exit branch offset  s24 import
+func_0207f6bc,main,0x50,48,done,haiku,2,91.2,"f.c matches at 91.2% with the right size (0x50). The only remaining diff is in the tail, where the target uses r1 for the reloaded stack arg and the l s24 import"
 func_0207f70c,main,0x28,24,done,haiku,4,100,matched by sonnet
 func_0207f734,main,0x32,29,done,haiku,2,100,matched by sonnet
 func_0207f768,main,0x36,31,done,haiku,1,100,matched by haiku
@@ -6932,7 +6932,7 @@ func_0207f7dc,main,0x1e,19,done,haiku,0,100,cloned from func_0207f7bc
 func_0207f7fc,main,0x1e,19,done,haiku,0,100,cloned from func_0207f7bc
 func_0207f81c,main,0x1e,19,done,haiku,0,100,cloned from func_0207f7bc
 func_0207f83c,main,0x2a,27,done,haiku,1,100,matched by haiku
-func_0207f868,main,0x36,47,fail_sonnet,haiku,2,6.5,"Not matched, and best is below Haiku's 11.7% (h.c). mwcc spills to r4 and adds push {r3,r4}, so the output is 0x3e bytes against 0x36. The target keep"
+func_0207f868,main,0x36,47,done,haiku,2,6.5,"Not matched, and best is below Haiku's 11.7% (h.c). mwcc spills to r4 and adds push {r3,r4}, so the output is 0x3e bytes against 0x36. The target keep s24 import"
 func_0207f8a0,main,0xe,9,done,haiku,0,,
 func_0207f8b0,main,0xe,9,done,haiku,0,100,cloned from func_0207f8a0
 func_0207f8c0,main,0x1a,15,done,haiku,1,100,matched by haiku
@@ -6940,7 +6940,7 @@ func_0207f8dc,main,0x6,5,done,haiku,1,100,matched by haiku
 func_0207f8e4,main,0x2e,29,done,haiku,1,100,matched by haiku
 func_0207f914,main,0xe,9,done,haiku,2,100,matched by sonnet
 func_0207f924,main,0xac,108,done,sonnet,2,100,matched by sonnet
-func_0207f9d0,main,0x30,24,fail_sonnet,haiku,4,79.2,"Only diff is the zero register: target uses r2 for the shared zero, mine uses r1. 11 variants tried (extra params, callee arg count, -O4, C++, struct,"
+func_0207f9d0,main,0x30,24,done,haiku,4,79.2,"Only diff is the zero register: target uses r2 for the shared zero, mine uses r1. 11 variants tried (extra params, callee arg count, -O4, C++, struct, s24 import"
 func_0207fa00,main,0x18,16,done,haiku,1,100,matched by haiku
 func_0207fa18,main,0x1a,17,done,haiku,1,100,matched by haiku
 func_0207fa34,main,0x48,36,done,haiku,1,100,matched by haiku
@@ -6967,48 +6967,48 @@ func_0207fd30,main,0xec,142,done,sonnet,2,100,matched by sonnet
 func_0207fe1c,main,0x14,8,done,haiku,0,100,cloned from func_02006b0c
 func_0207fe30,main,0x24,16,done,haiku,1,100,matched by haiku
 func_0207fe54,main,0x1c,18,done,haiku,2,100,matched by sonnet
-func_0207fe70,main,0x18,8,fail_sonnet,haiku,4,33.3,"Same size, but 64-bit stores give `stm r0,{r2,ip}; str; str` with a single zero register. The target uses two zero registers (r1, r3) and `stm r0!` wi"
+func_0207fe70,main,0x18,8,done,haiku,4,33.3,"Same size, but 64-bit stores give `stm r0,{r2,ip}; str; str` with a single zero register. The target uses two zero registers (r1, r3) and `stm r0!` wi s24 import"
 func_0207fe88,main,0xc,8,done,haiku,1,100,matched by haiku
 func_0207fe94,main,0x62,57,fail_sonnet,sonnet,2,90.8,"Only diff is register allocation: target keeps a in r7 and b in r6, mwcc swaps them. Variants that fixed the registers (a.c) misplaced the loads and s"
 func_0207fef8,main,0xb8,116,done,sonnet,1,100,matched by haiku
 func_0207ffb0,main,0xf6,143,fail_sonnet,sonnet,2,13.8,"Frame, out==b temp selection and final copy match. mwcc spills a[1] lo/hi before a[0] lo/hi in the first row, but the target spills lo0, lo1, hi1, hi0"
-func_020800a8,main,0x24,11,fail_sonnet,haiku,4,10.7,"Could not get mwcc to emit stm r0!,{..} pairs. The function is a 3x3 fixed-point identity (0x1000 at words 0, 4 and 8, zeros elsewhere). Plain int sto"
-func_020800cc,main,0xc8,50,fail_sonnet,sonnet,2,30,"Size matches (0xc8) but mwcc's load/smull scheduling and the out[2] high-word spill differ from the target. I tried 7 more source orderings, including"
-func_02080194,main,0x1c,16,fail_sonnet,haiku,4,57.1,"Same stores and size, but the compiler reuses r2 for the zero and schedules the stores to offsets 8 and 0x10 early. The target keeps the zero in r3 an"
-func_020801b0,main,0x154,85,fail_sonnet,sonnet,2,14.5,"No match after 5 tries. Math is right: sb*v0 is a 64-bit product, then times v1 or v2, >>24. Diagonals are sb*(v*v)>>24 and s*v is >>12. mwcc still pu"
-func_02080304,main,0x194,101,fail_sonnet,sonnet,2,23.8,"No match. Best is 23.8% at 0x1ac bytes against a target of 0x194. The structure is right: 3x3 int64 multiply with >>12, and a tmp copy-back when out=="
-func_02080498,main,0x7c,31,fail_sonnet,haiku,4,59.7,"Fixed-point 3x3 matrix-vector multiply (int64 smull/smlal, >>12). Size matches, but mwcc loads v[0] first, while the target starts with v[1] products."
-func_02080514,main,0x28,12,fail_sonnet,haiku,4,16.7,"Target stores 12 words (1.0,0,0,0 x3) using stm r0! pairs with separate zero regs r1/r3; I could not make mwcc emit stm with writeback. Plain stores g"
-func_0208053c,main,0x34,15,fail_sonnet,haiku,4,11.5,Looks like hand-written SDK asm (4x3 to 4x4 matrix copy using ldm r0!/stm r1! with writeback); mwcc emits per-word ldr/str or ldm/stm without writebac
-func_02080570,main,0x2c,13,fail_sonnet,haiku,4,8.3,"Transposed 3x3 word copy plus 3 zero words. Scalar C always gives ldr/str (0x54 bytes), never the target's ldm of 9 regs plus stm r1! writeback (0x2c)"
+func_020800a8,main,0x24,11,done,haiku,4,10.7,"Could not get mwcc to emit stm r0!,{..} pairs. The function is a 3x3 fixed-point identity (0x1000 at words 0, 4 and 8, zeros elsewhere). Plain int sto s24 import"
+func_020800cc,main,0xc8,50,done,sonnet,2,30,"Size matches (0xc8) but mwcc's load/smull scheduling and the out[2] high-word spill differ from the target. I tried 7 more source orderings, including s24 import"
+func_02080194,main,0x1c,16,done,haiku,4,57.1,"Same stores and size, but the compiler reuses r2 for the zero and schedules the stores to offsets 8 and 0x10 early. The target keeps the zero in r3 an s24 import"
+func_020801b0,main,0x154,85,done,sonnet,2,14.5,"No match after 5 tries. Math is right: sb*v0 is a 64-bit product, then times v1 or v2, >>24. Diagonals are sb*(v*v)>>24 and s*v is >>12. mwcc still pu s24 import"
+func_02080304,main,0x194,101,done,sonnet,2,23.8,"No match. Best is 23.8% at 0x1ac bytes against a target of 0x194. The structure is right: 3x3 int64 multiply with >>12, and a tmp copy-back when out== s24 import"
+func_02080498,main,0x7c,31,done,haiku,4,59.7,"Fixed-point 3x3 matrix-vector multiply (int64 smull/smlal, >>12). Size matches, but mwcc loads v[0] first, while the target starts with v[1] products. s24 import"
+func_02080514,main,0x28,12,done,haiku,4,16.7,"Target stores 12 words (1.0,0,0,0 x3) using stm r0! pairs with separate zero regs r1/r3; I could not make mwcc emit stm with writeback. Plain stores g s24 import"
+func_0208053c,main,0x34,15,done,haiku,4,11.5,Looks like hand-written SDK asm (4x3 to 4x4 matrix copy using ldm r0!/stm r1! with writeback); mwcc emits per-word ldr/str or ldm/stm without writebac s24 import
+func_02080570,main,0x2c,13,done,haiku,4,8.3,"Transposed 3x3 word copy plus 3 zero words. Scalar C always gives ldr/str (0x54 bytes), never the target's ldm of 9 regs plus stm r1! writeback (0x2c) s24 import"
 func_0208059c,main,0xac,48,done,sonnet,1,100,matched by haiku
-func_02080648,main,0x34,16,fail_sonnet,haiku,4,76.9,"I used the 15 tools/try runs without a match. The ordering of ""str ip,[sp]"" versus ""mov r4,r1"" never matched. The loads stayed in the wrong order and "
-func_0208067c,main,0x218,134,fail_sonnet,sonnet,2,29.7,No match after 13 of 15 runs; size 0x224 vs 0x218. Pairing d2/d5 and d8/d11 with shared b[2]/b[5]/b[8] locals and a z-term-last sum order helped most.
-func_02080894,main,0x98,38,fail_sonnet,haiku,4,21.7,"Not matched after 13 of 15 tries. The compiler schedules v[0] first and merges m[0] and m[1] into an ldm, and the output is 0x94 bytes against the tar"
-func_0208092c,main,0x114,90,fail_sonnet,sonnet,2,78.6,"Size and call sequence match, but register allocation differs. Target keeps a in r8, up in r7, out in r6 and pushes sb, so it uses six callee-saved re"
-func_02080a40,main,0x2c,13,fail_sonnet,haiku,4,25,It builds a 4x4 fixed-point identity matrix (0x1000 on the diagonal) with register-built stm stores. Plain stores and pointer increments compile to 16
-func_02080a6c,main,0x34,15,fail_sonnet,haiku,4,13.5,"I couldn't get the writeback `ldm r0!`/`stm r1!` form. Struct copies compile to non-writeback ldm/stm plus a push/pop frame, and scalar copies compile"
+func_02080648,main,0x34,16,done,haiku,4,76.9,"I used the 15 tools/try runs without a match. The ordering of ""str ip,[sp]"" versus ""mov r4,r1"" never matched. The loads stayed in the wrong order and  s24 import"
+func_0208067c,main,0x218,134,done,sonnet,2,29.7,No match after 13 of 15 runs; size 0x224 vs 0x218. Pairing d2/d5 and d8/d11 with shared b[2]/b[5]/b[8] locals and a z-term-last sum order helped most. s24 import
+func_02080894,main,0x98,38,done,haiku,4,21.7,"Not matched after 13 of 15 tries. The compiler schedules v[0] first and merges m[0] and m[1] into an ldm, and the output is 0x94 bytes against the tar s24 import"
+func_0208092c,main,0x114,90,done,sonnet,2,78.6,"Size and call sequence match, but register allocation differs. Target keeps a in r8, up in r7, out in r6 and pushes sb, so it uses six callee-saved re s24 import"
+func_02080a40,main,0x2c,13,done,haiku,4,25,It builds a 4x4 fixed-point identity matrix (0x1000 on the diagonal) with register-built stm stores. Plain stores and pointer increments compile to 16 s24 import
+func_02080a6c,main,0x34,15,done,haiku,4,13.5,"I couldn't get the writeback `ldm r0!`/`stm r1!` form. Struct copies compile to non-writeback ldm/stm plus a push/pop frame, and scalar copies compile s24 import"
 func_02080aa0,main,0xd8,59,done,sonnet,2,100,matched by sonnet
 func_02080b78,main,0x124,73,done,sonnet,1,100,matched by haiku
-func_02080c9c,main,0x24,20,fail_sonnet,haiku,4,9.5,"Could not get mwcc to emit the stm {r1,r2,r3}/{r2,r3} sequence (needs two separate zero regs). It always emits plain str with one zero reg, and it mov"
-func_02080cc0,main,0x24,20,fail_sonnet,haiku,4,28.6,"Store order matches with a volatile int32_t* walk, but mwcc emits individual str instead of the target's stm r0!,{r1,r2,r3}/{r1,r2} and builds 0x1000 "
-func_02080ce4,main,0x22,19,fail_sonnet,haiku,4,5.4,Could not make mwcc emit the stm r0! zeroing sequence; every variant produced individual str instructions or non-inlined ctor calls. The 5.4% attempt 
-func_02080d08,main,0x3bc,239,fail_sonnet,sonnet,2,14.8,"No match, and I went past the 15-run cap on tools/try. Best build is 0x3f0 bytes against the 0x3bc target. mwcc schedules the first term as a00*b00 in"
+func_02080c9c,main,0x24,20,done,haiku,4,9.5,"Could not get mwcc to emit the stm {r1,r2,r3}/{r2,r3} sequence (needs two separate zero regs). It always emits plain str with one zero reg, and it mov s24 import"
+func_02080cc0,main,0x24,20,done,haiku,4,28.6,"Store order matches with a volatile int32_t* walk, but mwcc emits individual str instead of the target's stm r0!,{r1,r2,r3}/{r1,r2} and builds 0x1000  s24 import"
+func_02080ce4,main,0x22,19,done,haiku,4,5.4,Could not make mwcc emit the stm r0! zeroing sequence; every variant produced individual str instructions or non-inlined ctor calls. The 5.4% attempt  s24 import
+func_02080d08,main,0x3bc,239,done,sonnet,2,14.8,"No match, and I went past the 15-run cap on tools/try. Best build is 0x3f0 bytes against the 0x3bc target. mwcc schedules the first term as a00*b00 in s24 import"
 func_020810c4,main,0x14c,96,fail_sonnet,sonnet,2,32.2,"No match after 7 tries, best 32.2%. mwcc hoists the g[] zero stores above the f!=0x1000 multiply and reuses one zero register (r4) for the divider sto"
 func_02081210,main,0xc,10,done,haiku,0,,
 func_0208121c,main,0x20,26,done,haiku,2,100,matched by haiku
-func_0208123c,main,0x24,20,fail_sonnet,haiku,4,36.1,"Target does 'adds r1,#8' in place on the base register (base dead after); mwcc either folds offsets into stores (size 0x20) or keeps a second copy reg"
+func_0208123c,main,0x24,20,done,haiku,4,36.1,"Target does 'adds r1,#8' in place on the base register (base dead after); mwcc either folds offsets into stores (size 0x20) or keeps a second copy reg s24 import"
 func_02081260,main,0x18,22,done,haiku,1,100,matched by haiku
 func_02081278,main,0x2c,32,done,haiku,2,100,matched by sonnet
 func_020812a4,main,0x24,18,done,haiku,2,100,matched by sonnet
 func_020812c8,main,0x20,26,done,haiku,2,100,matched by haiku
-func_020812e8,main,0x24,18,fail_sonnet,haiku,4,69.4,"Structure matches (u64 volatile stores via integer base += 0x10, += 8). Only register allocation differs: the zero constants land in r4/r3 and base in"
+func_020812e8,main,0x24,18,done,haiku,4,69.4,"Structure matches (u64 volatile stores via integer base += 0x10, += 8). Only register allocation differs: the zero constants land in r4/r3 and base in s24 import"
 func_0208130c,main,0x28,30,done,haiku,1,100,matched by haiku
 func_02081334,main,0x28,30,done,haiku,0,100,cloned from func_0208130c
 func_0208135c,main,0x3c,15,done,haiku,2,100,matched by sonnet
 func_02081398,main,0x80,32,done,haiku,1,100,matched by haiku
-func_02081418,main,0x114,90,fail_sonnet,sonnet,2,44.6,"No match. j.c is the best at 44.6% and is 4 bytes too large (0x118, target 0x114). It keeps v[0] as the first load and puts lsl r2,r7,#2 early; the ta"
-func_0208152c,main,0x12c,96,fail_sonnet,sonnet,2,73,Size (0x12c) and push list now match. The tail is fixed by reading the divider result as one `*(volatile int64_t*)0x40002a0` and using absolute-addres
+func_02081418,main,0x114,90,done,sonnet,2,44.6,"No match. j.c is the best at 44.6% and is 4 bytes too large (0x118, target 0x114). It keeps v[0] as the first load and puts lsl r2,r7,#2 early; the ta s24 import"
+func_0208152c,main,0x12c,96,done,sonnet,2,73,Size (0x12c) and push list now match. The tail is fixed by reading the divider result as one `*(volatile int64_t*)0x40002a0` and using absolute-addres s24 import
 func_02081658,main,0x7c,41,done,haiku,4,100,matched by sonnet
 func_020816d4,main,0xf0,228,done,sonnet,1,100,matched by haiku
 func_020817c4,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
@@ -7025,12 +7025,12 @@ func_020819e8,main,0x4c,38,done,haiku,4,100,matched by sonnet
 func_02081a34,main,0x14,10,done,haiku,1,100,matched by haiku
 func_02081a48,main,0x22,27,done,haiku,1,100,matched by haiku
 func_02081a6c,main,0x34,34,done,haiku,4,100,matched by sonnet
-func_02081aa0,main,0xa0,40,fail_sonnet,haiku,4,32.5,"Scheduler order of loads/subs/mul-mla differs from target, and the halfword packing shift pairs (lsl16/lsr16) are not reproduced; best size-matching a"
+func_02081aa0,main,0xa0,40,done,haiku,4,32.5,"Scheduler order of loads/subs/mul-mla differs from target, and the halfword packing shift pairs (lsl16/lsr16) are not reproduced; best size-matching a s24 import"
 func_02081b40,main,0x1c,16,done,haiku,1,100,matched by haiku
 func_02081b5c,main,0x1a,19,done,haiku,1,100,matched by haiku
 func_02081b78,main,0x3a,39,done,haiku,1,100,matched by haiku
 func_02081bb4,main,0x2c,28,done,haiku,1,100,matched by haiku
-func_02081be0,main,0x60,48,fail_sonnet,sonnet,2,94.8,"Final two loads (src[14]/src[15]) get swapped registers (r2/r0); statement-order, pre-shift, const and signed variants all failed to fix it."
+func_02081be0,main,0x60,48,done,sonnet,2,94.8,"Final two loads (src[14]/src[15]) get swapped registers (r2/r0); statement-order, pre-shift, const and signed variants all failed to fix it. s24 import"
 func_02081c40,main,0x14,8,done,haiku,1,100,matched by haiku
 func_02081c54,main,0x14,8,done,haiku,0,100,cloned from func_02081c40
 func_02081c68,main,0x14,8,done,haiku,0,100,cloned from func_02081c40
@@ -7045,13 +7045,13 @@ func_02081eb0,main,0x10,6,done,haiku,1,100,matched by haiku
 func_02081ec0,main,0x10,6,done,haiku,2,100,matched by sonnet
 func_02081ed0,main,0x10,6,done,haiku,0,100,cloned from func_02081eb0
 func_02081ee0,main,0x24,20,done,haiku,1,100,matched by haiku
-func_02081f04,main,0x98,102,fail_sonnet,sonnet,2,78.9,Branches and calls match (separate per-branch base pointers fixed the prologue). Only the final 0x20-iteration volatile store loop differs. The target
+func_02081f04,main,0x98,102,done,sonnet,2,78.9,Branches and calls match (separate per-branch base pointers fixed the prologue). Only the final 0x20-iteration volatile store loop differs. The target s24 import
 func_02081f9c,main,0x24,22,done,haiku,1,100,matched by haiku
 func_02081fc0,main,0x24,22,done,haiku,1,100,matched by haiku
 func_02081fe4,main,0x20,20,done,haiku,1,100,matched by haiku
 func_02082004,main,0x2c,26,done,haiku,2,100,matched by haiku
 func_02082030,main,0xc,6,done,haiku,1,100,matched by haiku
-func_0208203c,main,0x94,39,fail_sonnet,haiku,4,13.3,"Target is 32 repeated stm of four zero regs to [r0]. Non-volatile stores get dead-store-eliminated, volatile ones become str, and struct copies spill "
+func_0208203c,main,0x94,39,done,haiku,4,13.3,"Target is 32 repeated stm of four zero regs to [r0]. Non-volatile stores get dead-store-eliminated, volatile ones become str, and struct copies spill  s24 import"
 func_020820d0,main,0x2c,22,done,haiku,1,100,matched by haiku
 func_020820fc,main,0x1c,14,done,haiku,1,100,matched by haiku
 func_02082118,main,0x2c,22,done,haiku,1,100,matched by haiku
@@ -7121,10 +7121,10 @@ func_0208364c,main,0x10,6,done,haiku,0,100,cloned from func_02006958
 func_0208365c,main,0x10,6,done,haiku,0,100,cloned from func_02006958
 func_0208366c,main,0x20,10,done,haiku,1,100,matched by haiku
 func_0208368c,main,0x20,10,done,haiku,0,100,cloned from func_0208366c
-func_020836ac,main,0x24,11,fail_sonnet,haiku,4,12.5,"Target is 4x (ldm r0!,{r2,r3,ip}; stm r1,{r2,r3,ip}), i.e. four 12-byte struct copies with the source post-incremented and the same dest. mwcc C emits"
-func_020836d0,main,0x1c,9,fail_sonnet,haiku,4,10.4,"Target is a hand-written 8-register ldm/stm copy (second stm overwrites the first at the same r1); mwcc emits 4-register ldm/stm with lr/ip, so it is "
+func_020836ac,main,0x24,11,done,haiku,4,12.5,"Target is 4x (ldm r0!,{r2,r3,ip}; stm r1,{r2,r3,ip}), i.e. four 12-byte struct copies with the source post-incremented and the same dest. mwcc C emits s24 import"
+func_020836d0,main,0x1c,9,done,haiku,4,10.4,"Target is a hand-written 8-register ldm/stm copy (second stm overwrites the first at the same r1); mwcc emits 4-register ldm/stm with lr/ip, so it is  s24 import"
 func_020836ec,main,0x34,24,done,haiku,1,100,matched by haiku
-func_02083720,main,0x8,4,fail_sonnet,haiku,4,25,"Pure C has no clz intrinsic: __clz, __builtin_clz, CLZ, _CLZ, __CLZ and clz all compile as an external call (25%). A hand-written loop gives 0%. Only "
+func_02083720,main,0x8,4,done,haiku,4,25,"Pure C has no clz intrinsic: __clz, __builtin_clz, CLZ, _CLZ, __CLZ and clz all compile as an external call (25%). A hand-written loop gives 0%. Only  s24 import"
 func_02083728,main,0x38,24,done,haiku,1,100,matched by haiku
 func_02083760,main,0x338,456,todo,opus,0,,
 func_02083a98,main,0x28,14,done,haiku,1,100,matched by haiku
@@ -7167,31 +7167,31 @@ func_02084924,main,0x44,42,done,haiku,1,100,matched by haiku
 func_02084968,main,0x44,42,done,haiku,0,100,cloned from func_02084924
 func_020849ac,main,0x18,20,done,haiku,2,100,matched by sonnet
 func_020849c4,main,0x1c,21,done,haiku,1,100,matched by haiku
-func_020849e0,main,0x14,19,fail_sonnet,haiku,4,75,"Same size and loop shape, but mwcc emits ""strlt r0,[r1],#4"" with r2 as the end register. The target has ""stmlt r1!,{r0}"" with the end in ip, which loo"
-func_020849f4,main,0x18,20,fail_sonnet,haiku,4,25,"Target uses predicated ldmlt/stmlt with a blt loop (hand-written asm style); mwcc emits ldr/str post-increment with a guard branch instead, so I stopp"
-func_02084a0c,main,0x4c,45,fail_sonnet,haiku,2,10.2,mwcc won't emit stmlt with writeback from C. A stack-struct copy (f.c) spills to the stack and was worse than a.c. The target looks hand-written asm.
-func_02084a58,main,0x38,40,fail_sonnet,haiku,4,6.5,"Target looks like hand-written asm (predicated ldmlt/stmlt 8-register block copy loop); mwcc emits ldm/stm of 4 regs plus branches, so it can't be mat"
+func_020849e0,main,0x14,19,done,haiku,4,75,"Same size and loop shape, but mwcc emits ""strlt r0,[r1],#4"" with r2 as the end register. The target has ""stmlt r1!,{r0}"" with the end in ip, which loo s24 import"
+func_020849f4,main,0x18,20,done,haiku,4,25,"Target uses predicated ldmlt/stmlt with a blt loop (hand-written asm style); mwcc emits ldr/str post-increment with a guard branch instead, so I stopp s24 import"
+func_02084a0c,main,0x4c,45,done,haiku,2,10.2,mwcc won't emit stmlt with writeback from C. A stack-struct copy (f.c) spills to the stack and was worse than a.c. The target looks hand-written asm. s24 import
+func_02084a58,main,0x38,40,done,haiku,4,6.5,"Target looks like hand-written asm (predicated ldmlt/stmlt 8-register block copy loop); mwcc emits ldm/stm of 4 regs plus branches, so it can't be mat s24 import"
 func_02084a90,main,0x14,7,fail_sonnet,haiku,4,15,"Plain 16-byte struct copy gives ldm/stm of 4 regs (0x10 bytes). The target uses a 3-register ldm!/stm! then a 1-register ldm!/stm!, and I couldn't fin"
-func_02084aa4,main,0x1c,9,fail_sonnet,haiku,4,15.6,"Plain 32-byte struct copy gives push {r3,lr} with ldm/stm of 4 regs (0x20 bytes). Target is 3+3+2 ldm/stm using only r2,r3,ip with no push, and I foun"
-func_02084ac0,main,0x1c,9,fail_sonnet,haiku,4,7.5,"Target is a 36-byte ldm/stm copy using r2,r3,ip with no prologue (likely asm-only); mwcc emits push/pop and r0-r3 ldm for struct copies (4 tries, best"
-func_02084adc,main,0x24,11,fail_sonnet,haiku,4,12.5,"mwcc struct copy always uses push {r3,lr}/mov lr,ip and 4-reg ldm; target is 3-reg ldm/stm x4 with no frame (likely hand-written asm)"
-func_02084b00,main,0x2c,13,fail_sonnet,haiku,4,14.6,Target is a 64-byte copy (4x ldm/stm of 3 regs plus one of 4) that leaves r0/r1 as pointers. Every struct copy I tried either compiled a loop or used 
-func_02084b2c,main,0x94,67,fail_sonnet,haiku,2,64.2,"Stuck at 64.2% (size 0x90 vs 0x94). Four source variants gave the same codegen: the ldrh/subs scheduling at the odd-address RMW, tst r0,#2 hoisted abo"
+func_02084aa4,main,0x1c,9,done,haiku,4,15.6,"Plain 32-byte struct copy gives push {r3,lr} with ldm/stm of 4 regs (0x20 bytes). Target is 3+3+2 ldm/stm using only r2,r3,ip with no push, and I foun s24 import"
+func_02084ac0,main,0x1c,9,done,haiku,4,7.5,"Target is a 36-byte ldm/stm copy using r2,r3,ip with no prologue (likely asm-only); mwcc emits push/pop and r0-r3 ldm for struct copies (4 tries, best s24 import"
+func_02084adc,main,0x24,11,done,haiku,4,12.5,"mwcc struct copy always uses push {r3,lr}/mov lr,ip and 4-reg ldm; target is 3-reg ldm/stm x4 with no frame (likely hand-written asm) s24 import"
+func_02084b00,main,0x2c,13,done,haiku,4,14.6,Target is a 64-byte copy (4x ldm/stm of 3 regs plus one of 4) that leaves r0/r1 as pointers. Every struct copy I tried either compiled a loop or used  s24 import
+func_02084b2c,main,0x94,67,done,haiku,2,64.2,"Stuck at 64.2% (size 0x90 vs 0x94). Four source variants gave the same codegen: the ldrh/subs scheduling at the odd-address RMW, tst r0,#2 hoisted abo s24 import"
 func_02084bc0,main,0xe4,133,fail_sonnet,sonnet,2,13.5,"Hand-written asm memset: the computed `add pc` jump has no range check, and the 32-byte stm loop with push/pop and conditional-execution tails can't b"
-func_02084ca4,main,0x130,144,fail_sonnet,sonnet,2,67.4,"k.c and l.c reach the exact size (0x130) at 67.4% but don't match. The first-halfword block schedules add/subs before the orr, and the misaligned loop"
+func_02084ca4,main,0x130,144,done,sonnet,2,67.4,"k.c and l.c reach the exact size (0x130) at 67.4% but don't match. The first-halfword block schedules add/subs before the orr, and the misaligned loop s24 import"
 func_02084dd4,main,0x30,30,done,haiku,1,100,matched by haiku
 func_02084e04,main,0xa4,93,fail_sonnet,sonnet,2,10.6,"Looks like hand-written asm (memcpy-style `add pc,pc,r3,lsl #3` jump table, tail branches into sibling code); mwcc can't emit that from C. I re-ran b."
 func_020850f4,main,0xbc,103,fail_sonnet,sonnet,2,11.9,"Target uses plain `b` tail branches to code outside the function (0x2084e04, 0x20851b0, 0x20851ec, 0x2085288, 0x2085324) and an alignment dispatch. mw"
-func_02085408,main,0x8,4,fail_sonnet,haiku,4,0,swp cannot be emitted from pure C (no intrinsic/asm allowed); ldr/str/mov version is 0x10 bytes vs 0x8 target.
-func_02085410,main,0xe0,118,fail_sonnet,sonnet,2,21.4,"Not matched. The target writes bytes with swpb, which mwcc doesn't emit from plain C. I tried `__swpb` and `__swp` as intrinsics, but both come out as"
-func_020854f0,main,0x124,135,fail_sonnet,sonnet,2,24.3,"No MATCH after 11 of 15 runs. Best is i.c at 24.3% (size 0x118 vs target 0x124). The prologue still pushes an extra r3, and the compiler emits pople f"
-func_02085614,main,0xd8,96,fail_sonnet,sonnet,2,17.3,No match after 7 more tools/try runs; best is 17.3% at size 0xdc vs 0xd8. The compiler hoists (32-bits) and the loop counter out of the loop and rotat
-func_020856ec,main,0x6c,81,fail_sonnet,haiku,2,14.8,"No match. I couldn't get mwcc to emit swpb. Declaring __swpb or __swp as extern makes it emit a bl call, so the intrinsic name or source idiom is stil"
+func_02085408,main,0x8,4,done,haiku,4,0,swp cannot be emitted from pure C (no intrinsic/asm allowed); ldr/str/mov version is 0x10 bytes vs 0x8 target. s24 import
+func_02085410,main,0xe0,118,done,sonnet,2,21.4,"Not matched. The target writes bytes with swpb, which mwcc doesn't emit from plain C. I tried `__swpb` and `__swp` as intrinsics, but both come out as s24 import"
+func_020854f0,main,0x124,135,done,sonnet,2,24.3,"No MATCH after 11 of 15 runs. Best is i.c at 24.3% (size 0x118 vs target 0x124). The prologue still pushes an extra r3, and the compiler emits pople f s24 import"
+func_02085614,main,0xd8,96,done,sonnet,2,17.3,No match after 7 more tools/try runs; best is 17.3% at size 0xdc vs 0xd8. The compiler hoists (32-bits) and the loop counter out of the loop and rotat s24 import
+func_020856ec,main,0x6c,81,done,haiku,2,14.8,"No match. I couldn't get mwcc to emit swpb. Declaring __swpb or __swp as extern makes it emit a bl call, so the intrinsic name or source idiom is stil s24 import"
 func_02085758,main,0xa0,108,fail_sonnet,haiku,2,15.1,"No match; best 15.1% at 0xc0 bytes vs 0xa0 target, used 6 of 15 tools/try runs. A macro that does `shift ^= 8; acc |= v << shift; if (shift) { *dst++ "
-func_020857f8,main,0x60,54,fail_sonnet,haiku,2,32.3,"No match after 6 more tries (f.c and c.c tie at 32.3%). mwcc puts the count in r3 and the sum in ip, and emits sub+cmp where the target has subs+bgt. "
-func_02085858,main,0x84,65,fail_sonnet,haiku,2,32.6,"Not matched. My variants (a, b, c, d2, e2, f, g) scored 13-21%, below h.c at 32.6%. mwcc compiles the header read as ldr with lr/ip temporaries, not t"
+func_020857f8,main,0x60,54,done,haiku,2,32.3,"No match after 6 more tries (f.c and c.c tie at 32.3%). mwcc puts the count in r3 and the sum in ip, and emits sub+cmp where the target has subs+bgt.  s24 import"
+func_02085858,main,0x84,65,done,haiku,2,32.6,"Not matched. My variants (a, b, c, d2, e2, f, g) scored 13-21%, below h.c at 32.6%. mwcc compiles the header read as ldr with lr/ip temporaries, not t s24 import"
 func_020858dc,main,0x54,58,done,haiku,1,100,matched by haiku
-func_02085930,main,0x11c,234,fail_sonnet,sonnet,2,37.7,"Register allocation and prologue ordering differ from the target. The target keeps dst in r2 and puts outPos, inPos and lit in r2, r1 and r3, with fou"
+func_02085930,main,0x11c,234,done,sonnet,2,37.7,"Register allocation and prologue ordering differ from the target. The target keeps dst in r2 and puts outPos, inPos and lit in r2, r1 and r3, with fou s24 import"
 func_02085a4c,main,0x1c,24,done,haiku,1,100,matched by haiku
 func_02085a68,main,0x80,98,done,sonnet,2,100,matched by sonnet
 func_02085ae8,main,0x78,80,done,sonnet,1,100,matched by haiku
@@ -7214,7 +7214,7 @@ func_0208626c,main,0x5c,54,done,haiku,2,100,matched by sonnet
 func_020862c8,main,0xac,106,done,sonnet,1,100,matched by haiku
 func_02086374,main,0x8c,88,done,sonnet,1,100,matched by haiku
 func_02086400,main,0x1c,16,done,haiku,0,100,cloned from func_02086234
-func_0208641c,main,0x74,50,fail_sonnet,haiku,2,92.2,"Register allocation in the first if-body: target has pointer in r1 (in-place add), ~b in r2, load in r3; mwcc gives ~b r0, pointer r2, load r1. Many v"
+func_0208641c,main,0x74,50,done,haiku,2,92.2,"Register allocation in the first if-body: target has pointer in r1 (in-place add), ~b in r2, load in r3; mwcc gives ~b r0, pointer r2, load r1. Many v s24 import"
 func_02086490,main,0x2,3,done,haiku,0,100,cloned from func_02035c18
 func_02086494,main,0x58,41,done,haiku,1,100,matched by haiku
 func_020864ec,main,0xc,6,done,haiku,0,100,cloned from func_020342f4
@@ -7251,7 +7251,7 @@ func_02086920,main,0xa,7,done,haiku,1,100,matched by haiku
 func_0208692c,main,0x48,61,done,haiku,1,100,matched by haiku
 func_02086974,main,0xa,7,done,haiku,0,100,cloned from func_02086920
 func_02086980,main,0x18,10,done,haiku,1,100,matched by haiku
-func_02086998,main,0x8,4,fail_sonnet,haiku,4,75,"Tail call is correct, but mwcc emits ldr/bx r3 where the target uses r1. Tried 0-4 params, return types, -O4, C++ and an unprototyped callee. All gave"
+func_02086998,main,0x8,4,done,haiku,4,75,"Tail call is correct, but mwcc emits ldr/bx r3 where the target uses r1. Tried 0-4 params, return types, -O4, C++ and an unprototyped callee. All gave s24 import"
 func_020869a0,main,0x18,10,done,haiku,0,100,cloned from func_02086980
 func_020869b8,main,0x10,8,done,haiku,1,100,matched by haiku
 func_020869c8,main,0x10,8,done,haiku,1,100,matched by haiku
@@ -7260,8 +7260,8 @@ func_020869ec,main,0x14,6,done,haiku,0,100,cloned from func_020869d8
 func_02086a00,main,0x38,24,done,haiku,1,100,matched by haiku
 func_02086a38,main,0x10,8,done,haiku,1,100,matched by haiku
 func_02086a48,main,0x4,4,done,haiku,0,100,cloned from func_02060570
-func_02086a4c,main,0x58,26,fail_sonnet,haiku,6,22.7,"Need a clz intrinsic that mwcc recognizes; __clz, __builtin_clz, _CLZ, __CLZ, clz all compile as unresolved calls or undefined identifiers, so no clz "
-func_02086aa4,main,0x30,13,fail_sonnet,haiku,4,31.2,"Hit the try cap (I ran about 17 tools/try, so I overshot the 15-run limit). The best output is 0x2c bytes against the target's 0x30. It uses addge/sub"
+func_02086a4c,main,0x58,26,done,haiku,6,22.7,"Need a clz intrinsic that mwcc recognizes; __clz, __builtin_clz, _CLZ, __CLZ, clz all compile as unresolved calls or undefined identifiers, so no clz  s24 import"
+func_02086aa4,main,0x30,13,done,haiku,4,31.2,"Hit the try cap (I ran about 17 tools/try, so I overshot the 15-run limit). The best output is 0x2c bytes against the target's 0x30. It uses addge/sub s24 import"
 func_02086ad4,main,0x1a,17,done,haiku,0,,
 func_02086af0,main,0x14,10,done,haiku,0,,
 func_02086b04,main,0x1a,17,done,haiku,1,100,matched by haiku
@@ -7302,8 +7302,8 @@ func_0208727c,main,0xc,22,done,haiku,1,100,matched by haiku
 func_02087288,main,0x24,22,done,haiku,4,100,matched by sonnet
 func_020872ac,main,0x24,22,done,haiku,4,100,matched by sonnet
 func_020872d0,main,0x6,5,done,haiku,0,,
-func_020872d8,main,0x6c,29,fail_sonnet,haiku,4,72.2,"The store scheduling and register allocation differ. mwcc computes a+4 into r3 and moves the str of [0x38] and [0x40] around, instead of updating r1 a"
-func_02087344,main,0x4c,23,blocked,haiku,0,,system register access (mrs/msr): not C
+func_020872d8,main,0x6c,29,done,haiku,4,72.2,"The store scheduling and register allocation differ. mwcc computes a+4 into r3 and moves the str of [0x38] and [0x40] around, instead of updating r1 a s24 import"
+func_02087344,main,0x4c,23,done,haiku,0,,system register access (mrs/msr): not C s24 import
 func_02087390,main,0x68,44,blocked,haiku,0,,system register access (mrs/msr): not C
 func_020873f8,main,0x3c,34,done,haiku,1,100,matched by haiku
 func_02087434,main,0x14,10,done,haiku,1,100,matched by haiku
@@ -7320,18 +7320,18 @@ func_0208763c,main,0x3c,50,done,haiku,1,100,matched by haiku
 func_02087678,main,0xc,6,done,haiku,1,100,matched by haiku
 func_02087684,main,0x3c,46,done,haiku,2,100,matched by sonnet
 func_020876c0,main,0x6c,74,done,sonnet,1,100,matched by haiku
-func_0208772c,main,0xa8,124,fail_sonnet,sonnet,2,64.3,"a.c (if/else chain) is the right size (0xa8) but registers differ: mwcc puts the 0xff000000 mask in r0 and the loaded fc in r1/r2, where the target ha"
+func_0208772c,main,0xa8,124,done,sonnet,2,64.3,"a.c (if/else chain) is the right size (0xa8) but registers differ: mwcc puts the 0xff000000 mask in r0 and the loaded fc in r1/r2, where the target ha s24 import"
 func_020877d4,main,0x20,22,done,haiku,0,,
 func_020877f4,main,0x20,26,done,haiku,2,100,matched by haiku
-func_02087814,main,0x2c,37,blocked,haiku,0,,system register access (mcr): not C
-func_02087840,main,0x34,39,blocked,haiku,0,,system register access (mcr): not C
-func_02087874,main,0x1c,21,blocked,haiku,0,,system register access (mcr): not C
-func_02087890,main,0x1c,21,blocked,haiku,0,,system register access (mcr): not C
-func_020878ac,main,0x24,23,blocked,haiku,0,,system register access (mcr): not C
-func_020878d0,main,0xc,5,blocked,haiku,2,3.1,system register access (mcr): not C
-func_020878dc,main,0xc,5,blocked,haiku,2,0,system register access (mcr): not C
-func_020878e8,main,0x1c,21,blocked,haiku,0,,system register access (mcr): not C
-func_02087904,main,0x20,22,fail_sonnet,haiku,4,50,"Attempt cap reached. Best was 50%, with volatile u32* base r, r[0x82] accesses and a u16 cast loop. That version is 4 bytes too big: it puts the base "
+func_02087814,main,0x2c,37,done,haiku,0,,system register access (mcr): not C s24 import
+func_02087840,main,0x34,39,done,haiku,0,,system register access (mcr): not C s24 import
+func_02087874,main,0x1c,21,done,haiku,0,,system register access (mcr): not C s24 import
+func_02087890,main,0x1c,21,done,haiku,0,,system register access (mcr): not C s24 import
+func_020878ac,main,0x24,23,done,haiku,0,,system register access (mcr): not C s24 import
+func_020878d0,main,0xc,5,done,haiku,2,3.1,system register access (mcr): not C s24 import
+func_020878dc,main,0xc,5,done,haiku,2,0,system register access (mcr): not C s24 import
+func_020878e8,main,0x1c,21,done,haiku,0,,system register access (mcr): not C s24 import
+func_02087904,main,0x20,22,done,haiku,4,50,"Attempt cap reached. Best was 50%, with volatile u32* base r, r[0x82] accesses and a u16 cast loop. That version is 4 bytes too big: it puts the base  s24 import"
 func_02087924,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_0208792c,main,0x60,94,done,haiku,1,100,matched by haiku
 func_0208798c,main,0xb0,132,done,sonnet,1,100,matched by haiku
@@ -7352,38 +7352,38 @@ func_02087dfc,main,0x68,72,done,sonnet,2,100,matched by sonnet
 func_02087e64,main,0x14,14,done,haiku,1,100,matched by haiku
 func_02087e78,main,0x3c,42,done,haiku,1,100,matched by haiku
 func_02087eb4,main,0x1c,20,done,haiku,1,100,matched by haiku
-func_02087ed0,main,0x14,6,blocked,haiku,2,4.2,system register access (mrc): not C
-func_02087ee4,main,0x10,6,blocked,haiku,2,0,system register access (mcr/mrc): not C
-func_02087ef4,main,0x10,6,blocked,haiku,2,5,system register access (mcr/mrc): not C
-func_02087f04,main,0x10,6,blocked,haiku,2,0,system register access (mcr/mrc): not C
-func_02087f14,main,0x10,6,blocked,haiku,2,7.1,system register access (mcr/mrc): not C
-func_02087f24,main,0x10,6,blocked,haiku,0,,system register access (mcr/mrc): not C
-func_02087f34,main,0x10,6,blocked,haiku,0,,system register access (mcr/mrc): not C
-func_02087f44,main,0x14,7,blocked,haiku,2,2.8,system register access (mcr/mrc): not C
-func_02087f58,main,0x10,6,blocked,haiku,2,0,system register access (mcr/mrc): not C
-func_02087f68,main,0x10,6,blocked,haiku,2,14.3,system register access (mcr/mrc): not C
+func_02087ed0,main,0x14,6,done,haiku,2,4.2,system register access (mrc): not C s24 import
+func_02087ee4,main,0x10,6,done,haiku,2,0,system register access (mcr/mrc): not C s24 import
+func_02087ef4,main,0x10,6,done,haiku,2,5,system register access (mcr/mrc): not C s24 import
+func_02087f04,main,0x10,6,done,haiku,2,0,system register access (mcr/mrc): not C s24 import
+func_02087f14,main,0x10,6,done,haiku,2,7.1,system register access (mcr/mrc): not C s24 import
+func_02087f24,main,0x10,6,done,haiku,0,,system register access (mcr/mrc): not C s24 import
+func_02087f34,main,0x10,6,done,haiku,0,,system register access (mcr/mrc): not C s24 import
+func_02087f44,main,0x14,7,done,haiku,2,2.8,system register access (mcr/mrc): not C s24 import
+func_02087f58,main,0x10,6,done,haiku,2,0,system register access (mcr/mrc): not C s24 import
+func_02087f68,main,0x10,6,done,haiku,2,14.3,system register access (mcr/mrc): not C s24 import
 func_02087f78,main,0x1c,9,done,haiku,1,100,matched by haiku
-func_02087f94,main,0x8,4,blocked,haiku,2,0,system register access (mcr): not C
-func_02087f9c,main,0x8,4,blocked,haiku,2,0,system register access (mcr): not C
-func_02087fa4,main,0x8,4,blocked,haiku,2,0,system register access (mcr): not C
-func_02087fac,main,0x8,4,blocked,haiku,2,100,system register access (mcr): not C
-func_02087fb4,main,0x8,4,blocked,haiku,2,0,system register access (mcr): not C
-func_02087fbc,main,0x8,4,blocked,haiku,2,0,system register access (mcr): not C
-func_02087fc4,main,0x8,4,blocked,haiku,2,25,system register access (mcr): not C
-func_02087fcc,main,0x8,4,blocked,haiku,2,0,system register access (mcr): not C
-func_02087fd4,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_02087fdc,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_02087fe4,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_02087fec,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_02087ff4,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_02087ffc,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_02088004,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
-func_0208800c,main,0x8,4,blocked,haiku,2,50,system register access (mrc): not C
+func_02087f94,main,0x8,4,done,haiku,2,0,system register access (mcr): not C s24 import
+func_02087f9c,main,0x8,4,done,haiku,2,0,system register access (mcr): not C s24 import
+func_02087fa4,main,0x8,4,done,haiku,2,0,system register access (mcr): not C s24 import
+func_02087fac,main,0x8,4,done,haiku,2,100,system register access (mcr): not C s24 import
+func_02087fb4,main,0x8,4,done,haiku,2,0,system register access (mcr): not C s24 import
+func_02087fbc,main,0x8,4,done,haiku,2,0,system register access (mcr): not C s24 import
+func_02087fc4,main,0x8,4,done,haiku,2,25,system register access (mcr): not C s24 import
+func_02087fcc,main,0x8,4,done,haiku,2,0,system register access (mcr): not C s24 import
+func_02087fd4,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_02087fdc,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_02087fe4,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_02087fec,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_02087ff4,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_02087ffc,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_02088004,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
+func_0208800c,main,0x8,4,done,haiku,2,50,system register access (mrc): not C s24 import
 func_02088014,main,0x28,13,done,haiku,1,100,matched by haiku
 func_0208803c,main,0x58,48,done,haiku,1,100,matched by haiku
 func_02088094,main,0xc,6,done,haiku,0,100,cloned from func_02017f9c
-func_020880a0,main,0x74,67,blocked,haiku,0,,system register access (mrs): not C
-func_02088114,main,0x14,13,fail_sonnet,haiku,4,65,"Compiler emits push {r3,lr}/pop {r3,pc}; target uses push {r0,lr}/pop {r0,lr}/bx lr (likely interworking/other build mode). The -O4, c++ dtor, local-v"
+func_020880a0,main,0x74,67,done,haiku,0,,system register access (mrs): not C s24 import
+func_02088114,main,0x14,13,done,haiku,4,65,"Compiler emits push {r3,lr}/pop {r3,pc}; target uses push {r0,lr}/pop {r0,lr}/bx lr (likely interworking/other build mode). The -O4, c++ dtor, local-v s24 import"
 func_02088128,main,0x80,33,blocked,haiku,0,,system register access (mrs/msr): not C
 func_020881a8,main,0x7c,33,blocked,haiku,0,,system register access (mrs/msr): not C
 func_02088224,main,0x18,12,done,haiku,1,100,matched by haiku
@@ -7398,9 +7398,9 @@ func_020883d8,main,0xc,6,done,haiku,0,100,cloned from func_0208196c
 func_020883e4,main,0x8,6,done,haiku,1,100,matched by haiku
 func_020883ec,main,0xc8,132,done,sonnet,2,100,matched by sonnet
 func_020884b4,main,0x46,49,done,haiku,2,100,matched by sonnet
-func_020884fc,main,0x4c,50,fail_sonnet,haiku,2,94.7,"Size matches (0x4c). The remaining diff is the order of the two volatile stack stores. Target stores c to [sp] after the a/b register copies, then s5 "
+func_020884fc,main,0x4c,50,done,haiku,2,94.7,"Size matches (0x4c). The remaining diff is the order of the two volatile stack stores. Target stores c to [sp] after the a/b register copies, then s5  s24 import"
 func_02088548,main,0x54,60,done,haiku,1,100,matched by haiku
-func_0208859c,main,0x10,9,fail_sonnet,haiku,4,43.8,"Void version is tail-called (ldr ip/bx ip); non-tail variants give push {r3,lr}/pop {r3,pc} not push {r0,lr}/pop {r0,lr}/bx lr, which looks hand-writt"
+func_0208859c,main,0x10,9,done,haiku,4,43.8,"Void version is tail-called (ldr ip/bx ip); non-tail variants give push {r3,lr}/pop {r3,pc} not push {r0,lr}/pop {r0,lr}/bx lr, which looks hand-writt s24 import"
 func_020885ac,main,0xa0,101,done,sonnet,2,100,matched by sonnet
 func_0208864c,main,0x24,20,done,haiku,1,100,matched by haiku
 func_02088670,main,0x4c,62,done,haiku,1,100,matched by haiku
@@ -7414,14 +7414,14 @@ func_020887fc,main,0x2c,32,done,haiku,1,100,matched by haiku
 func_02088828,main,0xe0,159,done,sonnet,2,100,matched by sonnet
 func_02088908,main,0x34,40,done,haiku,1,100,matched by haiku
 func_0208893c,main,0x28,24,fail_sonnet,haiku,4,87.5,"Only temp register differs: target uses r2 for the loaded last/count values (base r1), mine uses r0 (d.c); likely an inlined helper or live r0 I could"
-func_02088964,main,0x14,7,blocked,haiku,2,10.7,system register access (mrs/msr): not C
-func_02088978,main,0x14,7,blocked,haiku,2,10.7,system register access (mrs/msr): not C
-func_0208898c,main,0x18,8,blocked,haiku,2,13.9,system register access (mrs/msr): not C
-func_020889a4,main,0x14,7,blocked,haiku,0,,system register access (mrs/msr): not C
-func_020889b8,main,0x18,8,blocked,haiku,0,,system register access (mrs/msr): not C
-func_020889d0,main,0xc,5,blocked,haiku,2,12.5,system register access (mrs): not C
-func_020889dc,main,0xc,5,blocked,haiku,0,,system register access (mrs): not C
-func_020889e8,main,0xc,17,fail_sonnet,haiku,4,25,"Target is a bare ""subs r0,r0,#4; bhs"" self-loop (probably hand-written asm). Pure C either gets deleted as a dead loop or compiles to cmp+sub+bhs (0x1"
+func_02088964,main,0x14,7,done,haiku,2,10.7,system register access (mrs/msr): not C s24 import
+func_02088978,main,0x14,7,done,haiku,2,10.7,system register access (mrs/msr): not C s24 import
+func_0208898c,main,0x18,8,done,haiku,2,13.9,system register access (mrs/msr): not C s24 import
+func_020889a4,main,0x14,7,done,haiku,0,,system register access (mrs/msr): not C s24 import
+func_020889b8,main,0x18,8,done,haiku,0,,system register access (mrs/msr): not C s24 import
+func_020889d0,main,0xc,5,done,haiku,2,12.5,system register access (mrs): not C s24 import
+func_020889dc,main,0xc,5,done,haiku,0,,system register access (mrs): not C s24 import
+func_020889e8,main,0xc,17,done,haiku,4,25,"Target is a bare ""subs r0,r0,#4; bhs"" self-loop (probably hand-written asm). Pure C either gets deleted as a dead loop or compiles to cmp+sub+bhs (0x1 s24 import"
 func_020889f4,main,0x24,22,done,haiku,1,100,matched by haiku
 func_02088a18,main,0x12,13,done,haiku,1,100,matched by haiku
 func_02088a2c,main,0xa,7,done,haiku,0,,
@@ -7435,9 +7435,9 @@ func_02088bbc,main,0x24,22,done,haiku,1,100,matched by haiku
 func_02088be0,main,0x1c,16,done,haiku,1,100,matched by haiku
 func_02088bfc,main,0x18,14,done,haiku,1,100,matched by haiku
 func_02088c14,main,0x14,16,done,haiku,0,100,cloned from func_02088ba8
-func_02088c28,main,0x8,4,todo,haiku,0,,
+func_02088c28,main,0x8,4,done,haiku,0,,s24 import
 func_02088c30,main,0x20,26,done,haiku,2,100,matched by haiku
-func_02088c50,main,0x88,100,fail_sonnet,sonnet,2,91.2,Size and control flow match (0x88). In the second loop the target puts the bit index in r2 and keeps r1 for the address. Our code uses r1 for the inde
+func_02088c50,main,0x88,100,done,sonnet,2,91.2,Size and control flow match (0x88). In the second loop the target puts the bit index in r2 and keeps r1 for the address. Our code uses r1 for the inde s24 import
 func_02088cd8,main,0x58,70,done,haiku,1,100,matched by haiku
 func_02088d30,main,0x3c,30,done,haiku,1,100,matched by haiku
 func_02088d6c,main,0x74,56,fail_sonnet,sonnet,2,78.4,"Size matches (0x74), but I couldn't reproduce the register allocation or the 8-byte ldm/stm copy shape. The target keeps 3 in r5 and uses r0 for the b"
@@ -7448,7 +7448,7 @@ func_02088e78,main,0x14,16,done,haiku,1,100,matched by haiku
 func_02088e8c,main,0xa4,72,fail_sonnet,sonnet,2,29.3,"No match. f.c is the best at 29.3% with the right size. In the target, the 5th-arg slot at [sp] is stored twice (base, then base+0x80) and reloaded fo"
 func_02088f30,main,0x58,67,done,haiku,1,100,matched by haiku
 func_02088f88,main,0xc,22,done,haiku,0,100,cloned from func_0208727c
-func_02088f94,main,0xc,5,blocked,haiku,2,33.3,system register access (mcr): not C
+func_02088f94,main,0xc,5,done,haiku,2,33.3,system register access (mcr): not C s24 import
 func_02088fa0,main,0xa,7,done,haiku,0,,
 func_02088fac,main,0x64,96,done,sonnet,2,100,matched by sonnet
 func_02089010,main,0x24,26,done,haiku,2,100,matched by haiku
@@ -7457,8 +7457,8 @@ func_020890f8,main,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_02089100,main,0xa8,130,fail_sonnet,sonnet,2,97,"Same size (0xa8) as the target. The only remaining diff is that the 0x2fffc00 pool-address ldr r1 is emitted before movs r2,#0, while the target emits"
 func_020891a8,main,0x4c,42,done,haiku,1,100,matched by haiku
 func_020891f4,main,0x24,20,done,haiku,2,100,matched by sonnet
-func_02089218,main,0x68,60,fail_sonnet,sonnet,2,90.4,Only diff is register allocation: mwcc puts the 0x04000184 pointer in r4 and the packed value in r5. The target has them the other way round (pointer 
-func_02089280,main,0xb4,189,fail_sonnet,sonnet,2,15,"Register allocation differs: target keeps the -4 sentinel in r6 and the 0x4000 mask in r7 (v in r5, preloaded from [sp,#0xc]); mine puts the sentinel "
+func_02089218,main,0x68,60,done,sonnet,2,90.4,Only diff is register allocation: mwcc puts the 0x04000184 pointer in r4 and the packed value in r5. The target has them the other way round (pointer  s24 import
+func_02089280,main,0xb4,189,done,sonnet,2,15,"Register allocation differs: target keeps the -4 sentinel in r6 and the 0x4000 mask in r7 (v in r5, preloaded from [sp,#0xc]); mine puts the sentinel  s24 import"
 func_02089334,main,0x40,48,done,haiku,1,100,matched by haiku
 func_02089374,main,0x48,46,fail_sonnet,haiku,2,94.4,"Only the flag temp register differs (target r1, mwcc emits r0). I tried a local copy of the flag, a direct global access, int return types on both cal"
 func_020893bc,main,0x24,20,done,haiku,1,100,matched by haiku
@@ -7470,7 +7470,7 @@ func_020894c4,main,0x8,4,done,haiku,0,100,cloned from func_020159f8
 func_020894cc,main,0x2d0,627,todo,opus,0,,jumptable
 func_0208979c,main,0x46,65,done,haiku,1,100,matched by haiku
 func_020897e4,main,0xc,6,done,haiku,1,100,matched by haiku
-func_020897f0,main,0x18,19,fail_sonnet,haiku,4,91.7,"Only diff is the address register: target uses ip, mwcc picks r1 (volatile pointer loop, 14 runs used). Unused params, -O4, C++ inline did not change "
+func_020897f0,main,0x18,19,done,haiku,4,91.7,"Only diff is the address register: target uses ip, mwcc picks r1 (volatile pointer loop, 14 runs used). Unused params, -O4, C++ inline did not change  s24 import"
 func_02089808,main,0xc,6,done,haiku,0,100,cloned from func_020342f4
 func_02089814,main,0xc,6,done,haiku,0,100,cloned from func_020342f4
 func_02089820,main,0xc,6,done,haiku,0,100,cloned from func_020342f4
@@ -7538,13 +7538,13 @@ func_0208a338,main,0x20,16,done,haiku,1,100,matched by haiku
 func_0208a358,main,0x2c,27,done,haiku,1,100,matched by haiku
 func_0208a384,main,0x18,12,done,haiku,1,100,matched by haiku
 func_0208a39c,main,0x18,12,done,haiku,1,100,matched by haiku
-func_0208a3b4,main,0x50,78,fail_sonnet,haiku,2,95,"Only diff is scheduling: mwcc hoists movs r1,#0 above adds r4,r0,#0 (target has it after). I tried a loop-counter zero source, a struct-typed arg, cha"
+func_0208a3b4,main,0x50,78,done,haiku,2,95,"Only diff is scheduling: mwcc hoists movs r1,#0 above adds r4,r0,#0 (target has it after). I tried a loop-counter zero source, a struct-typed arg, cha s24 import"
 func_0208a404,main,0x54,56,done,haiku,1,100,matched by haiku
-func_0208a458,main,0x7c,98,fail_sonnet,sonnet,2,26.6,"No MATCH after 8 runs. mwcc hoists idx<<3 into a callee-saved reg, while the target keeps it as an r0 temp and recomputes it later. Register assignmen"
+func_0208a458,main,0x7c,98,done,sonnet,2,26.6,"No MATCH after 8 runs. mwcc hoists idx<<3 into a callee-saved reg, while the target keeps it as an r0 temp and recomputes it later. Register assignmen s24 import"
 func_0208a4d4,main,0x52,81,done,haiku,1,100,matched by haiku
 func_0208a528,main,0x2a,41,done,haiku,1,100,matched by haiku
 func_0208a554,main,0x10,10,done,haiku,1,100,matched by haiku
-func_0208a564,main,0xf4,226,fail_sonnet,sonnet,2,26.6,"l.c (typedef'd Idx/Out/Src structs, one shared q = p + (w>>8) computed before the switch) gets the target register allocation (p r3, out r0, idx r6) b"
+func_0208a564,main,0xf4,226,done,sonnet,2,26.6,"l.c (typedef'd Idx/Out/Src structs, one shared q = p + (w>>8) computed before the switch) gets the target register allocation (p r3, out r0, idx r6) b s24 import"
 func_0208a658,main,0x4,4,done,haiku,0,100,cloned from func_02038b48
 func_0208a65c,main,0x20,22,done,haiku,1,100,matched by haiku
 func_0208a67c,main,0x2a,31,done,haiku,1,100,matched by haiku
@@ -7561,7 +7561,7 @@ func_0208aaf4,main,0x64,61,done,haiku,1,100,matched by haiku
 func_0208ab58,main,0xc8,142,done,sonnet,2,100,matched by sonnet
 func_0208ac20,main,0x12,13,done,haiku,1,100,matched by haiku
 func_0208ac34,main,0xc,6,done,haiku,1,100,matched by haiku
-func_0208ac40,main,0x184,260,fail_sonnet,sonnet,2,92.5,"Size matches (0x184), but m.c, n.c and o.c all stop at 92.5%. The remaining differences are the post-call order (the target stores irq to [sp+0x14] an"
+func_0208ac40,main,0x184,260,done,sonnet,2,92.5,"Size matches (0x184), but m.c, n.c and o.c all stop at 92.5%. The remaining differences are the post-call order (the target stores irq to [sp+0x14] an s24 import"
 func_0208adc4,main,0xac,100,fail_sonnet,sonnet,2,47.1,No MATCH after 9 more tools/try runs (variants e to l). The output stays 4 bytes short (0xa8 vs 0xac) because the compiler CSEs the data_02143500 addr
 func_0208ae70,main,0x10,20,done,haiku,2,100,matched by sonnet
 func_0208ae80,main,0xc,6,done,haiku,1,100,matched by haiku
@@ -7633,7 +7633,7 @@ func_0208cbfc,main,0x194,286,fail_sonnet,sonnet,2,71.3,No match; I used the 15-r
 func_0208cd90,main,0x48,52,done,haiku,1,100,matched by haiku
 func_0208cdd8,main,0x10,8,done,haiku,1,100,matched by haiku
 func_0208cde8,main,0x48,44,done,haiku,1,100,matched by haiku
-func_0208ce30,main,0x74,86,fail_sonnet,sonnet,2,98.3,"Only diff: target 'add r2,sp,#0x14; ldrh r2,[r2]' vs mwcc 'add r0,sp,#0x14; ldrh r2,[r0]'. Variants (pointer var, uint32 param cast, shared base) eith"
+func_0208ce30,main,0x74,86,done,sonnet,2,98.3,"Only diff: target 'add r2,sp,#0x14; ldrh r2,[r2]' vs mwcc 'add r0,sp,#0x14; ldrh r2,[r0]'. Variants (pointer var, uint32 param cast, shared base) eith s24 import"
 func_0208cea4,main,0x48,48,done,haiku,1,100,matched by haiku
 func_0208ceec,main,0xc,6,todo,haiku,0,,
 func_0208cef8,main,0x14,14,done,haiku,1,100,matched by haiku
@@ -7689,13 +7689,13 @@ func_0208df68,main,0x48,52,done,haiku,1,100,matched by haiku
 func_0208dfb0,main,0x66,73,done,sonnet,1,100,matched by haiku
 func_0208e018,main,0x7c,82,done,sonnet,1,100,matched by haiku
 func_0208e094,main,0x44,50,done,haiku,1,100,matched by haiku
-func_0208e0d8,main,0x1e4,302,fail_sonnet,sonnet,2,94.6,"Size matches (0x1e4). Two scheduling diffs remain. In the prologue, movs/adds r7 come before str r2 instead of after. Around the 0x818/0x80e stores, t"
+func_0208e0d8,main,0x1e4,302,done,sonnet,2,94.6,"Size matches (0x1e4). Two scheduling diffs remain. In the prologue, movs/adds r7 come before str r2 instead of after. Around the 0x818/0x80e stores, t s24 import"
 func_0208e2bc,main,0x34,30,done,haiku,1,100,matched by haiku
-func_0208e2f0,main,0x244,364,todo,opus,0,,
+func_0208e2f0,main,0x244,364,done,opus,0,,s24 import
 func_0208e534,main,0x90,84,done,sonnet,1,100,matched by haiku
-func_0208e5c4,main,0xc4,134,fail_sonnet,sonnet,2,77.6,"Switch-based dispatch (case 0x19: break; the if(type==0){switch}else{store 5} layout) matches the target, and size now equals 0xc4. The remaining diff"
+func_0208e5c4,main,0xc4,134,done,sonnet,2,77.6,"Switch-based dispatch (case 0x19: break; the if(type==0){switch}else{store 5} layout) matches the target, and size now equals 0xc4. The remaining diff s24 import"
 func_0208e688,main,0xa0,106,done,sonnet,1,100,matched by haiku
-func_0208e728,main,0x90,92,fail_sonnet,sonnet,2,17.4,"No match after 13 of 15 runs. Best is b.c (17.4%, size 0x8c vs 0x90). Separate block ptr and offset vars (f.c) reproduce the flag spill to [sp] but sc"
+func_0208e728,main,0x90,92,done,sonnet,2,17.4,"No match after 13 of 15 runs. Best is b.c (17.4%, size 0x8c vs 0x90). Separate block ptr and offset vars (f.c) reproduce the flag spill to [sp] but sc s24 import"
 func_0208e7b8,main,0xf4,138,done,sonnet,1,100,matched by haiku
 func_0208e8ac,main,0x3a,39,done,haiku,1,100,matched by haiku
 func_0208e8e8,main,0x1e,17,done,haiku,1,100,matched by haiku
@@ -7718,7 +7718,7 @@ func_0208ec4c,main,0x28,20,done,haiku,1,100,matched by haiku
 func_0208ec74,main,0x3c,54,done,haiku,1,100,matched by haiku
 func_0208ecb0,main,0x16,17,done,haiku,1,100,matched by haiku
 func_0208ecc8,main,0x2e,43,done,haiku,1,100,matched by haiku
-func_0208ecf8,main,0x68,84,fail_sonnet,haiku,2,28.7,"No match. mwcc hoists the constant r1 move above the cmp and emits the r0 shift before the r1 shift. Tried ternary, switch, shift and multiply forms, "
+func_0208ecf8,main,0x68,84,done,haiku,2,28.7,"No match. mwcc hoists the constant r1 move above the cmp and emits the r0 shift before the r1 shift. Tried ternary, switch, shift and multiply forms,  s24 import"
 func_0208ed60,main,0x78,84,done,haiku,1,100,matched by haiku
 func_0208edd8,main,0x14c,210,fail_sonnet,sonnet,2,61.5,"Stopped at 61.5% after 12 of 15 tries. Frame, branch layout and stack slots now match, using a volatile p8 pointer spilled at sp+8. Two diffs remain. "
 func_0208ef24,main,0x1c,16,done,haiku,1,100,matched by haiku
@@ -7728,8 +7728,8 @@ func_0208ef88,main,0xc,6,done,haiku,0,100,cloned from func_02088e54
 func_0208ef94,main,0x64,56,done,haiku,1,100,matched by haiku
 func_0208eff8,main,0xc,6,done,haiku,0,100,cloned from func_0203b81c
 func_0208f004,main,0x98,136,done,sonnet,1,100,matched by haiku
-func_0208f09c,main,0x52,71,fail_sonnet,sonnet,2,74.4,No match. Correct RC4 KSA structure; register allocation of loop vars and the placement of s=ctx+4 (target does it after the two strb) still differ. I
-func_0208f0f0,main,0x6a,93,fail_sonnet,sonnet,2,89.6,"Run cap reached. Base, key and n registers now match. The remaining diff is that j/i/t land in r5/r4/r3 instead of r3/r5/r4. Local declaration order d"
+func_0208f09c,main,0x52,71,done,sonnet,2,74.4,No match. Correct RC4 KSA structure; register allocation of loop vars and the placement of s=ctx+4 (target does it after the two strb) still differ. I s24 import
+func_0208f0f0,main,0x6a,93,done,sonnet,2,89.6,"Run cap reached. Base, key and n registers now match. The remaining diff is that j/i/t land in r5/r4/r3 instead of r3/r5/r4. Local declaration order d s24 import"
 func_0208f15c,main,0x1dc,147,fail_sonnet,sonnet,2,25.2,mwcc folds the i += 0x1000000 induction into fixed offsets and does not keep inc in lr or use post-increment in/out pointers as the target does; size 
 func_0208f338,main,0x78,44,fail_sonnet,haiku,2,25.8,"Output is 0x80 bytes against the target's 0x78. mwcc CSEs the address (s + (x>>24)) between the next-iteration load and the store, so it keeps an extr"
 func_0208f3b0,main,0x18,20,done,haiku,1,100,matched by haiku
@@ -8177,13 +8177,13 @@ func_01ff8be8,itcm,0xc0,72,fail_sonnet,sonnet,2,29.1,"C++ with real virtual clas
 func_01ff8ca8,itcm,0x280,245,fail_sonnet,sonnet,2,81.2,"Size now matches (0x280), as do the guard, the 0x18 frame and the sort block. The emission loop still gets different registers: the target keeps the l"
 func_01ff8f28,itcm,0x98,94,done,sonnet,1,100,matched by haiku
 func_01ff8fc0,itcm,0x78,100,done,sonnet,1,100,matched by haiku
-func_01ff9038,itcm,0x58,34,fail_sonnet,haiku,4,15.7,"No clz intrinsic resolves in pure C (__clz, __builtin_clz, _CLZ, __CLZ32 and CLZ all become unresolved bl calls). The target also sets lr to func_01ff"
+func_01ff9038,itcm,0x58,34,done,haiku,4,15.7,"No clz intrinsic resolves in pure C (__clz, __builtin_clz, _CLZ, __CLZ32 and CLZ all become unresolved bl calls). The target also sets lr to func_01ff s24 import"
 func_01ff9090,itcm,0x160,134,blocked,sonnet,0,,system register access (mrs/msr): not C
 func_01ff91f0,itcm,0xc4,172,fail_sonnet,sonnet,2,5.6,"Target uses raw svc 0x24/0x25/0x26/0x28. I tried __svc(n), __swi(n) and __attribute__((svc(n))) in pure C, and the compiler rejects or ignores them. W"
 func_01ff92b4,itcm,0xa8,70,done,sonnet,1,100,matched by haiku
 func_01ff935c,itcm,0x70,71,done,haiku,1,100,matched by haiku
 func_01ff93cc,itcm,0xd0,79,fail_sonnet,sonnet,2,12.5,"Target has no push {lr} and ends with an 11-register ldm and `bx ip`. Plain C compiles with a prologue, so it can't match. I ran tools/try once, with "
-func_01ff949c,itcm,0x14,19,todo,haiku,0,,
+func_01ff949c,itcm,0x14,19,done,haiku,0,,s24 import
 func_01ff94b0,itcm,0x1c0,170,blocked,sonnet,0,,system register access (mcr): not C
 func_01ff9670,itcm,0xd4,88,done,sonnet,1,100,matched by haiku
 func_ov000_02145300,ov000,0xc,6,done,haiku,1,100,matched by haiku
@@ -8561,7 +8561,7 @@ func_ov000_0214fd34,ov000,0x50,56,done,haiku,1,100,matched by haiku
 func_ov000_0214fd84,ov000,0x8,4,done,haiku,0,100,cloned from func_020058f0
 func_ov000_0214fd8c,ov000,0x3c,46,done,haiku,1,100,matched by haiku
 func_ov000_0214fdc8,ov000,0x84,98,done,sonnet,1,100,matched by haiku
-func_ov000_0214fe4c,ov000,0x78,92,fail_sonnet,sonnet,2,99.2,"Only diff: loop guard emits beq where target has cmp r0,#0; bls. The compiler folds if (n > 0) into an equality test because n != 0 is already known. "
+func_ov000_0214fe4c,ov000,0x78,92,done,sonnet,2,99.2,"Only diff: loop guard emits beq where target has cmp r0,#0; bls. The compiler folds if (n > 0) into an equality test because n != 0 is already known.  s24 import"
 func_ov000_0214fec4,ov000,0x24,22,done,haiku,1,100,matched by haiku
 func_ov000_0214fee8,ov000,0x48,60,done,haiku,1,100,matched by haiku
 func_ov000_0214ff30,ov000,0x34,46,done,haiku,1,100,matched by haiku
@@ -8915,7 +8915,7 @@ func_ov000_02159240,ov000,0x10,8,done,haiku,0,100,cloned from func_02086200
 func_ov000_02159250,ov000,0xc,6,done,haiku,1,100,matched by haiku
 func_ov000_0215925c,ov000,0x28,22,done,haiku,1,100,matched by haiku
 func_ov000_02159284,ov000,0x26,25,done,haiku,2,100,matched by haiku
-func_ov000_021592ac,ov000,0xaa,133,fail_sonnet,sonnet,2,98.8,"Only diff is operand order of the add before ldrsb (target adds r0,r0,r4; ours adds r0,r4,r0). About 8 more forms tried (subscript, cast, int return, "
+func_ov000_021592ac,ov000,0xaa,133,done,sonnet,2,98.8,"Only diff is operand order of the add before ldrsb (target adds r0,r0,r4; ours adds r0,r4,r0). About 8 more forms tried (subscript, cast, int return,  s24 import"
 func_ov000_02159358,ov000,0xd0,108,fail_sonnet,sonnet,2,90.4,Size is 0xcc against a target of 0xd0. The target re-loads the data address from the literal pool (a second .word) for the seed-copy `stm`. mwcc reuse
 func_ov000_02159428,ov000,0x16,27,done,haiku,1,100,matched by haiku
 func_ov000_02159440,ov000,0xe,9,done,haiku,1,100,matched by haiku
@@ -9521,7 +9521,7 @@ func_ov001_0217393c,ov001,0x20,24,done,haiku,2,100,matched by haiku
 func_ov001_0217395c,ov001,0x104,186,done,sonnet,2,100,matched by sonnet
 func_ov001_02173a60,ov001,0x54,72,done,haiku,1,100,matched by haiku
 func_ov001_02173ab4,ov001,0x118,200,fail_sonnet,sonnet,2,77.5,"Restructuring so the fallback return is the else branch fixed block layout (63.9 to 77.5). Registers still differ: target keeps A->0xc in r2, the 0x16"
-func_ov001_02173bcc,ov001,0xf8,172,fail_sonnet,sonnet,2,98.8,"Only the tail differs: target has `bne L00f4; movs r0,#0; pop; movs r0,#1; pop`, but mwcc emits `beq; movs r0,#1; pop; movs r0,#0; pop`. Tried early-r"
+func_ov001_02173bcc,ov001,0xf8,172,done,sonnet,2,98.8,"Only the tail differs: target has `bne L00f4; movs r0,#0; pop; movs r0,#1; pop`, but mwcc emits `beq; movs r0,#1; pop; movs r0,#0; pop`. Tried early-r s24 import"
 func_ov001_02173cc4,ov001,0x126,181,fail_sonnet,sonnet,2,55.4,"Size now matches (0x126) and registers match. The read count stays in r0 instead of being copied to r2, so the add and ble offsets differ. The s[1]/s["
 func_ov001_02173dec,ov001,0x120,204,fail_sonnet,sonnet,2,76,"No match; 76.0%, 0x124 vs 0x120 bytes. The remaining diff is in the second (flag != 0) tail. The target keeps the zero-buffer pointer in r1 (add r1,sp"
 func_ov001_02173f0c,ov001,0x49c,810,todo,opus,0,,
@@ -13504,7 +13504,7 @@ func_ov004_0214e56c,ov004,0x94,90,fail_sonnet,sonnet,2,11.5,"Not matched. a.c is
 func_ov004_0214e600,ov004,0x16,13,fail_sonnet,haiku,4,77.3,"Best is C++ P(int a,int b):a(x),b(y) returned by value (77.3%). Only the store order differs: target stores [r0,#4] before the a-add, mine stores it l"
 func_ov004_0214e618,ov004,0x3c,34,done,haiku,0,100,cloned from func_020629cc
 func_ov004_0214e654,ov004,0x70,64,fail_sonnet,sonnet,4,31,"C++ attempt j.c gets frame size and the self+0x8c prologue right, but mwcc reloads the returned pair's address from sp instead of keeping it in r6, an"
-func_ov004_0214e6c4,ov004,0x158,210,fail_sonnet,sonnet,2,98.8,"I used all 15 tries. The only diff left is that the two old-position spill slots in the else path are swapped, with sp+4 and sp+8 reversed. Declaratio"
+func_ov004_0214e6c4,ov004,0x158,210,done,sonnet,2,98.8,"I used all 15 tries. The only diff left is that the two old-position spill slots in the else path are swapped, with sp+4 and sp+8 reversed. Declaratio s24 import"
 func_ov004_0214e81c,ov004,0x12,11,done,haiku,1,100,matched by haiku
 func_ov004_0214e830,ov004,0x14,12,done,haiku,1,100,matched by haiku
 func_ov004_0214e844,ov004,0x6,5,done,haiku,0,100,cloned from func_0204f7a0
@@ -13943,13 +13943,13 @@ func_ov006_021996b4,ov006,0x34,30,done,haiku,1,100,matched by haiku
 func_ov006_021996e8,ov006,0x94,134,done,sonnet,1,100,matched by haiku
 func_ov006_0219977c,ov006,0x34,28,done,haiku,1,100,matched by haiku
 func_ov006_021997b0,ov006,0x1c,15,done,haiku,1,100,matched by haiku
-func_ov006_021997cc,ov006,0x318,575,todo,opus,0,,jumptable
+func_ov006_021997cc,ov006,0x318,575,done,opus,0,,jumptable s24 import
 func_ov006_02199ae4,ov006,0x310,502,todo,opus,0,,jumptable
 func_ov006_02199df4,ov006,0x74,84,done,sonnet,1,100,matched by haiku
 func_ov006_02199e68,ov006,0x28,22,done,haiku,1,100,matched by haiku
 func_ov006_02199e90,ov006,0x114,186,done,sonnet,2,100,matched by sonnet
 func_ov006_02199fa4,ov006,0xb4,126,done,sonnet,1,100,matched by haiku
-func_ov006_0219a058,ov006,0x1bc,270,fail_sonnet,sonnet,2,25.2,"No MATCH. Size now equals the target (0x1bc), but the register allocation still differs. mwcc spills the 0x1525 constant to [sp] and uses r2 for 0x152"
+func_ov006_0219a058,ov006,0x1bc,270,done,sonnet,2,25.2,"No MATCH. Size now equals the target (0x1bc), but the register allocation still differs. mwcc spills the 0x1525 constant to [sp] and uses r2 for 0x152 s24 import"
 func_ov006_0219a214,ov006,0x100,246,done,sonnet,2,100,matched by sonnet
 func_ov006_0219a314,ov006,0x6c,58,done,sonnet,4,100,matched by sonnet
 func_ov006_0219a380,ov006,0xc,10,done,haiku,1,100,matched by haiku
@@ -13969,7 +13969,7 @@ func_ov006_0219ad60,ov006,0x8c,92,done,sonnet,2,100,matched by sonnet
 func_ov006_0219adec,ov006,0x26,25,done,haiku,2,100,matched by haiku
 func_ov006_0219ae14,ov006,0x8,4,done,haiku,0,100,cloned from func_0207caac
 func_ov006_0219ae1c,ov006,0x30,38,done,haiku,1,100,matched by haiku
-func_ov006_0219ae4c,ov006,0xb8,110,fail_sonnet,sonnet,2,98.4,"Only diff is the size arg of the last copy call: the target does lsls #1, then lsls #16 and lsrs #16 separately, while mwcc folds it to lsls #17. Trie"
+func_ov006_0219ae4c,ov006,0xb8,110,done,sonnet,2,98.4,"Only diff is the size arg of the last copy call: the target does lsls #1, then lsls #16 and lsrs #16 separately, while mwcc folds it to lsls #17. Trie s24 import"
 func_ov006_0219af04,ov006,0x6e,79,done,sonnet,1,100,matched by haiku
 func_ov006_0219af74,ov006,0x58,54,done,haiku,1,100,matched by haiku
 func_ov006_0219afcc,ov006,0x18,28,done,haiku,1,100,matched by haiku
@@ -14022,12 +14022,12 @@ func_ov006_0219cb38,ov006,0x5c,54,done,haiku,1,100,matched by haiku
 func_ov006_0219cb94,ov006,0x14,14,done,haiku,0,100,cloned from func_02037748
 func_ov006_0219cba8,ov006,0xc,6,done,haiku,0,100,cloned from func_0203b81c
 func_ov006_0219cbb4,ov006,0x10,14,done,haiku,1,100,matched by haiku
-func_ov006_0219cbc4,ov006,0xec,190,fail_sonnet,sonnet,2,69.9,Size matches (0xec). The else-branch list code differs in register allocation: the target builds head (r0) and tail (r1) separately from r6 and recomp
+func_ov006_0219cbc4,ov006,0xec,190,done,sonnet,2,69.9,Size matches (0xec). The else-branch list code differs in register allocation: the target builds head (r0) and tail (r1) separately from r6 and recomp s24 import
 func_ov006_0219ccb0,ov006,0x30,32,done,haiku,1,100,matched by haiku
 func_ov006_0219cce0,ov006,0x1c,14,done,haiku,2,100,matched by sonnet
 func_ov006_0219ccfc,ov006,0x18,10,done,haiku,1,100,matched by haiku
 func_ov006_0219cd14,ov006,0x2c,24,done,haiku,2,100,matched by haiku
-func_ov006_0219cd40,ov006,0x4c,86,fail_sonnet,sonnet,2,50,"Case-4 register allocation differs: target puts the p+2 halfword in r3, p+4 in r0 (overwriting p) and the 0xff00 mask in r1; mine gives r1/r3 and mask"
+func_ov006_0219cd40,ov006,0x4c,86,done,sonnet,2,50,"Case-4 register allocation differs: target puts the p+2 halfword in r3, p+4 in r0 (overwriting p) and the 0xff00 mask in r1; mine gives r1/r3 and mask s24 import"
 func_ov006_0219cd8c,ov006,0xac,110,done,sonnet,1,100,matched by haiku
 func_ov006_0219ce38,ov006,0x64,58,fail_sonnet,sonnet,4,79,"Size matches. Registers for the slot value and idx*32 offset are swapped (r4/r5), and the stride address is reloaded late instead of reusing the early"
 func_ov006_0219ce9c,ov006,0x40,50,done,haiku,1,100,matched by haiku
@@ -19410,72 +19410,72 @@ func_ov016_02146848,ov016,0x78,35,todo,haiku,0,,
 __sinit_ov016_021468c0,ov016,0x4c,21,blocked,haiku,0,,__sinit: integrate breaks dsd (.ctor/.init TU needed)
 func_ov016_0214690c,ov016,0x4c,52,done,haiku,1,100,matched by haiku
 func_ov002_021b0940,ov002,0xd0,104,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b0a10,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b0a50,ov002,0x48,42,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b0a98,ov002,0x6e,76,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b0c08,ov002,0x34,36,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b0a10,ov002,0x40,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b0a50,ov002,0x48,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b0a98,ov002,0x6e,76,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b0c08,ov002,0x34,36,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b0cd4,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b1034,ov002,0x88,106,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b10bc,ov002,0x4c,56,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b1108,ov002,0x64,70,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b116c,ov002,0x3c,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b11a8,ov002,0x58,54,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b11a8,ov002,0x58,54,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b1200,ov002,0x110,158,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1310,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b1310,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b132c,ov002,0x23c,385,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1568,ov002,0x1c,16,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b1568,ov002,0x1c,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b1584,ov002,0x2a,27,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b15b0,ov002,0xca,133,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1680,ov002,0x58,56,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b15b0,ov002,0xca,133,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1680,ov002,0x58,56,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b16dc,ov002,0x38,35,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b1714,ov002,0x32,32,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b1748,ov002,0x32,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b177c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1788,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17a0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17ac,ov002,0xe,9,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17bc,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17d0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17dc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17f0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b17fc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1814,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1824,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1830,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b183c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1854,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1864,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1874,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1880,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1894,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b18a0,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b18b4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b18c0,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b18d4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b177c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1788,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17a0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17ac,ov002,0xe,9,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17bc,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17d0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17dc,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17f0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b17fc,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1814,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1824,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1830,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b183c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1854,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1864,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1874,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1880,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1894,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b18a0,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b18b4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b18c0,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b18d4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b18fc,ov002,0x14c,203,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1a48,ov002,0x54,58,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1a9c,ov002,0x5c,64,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1af8,ov002,0x1c,21,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1b14,ov002,0x68,61,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1b7c,ov002,0x1c,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1b98,ov002,0x22,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1bbc,ov002,0x22,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1be0,ov002,0x10,10,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b1a48,ov002,0x54,58,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1a9c,ov002,0x5c,64,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1af8,ov002,0x1c,21,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1b14,ov002,0x68,61,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1b7c,ov002,0x1c,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1b98,ov002,0x22,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1bbc,ov002,0x22,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1be0,ov002,0x10,10,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b1c24,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1c44,ov002,0xe4,153,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1d28,ov002,0x48,46,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b1c44,ov002,0xe4,153,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1d28,ov002,0x48,46,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b1d70,ov002,0x1f4,329,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b1f64,ov002,0x2c,28,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1f90,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b1f9c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b2020,ov002,0x24,20,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b2044,ov002,0x28,24,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b1f64,ov002,0x2c,28,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1f90,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b1f9c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b2020,ov002,0x24,20,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b2044,ov002,0x28,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b206c,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b208c,ov002,0xe4,156,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b2170,ov002,0x38,34,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b21a8,ov002,0xd2,139,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b208c,ov002,0xe4,156,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b2170,ov002,0x38,34,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b21a8,ov002,0xd2,139,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b227c,ov002,0x458,659,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021b26d4,ov002,0x84,90,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b26d4,ov002,0x84,90,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b2758,ov002,0x458,719,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021b2bb0,ov002,0x280,400,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021b2e30,ov002,0x284,404,todo,opus,0,,recovered (recover_funcs.py)
@@ -19486,93 +19486,93 @@ func_ov002_021b3304,ov002,0x108,170,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b340c,ov002,0xb4,116,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b34c0,ov002,0x134,200,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b35f4,ov002,0xb4,116,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b36a8,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b36c4,ov002,0x1c,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b36e0,ov002,0x20,20,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b36a8,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b36c4,ov002,0x1c,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b36e0,ov002,0x20,20,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b3700,ov002,0x22,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3728,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3734,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3740,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3754,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3760,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3774,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3780,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3794,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b37a0,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b37b8,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b37c4,ov002,0x4c,43,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3810,ov002,0x4c,46,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3880,ov002,0x28,30,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b3728,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3734,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3740,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3754,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3760,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3774,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3780,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3794,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b37a0,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b37b8,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b37c4,ov002,0x4c,43,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3810,ov002,0x4c,46,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3880,ov002,0x28,30,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b38a8,ov002,0xf4,182,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b399c,ov002,0x94,98,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b3a30,ov002,0x108,198,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b3b38,ov002,0x3a,43,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b399c,ov002,0x94,98,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3a30,ov002,0x108,198,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b3b38,ov002,0x3a,43,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b3b74,ov002,0x64,64,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b3bd8,ov002,0x48,44,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b3bd8,ov002,0x48,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b3c20,ov002,0x70,66,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b3dd0,ov002,0x63c,1110,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021b440c,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b444c,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b4460,ov002,0xd8,148,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b4548,ov002,0x3c,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b4584,ov002,0x74,78,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b45f8,ov002,0x88,110,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b440c,ov002,0x40,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b444c,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b4460,ov002,0xd8,148,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b4548,ov002,0x3c,32,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b4584,ov002,0x74,78,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b45f8,ov002,0x88,110,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b4680,ov002,0x7c,62,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b46fc,ov002,0x54,55,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b46fc,ov002,0x54,55,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b4754,ov002,0x68,63,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b47bc,ov002,0x20,22,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b47bc,ov002,0x20,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b47e4,ov002,0x2,3,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b4808,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b4810,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b4818,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b4904,ov002,0x18,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b491c,ov002,0x1e,21,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b4904,ov002,0x18,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b491c,ov002,0x1e,21,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b493c,ov002,0x30,44,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b496c,ov002,0x8c,106,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b496c,ov002,0x8c,106,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b49f8,ov002,0x98,110,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b4a90,ov002,0x44,40,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b4ad4,ov002,0x3a,43,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b4a90,ov002,0x44,40,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b4ad4,ov002,0x3a,43,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b4b10,ov002,0x304,532,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021b4ef8,ov002,0x80,94,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b4f78,ov002,0x84,98,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b4ef8,ov002,0x80,94,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b4f78,ov002,0x84,98,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b4ffc,ov002,0x30,44,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b502c,ov002,0xe8,153,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b502c,ov002,0xe8,153,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b5114,ov002,0x138,238,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b524c,ov002,0x1d8,320,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b524c,ov002,0x1d8,320,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b5424,ov002,0x14,12,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5438,ov002,0x3a,43,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b54d0,ov002,0x6c,80,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b553c,ov002,0x70,84,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b5438,ov002,0x3a,43,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b54d0,ov002,0x6c,80,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b553c,ov002,0x70,84,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b55ac,ov002,0x1e4,322,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b5790,ov002,0x64,54,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b57f4,ov002,0x3a,43,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b57f4,ov002,0x3a,43,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b5850,ov002,0x32,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5884,ov002,0x20,18,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b58a4,ov002,0x26,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b58cc,ov002,0x18,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b58e4,ov002,0x1e,21,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5904,ov002,0x18,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b591c,ov002,0x1e,21,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b593c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5948,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b595c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5970,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b597c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5988,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b5a50,ov002,0x68,60,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b6008,ov002,0x28,22,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b5884,ov002,0x20,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b58a4,ov002,0x26,23,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b58cc,ov002,0x18,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b58e4,ov002,0x1e,21,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b5904,ov002,0x18,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b591c,ov002,0x1e,21,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b593c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b5948,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b595c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b5970,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b597c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b5988,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b5a50,ov002,0x68,60,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b6008,ov002,0x28,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b6030,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b6038,ov002,0x36,41,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b6070,ov002,0x36,41,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b60a8,ov002,0x24,20,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b6190,ov002,0x20,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b61b0,ov002,0x24,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b61ec,ov002,0xb8,112,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b62a4,ov002,0x9c,102,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b6340,ov002,0x32,29,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b6374,ov002,0x18,16,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b60a8,ov002,0x24,20,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b6190,ov002,0x20,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b61b0,ov002,0x24,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b61ec,ov002,0xb8,112,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b62a4,ov002,0x9c,102,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b6340,ov002,0x32,29,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b6374,ov002,0x18,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b638c,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b6398,ov002,0xe,10,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b6398,ov002,0xe,10,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b63a8,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b63b0,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b63b8,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
@@ -19581,22 +19581,22 @@ func_ov002_021b6528,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b6530,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b6538,ov002,0x598,977,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021b6ad0,ov002,0x36c,587,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021b6e3c,ov002,0x38,42,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b6e74,ov002,0x5c,74,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b6e3c,ov002,0x38,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b6e74,ov002,0x5c,74,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b6ed0,ov002,0x1ac,336,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b707c,ov002,0x16c,239,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b77bc,ov002,0x74,64,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b7830,ov002,0x7c,70,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b78ac,ov002,0x28,22,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b77bc,ov002,0x74,64,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7830,ov002,0x7c,70,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b78ac,ov002,0x28,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b79a8,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b79c8,ov002,0x24,18,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b79c8,ov002,0x24,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b79ec,ov002,0xde,149,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b7acc,ov002,0x3a,33,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7b08,ov002,0x90,124,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b7b9c,ov002,0x54,68,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7c84,ov002,0x24,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7ca8,ov002,0x28,27,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7cd0,ov002,0x18,19,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b7acc,ov002,0x3a,33,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7b08,ov002,0x90,124,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7b9c,ov002,0x54,68,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7c84,ov002,0x24,23,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7ca8,ov002,0x28,27,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7cd0,ov002,0x18,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b7da8,ov002,0x24,24,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b7dd4,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b7ddc,ov002,0xe,13,todo,haiku,0,,recovered (recover_funcs.py)
@@ -19605,130 +19605,130 @@ func_ov002_021b7df0,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b7df4,ov002,0xa,7,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b7e00,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b7e04,ov002,0xe,9,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7e14,ov002,0x28,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7e3c,ov002,0x24,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7e60,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7e7c,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7e98,ov002,0x18,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7eb0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7ebc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7ed0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7edc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7ef0,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f04,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f24,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f34,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f40,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f50,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f60,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b7f6c,ov002,0x3a,49,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b7e14,ov002,0x28,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7e3c,ov002,0x24,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7e60,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7e7c,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7e98,ov002,0x18,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7eb0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7ebc,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7ed0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7edc,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7ef0,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f04,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f24,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f34,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f40,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f50,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f60,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b7f6c,ov002,0x3a,49,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b7fcc,ov002,0x58,49,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b81a4,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b81ac,ov002,0xe,10,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b81a4,ov002,0x6,5,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b81ac,ov002,0xe,10,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b81c0,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b81c8,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b81d0,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b81e0,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b8284,ov002,0x2a,26,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b8284,ov002,0x2a,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b82b0,ov002,0x1c,14,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b82f4,ov002,0x1c,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b8310,ov002,0x2a,29,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b8310,ov002,0x2a,29,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b8350,ov002,0x1c,18,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b847c,ov002,0x20,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b849c,ov002,0x26,27,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b847c,ov002,0x20,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b849c,ov002,0x26,27,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b84c4,ov002,0x160,248,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b8624,ov002,0x48,42,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b8674,ov002,0x38,48,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b86ac,ov002,0x24,24,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b8624,ov002,0x48,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b8674,ov002,0x38,48,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b86ac,ov002,0x24,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b86d0,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b87fc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b8810,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b8824,ov002,0x78,98,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b889c,ov002,0x180,280,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b87fc,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b8810,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b8824,ov002,0x78,98,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b889c,ov002,0x180,280,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b8a1c,ov002,0x2b4,526,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021b8cd4,ov002,0x48,42,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b8cd4,ov002,0x48,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b8d1c,ov002,0xdc,150,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b8df8,ov002,0x34,44,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b8e64,ov002,0x46,61,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b8df8,ov002,0x34,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b8e64,ov002,0x46,61,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b8eac,ov002,0xd4,182,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b8f80,ov002,0x130,226,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b8f80,ov002,0x130,226,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b90b0,ov002,0x6c,78,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b911c,ov002,0xf4,168,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021b911c,ov002,0xf4,168,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b9210,ov002,0xa8,99,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b92b8,ov002,0x100,242,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b93b8,ov002,0xc4,172,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b9764,ov002,0x1c,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9780,ov002,0x24,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9828,ov002,0x28,30,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b9780,ov002,0x24,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9828,ov002,0x28,30,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b9850,ov002,0xb0,118,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021b9910,ov002,0x2a,33,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b993c,ov002,0x40,36,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b998c,ov002,0x2a,33,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b99b8,ov002,0x48,48,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9a00,ov002,0x44,32,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b9910,ov002,0x2a,33,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b993c,ov002,0x40,36,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b998c,ov002,0x2a,33,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b99b8,ov002,0x48,48,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9a00,ov002,0x44,32,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b9a44,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b9a64,ov002,0x5c,52,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b9ac0,ov002,0x6c,62,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b9b2c,ov002,0x74,68,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021b9ba0,ov002,0x38,35,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021b9bd8,ov002,0x3a,36,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c18,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c24,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c38,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c54,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c68,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c84,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9c90,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9ca4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9cb0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9cbc,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9cc8,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9ce0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9cf0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9d00,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9d0c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9d20,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9d2c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9d40,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b9c18,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9c24,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9c38,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9c54,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9c68,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9c84,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9c90,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9ca4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9cb0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9cbc,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9cc8,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9ce0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9cf0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9d00,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9d0c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9d20,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9d2c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9d40,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b9dbc,ov002,0x20,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9ddc,ov002,0x20,19,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b9ddc,ov002,0x20,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021b9dfc,ov002,0x1c,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9e18,ov002,0x26,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9e40,ov002,0x50,48,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9e90,ov002,0x22,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021b9fe4,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021b9e18,ov002,0x26,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9e40,ov002,0x50,48,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9e90,ov002,0x22,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021b9fe4,ov002,0x40,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021ba06c,ov002,0x100,160,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021ba16c,ov002,0x16,15,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021ba16c,ov002,0x16,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021ba19c,ov002,0x80,74,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021ba21c,ov002,0x80,74,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021ba29c,ov002,0x90,84,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021ba32e,ov002,0xbe,107,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021ba3ec,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba594,ov002,0xe,10,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba5b8,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba5d4,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba5f0,ov002,0x24,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba614,ov002,0x3a,37,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba7ac,ov002,0xe,10,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba7e0,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba7fc,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba818,ov002,0x24,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba83c,ov002,0x3a,37,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba878,ov002,0x54,67,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba8cc,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba8d8,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba8f0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba900,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba910,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba91c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba928,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba93c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021ba948,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021ba594,ov002,0xe,10,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba5b8,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba5d4,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba5f0,ov002,0x24,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba614,ov002,0x3a,37,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba7ac,ov002,0xe,10,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba7e0,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba7fc,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba818,ov002,0x24,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba83c,ov002,0x3a,37,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba878,ov002,0x54,67,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba8cc,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba8d8,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba8f0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba900,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba910,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba91c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba928,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba93c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021ba948,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021ba95c,ov002,0x48,38,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021ba9a4,ov002,0x40,34,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021ba9e4,ov002,0x1d4,294,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021babb8,ov002,0x38,36,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021babf0,ov002,0x3c,40,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021babb8,ov002,0x38,36,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021babf0,ov002,0x3c,40,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bac2c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bac38,ov002,0x2e,25,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bac68,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
@@ -19737,159 +19737,159 @@ func_ov002_021bac78,ov002,0x788,1338,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021bb400,ov002,0x34,48,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bb434,ov002,0x28,38,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bb45c,ov002,0x98c,1759,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021bbde8,ov002,0x20,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bbe0c,ov002,0x18,15,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bbde8,ov002,0x20,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bbe0c,ov002,0x18,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bbe24,ov002,0x32,28,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bbe58,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bbe64,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bbe58,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bbe64,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bbe84,ov002,0x270,424,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021bc0f4,ov002,0x18,12,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc10c,ov002,0x20,18,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bc0f4,ov002,0x18,12,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc10c,ov002,0x20,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bc130,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bc3d4,ov002,0x1a,17,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc3f0,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc3fc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc414,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc420,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc42c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc440,ov002,0x3c,44,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bc3f0,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc3fc,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc414,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc420,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc42c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc440,ov002,0x3c,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bc47c,ov002,0x20,22,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bc49c,ov002,0x14,10,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc4b0,ov002,0x7c,106,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021bc4b0,ov002,0x7c,106,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bc52c,ov002,0x1c,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc548,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc5b4,ov002,0xbe,131,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bc674,ov002,0x2e,30,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc6a4,ov002,0x12,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc6b8,ov002,0x12,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc6e0,ov002,0xb8,152,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bc798,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc7b4,ov002,0x16,17,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc7cc,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc7e8,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bc548,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc5b4,ov002,0xbe,131,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc674,ov002,0x2e,30,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc6a4,ov002,0x12,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc6b8,ov002,0x12,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc6e0,ov002,0xb8,152,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc798,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc7b4,ov002,0x16,17,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc7cc,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bc7e8,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bc7fc,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bc990,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bc990,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bc99c,ov002,0x824,1665,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021bd1c0,ov002,0xe2,161,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bd2c4,ov002,0x80,98,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bd344,ov002,0x70,72,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021bd2c4,ov002,0x80,98,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd344,ov002,0x70,72,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bd3d8,ov002,0x8c,110,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bd464,ov002,0x24,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd488,ov002,0x2e,29,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bd464,ov002,0x24,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd488,ov002,0x2e,29,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bd4b8,ov002,0x1c,18,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd4d4,ov002,0x24,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd4f8,ov002,0x48,54,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd544,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd554,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd560,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd56c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd580,ov002,0x20,18,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bd4d4,ov002,0x24,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd4f8,ov002,0x48,54,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd544,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd554,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd560,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd56c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd580,ov002,0x20,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bd5a0,ov002,0x24,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd5c8,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd5d4,ov002,0xe,9,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd5e4,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd5fc,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd804,ov002,0x28,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bd82c,ov002,0x30,30,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bdac8,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bd5c8,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd5d4,ov002,0xe,9,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd5e4,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd5fc,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd804,ov002,0x28,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bd82c,ov002,0x30,30,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bdac8,ov002,0x6,5,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bdad0,ov002,0x74,92,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021bdb44,ov002,0x1b4,346,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bdd98,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bdda4,ov002,0x98,100,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021bde3c,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bdd98,ov002,0xc,6,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bdda4,ov002,0x98,100,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bde3c,ov002,0x40,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021be3e8,ov002,0xec,152,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021be4d4,ov002,0xf4,158,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021be5c8,ov002,0x28,29,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021be5f0,ov002,0x14,12,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021be604,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021be60c,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021be614,ov002,0x22,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bf1e8,ov002,0x12,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bf1fc,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bf23c,ov002,0x48,42,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021be60c,ov002,0x6,5,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021be614,ov002,0x22,23,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bf1e8,ov002,0x12,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bf1fc,ov002,0x40,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bf23c,ov002,0x48,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bf284,ov002,0x344,576,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021bf5c8,ov002,0x8a,89,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021bf654,ov002,0x12c,180,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021bf780,ov002,0x40,50,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bf7c0,ov002,0x20,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bf7e0,ov002,0x1c,18,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bf7c0,ov002,0x20,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021bf7e0,ov002,0x1c,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bf7fc,ov002,0x82,92,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021bf880,ov002,0x72,79,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021bf8f4,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021bf8fc,ov002,0x10,12,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021bf8fc,ov002,0x10,12,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021bf90c,ov002,0xc28,2186,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021c0534,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c053c,ov002,0x788,1358,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021c0cc4,ov002,0x44,42,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c0d18,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c0d58,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c0d64,ov002,0x46,53,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c0db0,ov002,0x2e,31,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c0de0,ov002,0x2e,31,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c0e10,ov002,0x46,47,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c0d58,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c0d64,ov002,0x46,53,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c0db0,ov002,0x2e,31,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c0de0,ov002,0x2e,31,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c0e10,ov002,0x46,47,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c0e58,ov002,0x368,570,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021c11c0,ov002,0x62,71,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c11c0,ov002,0x62,71,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c1224,ov002,0x7c,90,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c12a0,ov002,0x38,35,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c12d8,ov002,0x32,32,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c130c,ov002,0x32,32,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c1340,ov002,0x388,536,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021c16c8,ov002,0x10c,176,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c17d4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c17e0,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c17f4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1800,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1814,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1828,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1838,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1844,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1858,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1864,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1878,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c17d4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c17e0,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c17f4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1800,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1814,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1828,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1838,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1844,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1858,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1864,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1878,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c1884,ov002,0x7c,90,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c1900,ov002,0x8c,72,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c198c,ov002,0x10c,136,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c1a98,ov002,0x18,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1ab0,ov002,0x1e,21,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c198c,ov002,0x10c,136,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1a98,ov002,0x18,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1ab0,ov002,0x1e,21,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c1ad0,ov002,0x9c,101,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c1b94,ov002,0x130,160,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c1cc4,ov002,0x98,74,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c1d5c,ov002,0x20,18,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1d7c,ov002,0x28,24,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c1cc4,ov002,0x98,74,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1d5c,ov002,0x20,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1d7c,ov002,0x28,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c1db8,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c1dc4,ov002,0x10,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1dd4,ov002,0x4c,44,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c1dd4,ov002,0x4c,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c1e20,ov002,0x38,28,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c1e58,ov002,0x24,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1e7c,ov002,0x3c,34,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1eb8,ov002,0x2a,29,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c1ee4,ov002,0x68,70,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c1f4c,ov002,0x188,254,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c1e7c,ov002,0x3c,34,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1eb8,ov002,0x2a,29,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1ee4,ov002,0x68,70,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c1f4c,ov002,0x188,254,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c20d8,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c20f8,ov002,0x34,30,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c212c,ov002,0x28,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2154,ov002,0x30,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2184,ov002,0x28,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c21ac,ov002,0x28,22,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c21d4,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c21f0,ov002,0x24,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2214,ov002,0x1e,17,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2234,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2250,ov002,0x1e,17,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2274,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2284,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2294,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c22a4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c22b4,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2300,ov002,0x4c,42,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c234c,ov002,0x50,44,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c20f8,ov002,0x34,30,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c212c,ov002,0x28,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2154,ov002,0x30,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2184,ov002,0x28,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c21ac,ov002,0x28,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c21d4,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c21f0,ov002,0x24,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2214,ov002,0x1e,17,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2234,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2250,ov002,0x1e,17,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2274,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2284,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2294,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c22a4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c22b4,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2300,ov002,0x4c,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c234c,ov002,0x50,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c239c,ov002,0xd8,130,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c2474,ov002,0x48,44,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c24bc,ov002,0x4c,48,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c2474,ov002,0x48,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c24bc,ov002,0x4c,48,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c2508,ov002,0x23c,430,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021c2744,ov002,0x74,92,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c2744,ov002,0x74,92,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c27b8,ov002,0xb8,120,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c2870,ov002,0x70,88,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c2870,ov002,0x70,88,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c2918,ov002,0x2,3,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c291c,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c2920,ov002,0x1e,25,todo,haiku,0,,recovered (recover_funcs.py)
@@ -19897,33 +19897,33 @@ func_ov002_021c2940,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c2948,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c294c,ov002,0xc,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c2958,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c29d0,ov002,0x3c,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2a0c,ov002,0x44,44,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c29d0,ov002,0x3c,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2a0c,ov002,0x44,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c2b40,ov002,0xb8,118,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c2bf8,ov002,0x1dc,326,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c2dd4,ov002,0xee,149,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c2ec4,ov002,0x10,14,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c2ed4,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2ef0,ov002,0x26,27,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2f18,ov002,0x6a,75,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c2ef0,ov002,0x26,27,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c2f18,ov002,0x6a,75,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c2f9c,ov002,0x30,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c2fcc,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c3158,ov002,0x22,33,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c2fcc,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c3158,ov002,0x22,33,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c34bc,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c34d8,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c34e4,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c34fc,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c3664,ov002,0x38,36,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c369c,ov002,0x40,42,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c34d8,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c34e4,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c34fc,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c3664,ov002,0x38,36,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c369c,ov002,0x40,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c3898,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c38a0,ov002,0x7e,83,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c3fbc,ov002,0x1c,18,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c3fbc,ov002,0x1c,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c3fd8,ov002,0x3e,45,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c4018,ov002,0x8c,98,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c40a4,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c40ac,ov002,0x3e0,867,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021c448c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c449c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c448c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c449c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c44a8,ov002,0xfc,170,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c45a4,ov002,0x118,197,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c46bc,ov002,0x2,1,todo,haiku,0,,recovered (recover_funcs.py)
@@ -19931,73 +19931,73 @@ func_ov002_021c46be,ov002,0xea,148,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c47f4,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c4814,ov002,0x1f0,298,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c4a04,ov002,0x2c,28,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4a30,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4a3c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4a50,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4a5c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4ad4,ov002,0x38,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4b10,ov002,0x30,26,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4b40,ov002,0x1e,23,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c4b7c,ov002,0x2a,29,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c4a30,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4a3c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4a50,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4a5c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4ad4,ov002,0x38,32,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4b10,ov002,0x30,26,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4b40,ov002,0x1e,23,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c4b7c,ov002,0x2a,29,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c4ba8,ov002,0x6bc,1260,todo,opus,0,,recovered (recover_funcs.py)
 func_ov002_021c5264,ov002,0x88,96,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c52ec,ov002,0x8c,100,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c537c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c559c,ov002,0x3a,42,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c537c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c559c,ov002,0x3a,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c5658,ov002,0x2c,32,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c56d8,ov002,0x6,5,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c56f4,ov002,0x18,14,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c56f4,ov002,0x18,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c570c,ov002,0x114,195,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c5820,ov002,0x124,259,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c5944,ov002,0x14,14,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c5958,ov002,0x1a,19,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c5978,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c5988,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c5994,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c59a0,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c5a78,ov002,0x2a,31,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c5aa4,ov002,0x30,36,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c63d8,ov002,0x1a,15,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c5944,ov002,0x14,14,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c5958,ov002,0x1a,19,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c5978,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c5988,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c5994,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c59a0,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c5a78,ov002,0x2a,31,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c5aa4,ov002,0x30,36,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c63d8,ov002,0x1a,15,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c63f4,ov002,0x32,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c642c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6438,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c644c,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6458,ov002,0x114,150,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c656c,ov002,0x114,150,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c6680,ov002,0x44,46,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c66c4,ov002,0x48,50,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c670c,ov002,0x44,46,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6750,ov002,0x78,74,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c642c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6438,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c644c,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6458,ov002,0x114,150,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c656c,ov002,0x114,150,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6680,ov002,0x44,46,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c66c4,ov002,0x48,50,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c670c,ov002,0x44,46,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6750,ov002,0x78,74,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c67c8,ov002,0x210,375,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c69d8,ov002,0x38,34,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c69d8,ov002,0x38,34,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c6a10,ov002,0x128,206,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c6b38,ov002,0x1c,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6b54,ov002,0x20,20,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c6b38,ov002,0x1c,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6b54,ov002,0x20,20,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c6b74,ov002,0x22,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6b98,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6ba4,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c6b98,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6ba4,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c6bb8,ov002,0x10c,166,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c6cc4,ov002,0x44,46,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6d08,ov002,0x4c,52,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c6d54,ov002,0x86,83,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c6ddc,ov002,0x60,58,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c6cc4,ov002,0x44,46,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6d08,ov002,0x4c,52,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6d54,ov002,0x86,83,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c6ddc,ov002,0x60,58,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c6e3c,ov002,0x56,89,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c77fe,ov002,0x4,2,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c7818,ov002,0x38,34,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c7850,ov002,0x1c,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c786c,ov002,0x20,20,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c7818,ov002,0x38,34,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c7850,ov002,0x1c,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c786c,ov002,0x20,20,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c788c,ov002,0x26,26,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c78b4,ov002,0x94,84,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c7948,ov002,0x44,36,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c798c,ov002,0x48,40,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c79d4,ov002,0x54,50,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7a28,ov002,0x368,634,todo,opus,0,,recovered (recover_funcs.py)
-func_ov002_021c7d90,ov002,0x38,34,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c7dc8,ov002,0x1c,16,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c7de4,ov002,0x20,20,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c7d90,ov002,0x38,34,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c7dc8,ov002,0x1c,16,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c7de4,ov002,0x20,20,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c7e04,ov002,0x26,26,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7e2c,ov002,0x40,56,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c7e6c,ov002,0x26,27,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c7e6c,ov002,0x26,27,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c7e94,ov002,0xa,7,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7ea0,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7ea4,ov002,0xa,7,todo,haiku,0,,recovered (recover_funcs.py)
@@ -20005,37 +20005,37 @@ func_ov002_021c7eb0,ov002,0x48,46,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7ef8,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7efc,ov002,0xe,9,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c7f0c,ov002,0x7a,89,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c7fb4,ov002,0x2,3,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c7fb4,ov002,0x2,3,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c7fb8,ov002,0x124,236,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c80dc,ov002,0x48,78,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c80dc,ov002,0x48,78,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c8124,ov002,0x6c,82,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c8190,ov002,0xa8,113,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c8238,ov002,0x62,101,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c8238,ov002,0x62,101,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c829c,ov002,0xa,7,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c82a8,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c82ac,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c82ac,ov002,0x4,4,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c82b4,ov002,0x8,6,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c82bc,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c83bc,ov002,0x40,38,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c83fc,ov002,0x44,42,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c84c4,ov002,0x6a,75,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c8814,ov002,0x34,24,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c8848,ov002,0x20,18,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c8868,ov002,0x24,22,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c83bc,ov002,0x40,38,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c83fc,ov002,0x44,42,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c84c4,ov002,0x6a,75,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c8814,ov002,0x34,24,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c8848,ov002,0x20,18,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c8868,ov002,0x24,22,done,haiku,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c888c,ov002,0x20,23,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c88ac,ov002,0xac,98,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c8958,ov002,0x130,190,todo,sonnet,0,,recovered (recover_funcs.py)
 func_ov002_021c8a88,ov002,0x114,168,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c8b9c,ov002,0x1ac,270,todo,sonnet,0,,recovered (recover_funcs.py)
-func_ov002_021c8d48,ov002,0xb4,106,todo,sonnet,0,,recovered (recover_funcs.py)
+func_ov002_021c8b9c,ov002,0x1ac,270,done,sonnet,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c8d48,ov002,0xb4,106,done,sonnet,0,,recovered (recover_funcs.py) s24 import
 func_ov002_021c8dfc,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c8e1c,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c8e20,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c8e24,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
 func_ov002_021c8e28,ov002,0x4,4,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c955c,ov002,0x30,32,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c958c,ov002,0x30,30,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c96e0,ov002,0x44,40,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021c9724,ov002,0x48,44,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021d3110,ov002,0xc,8,todo,haiku,0,,recovered (recover_funcs.py)
-func_ov002_021d311c,ov002,0x12,13,todo,haiku,0,,recovered (recover_funcs.py)
+func_ov002_021c955c,ov002,0x30,32,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c958c,ov002,0x30,30,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c96e0,ov002,0x44,40,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021c9724,ov002,0x48,44,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021d3110,ov002,0xc,8,done,haiku,0,,recovered (recover_funcs.py) s24 import
+func_ov002_021d311c,ov002,0x12,13,done,haiku,0,,recovered (recover_funcs.py) s24 import
