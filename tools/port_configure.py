@@ -22,6 +22,47 @@ import ffclib  # noqa: E402
 DATA_DECL_RE = re.compile(r"extern [A-Za-z0-9_ ]+\*?\s*(func_\w+)(?:\[\w*\])?\s*;")
 
 
+# Absolute DS addresses in src/ (`ABS(u32, 0x0214075C)`, `(T *)0x020b2938`) that fall in a data/rodata/bss section
+# of the TU's own module, main, itcm or dtcm: the port keeps those sections in host blobs (port_gendata.py), so the
+# copy compiled for the port reads `(ffc_blob_<mod>_<sec> + off)` instead. Other values (hardware registers, the
+# shared 0x027ff/0x02fff area, code addresses) stay as they are: the HAL maps the DS address space for those.
+HEX_RE = re.compile(r"\b0[xX]0*([0-9a-fA-F]{7,8})([uUlL]*)\b")
+BLOB_SECS = None
+
+
+def blob_sections():
+    global BLOB_SECS
+    if BLOB_SECS is None:
+        import port_gendata
+        BLOB_SECS = {m: [(f"ffc_blob_{m}{n}".replace(".", "_"), lo, hi) for n, lo, hi, kind in port_gendata.sections(d)
+                         if kind != "code"] for m, d in ffclib.module_dirs()}
+    return BLOB_SECS
+
+
+def rewrite_abs(text: str, mod: str) -> str:
+    secs = blob_sections()
+    order = [mod] + [m for m in ("main", "itcm", "dtcm") if m != mod]
+    used = set()
+
+    def sub(m):
+        v = int(m[1], 16)
+        if not 0x01ff8000 <= v < 0x03000000:
+            return m[0]
+        for md in order:
+            for name, lo, hi in secs.get(md, ()):
+                if lo <= v < hi or (v == hi and name.endswith("_bss")):
+                    used.add(name)
+                    return f"((__SIZE_TYPE__)({name} + {v - lo:#x}))"
+        return m[0]
+
+    out = HEX_RE.sub(sub, text)
+    if not used:
+        return text
+    decl = "".join(f"FFC_EXTERN_C unsigned char {n}[];\n" for n in sorted(used))
+    return ("#ifdef __cplusplus\n#define FFC_EXTERN_C extern \"C\"\n#else\n#define FFC_EXTERN_C extern\n#endif\n"
+            + decl + "#line 1\n" + out)
+
+
 def function_names() -> set:
     out = set()
     for _, d in ffclib.module_dirs():
@@ -87,6 +128,7 @@ def main():
         objs.append(o)
         src = rel
         fixed_text = DATA_DECL_RE.sub(lambda m: f"void {m[1]}();" if m[1] in fnames else m[0], head)
+        fixed_text = rewrite_abs(fixed_text, rel.parts[1])
         if fixed_text != head:
             src = Path(out) / "fix" / rel
             (ROOT / src).parent.mkdir(parents=True, exist_ok=True)
@@ -133,7 +175,7 @@ def main():
     (ROOT / "port").mkdir(exist_ok=True)
     (ROOT / "port" / f"build.{a.target}.ninja").write_text("\n".join(lines))
     (ROOT / "port" / f"skipped.{a.target}.txt").write_text("".join(s + "\n" for s in skipped))
-    print(f"{len(objs)} TUs ({len(fixed)} with function-as-data decls rewritten), {len(skipped)} asm stubs/overridden TUs skipped -> port/build.{a.target}.ninja")
+    print(f"{len(objs)} TUs ({len(fixed)} rewritten: function-as-data decls, absolute data addresses), {len(skipped)} asm stubs/overridden TUs skipped -> port/build.{a.target}.ninja")
 
 
 if __name__ == "__main__":

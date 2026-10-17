@@ -273,3 +273,58 @@ uint32_t func_0207d5ac(void)
 void func_0207d644(void)
 {
 }
+
+/* CARDi_ReadRomSyncCore(common): src/main/func_0207d8b0.c matches the ROM only because the ID read by
+ * CARDi_ReadRomIDCore stays in r0 for CARDi_CheckPulledOutCore; on the host the argument is passed explicitly. */
+extern void *data_02140e00[];
+extern uint32_t *data_021407c0;
+void func_0207db64(uint32_t id);
+void func_0207d600(uint32_t warn_mask);
+void func_0207d8b0(uint8_t *p)
+{
+    ((void (*)(int, uint32_t, uint32_t, uint32_t))data_02140e00[1])(0, FFC_REG32((uintptr_t)p + 0x500),
+                                                                     FFC_REG32((uintptr_t)p + 0x4fc),
+                                                                     FFC_REG32((uintptr_t)p + 0x504));
+    func_0207db64(func_0207d55c());
+    func_0207d600(8);
+    *data_021407c0 = 0; /* cmd->result = CARD_RESULT_SUCCESS */
+}
+
+/* FS_SetCurrentDirectory(path): src/main/func_0207e220.c keeps baseid apart from the rest of
+ * FSArgumentForFindPath (adjacent on the mwcc stack only). */
+extern void *func_0207e2d4(const char *path, uint32_t *baseid, char *relpath); /* FS_NormalizePath */
+extern void func_0208bcc8(void *dst, const void *src, uint32_t n);              /* STD_CopyLString */
+extern void func_0207e890(void *file);                                           /* FS_InitFile */
+extern uint32_t func_0207e0f4(void *file, uint32_t command, uint32_t blocking);  /* FSi_SendCommand */
+extern uint8_t data_021410cc[]; /* current_dir_pos */
+extern uint8_t data_021411dc[]; /* current_dir_path */
+uint32_t func_0207e220(const char *path)
+{
+    char relpath[0x104];
+    uint32_t file[18];
+    struct {
+        uint32_t baseid;
+        const char *relpath;
+        uint32_t target_id, target_is_directory;
+    } arg = {0};
+    uint32_t *arc = (uint32_t *)func_0207e2d4(path, &arg.baseid, relpath);
+    if (!arc)
+        return 0;
+    *(uint32_t *)(data_021410cc + 4) = (uint32_t)(uintptr_t)arc;
+    *(uint16_t *)(data_021410cc + 8) = 0;
+    *(uint16_t *)(data_021410cc + 0xa) = 0;
+    *(uint32_t *)(data_021410cc + 0xc) = 0;
+    func_0208bcc8(data_021411dc, relpath, 0x104);
+    if (((uint32_t *)(uintptr_t)arc[9])[4] != 0) { /* arc->vtbl->FindPath */
+        func_0207e890(file);
+        file[2] = (uint32_t)(uintptr_t)arc;
+        file[4] = (uint32_t)(uintptr_t)&arg;
+        arg.relpath = relpath;
+        arg.target_is_directory = 1;
+        if (func_0207e0f4(file, 4, 1)) {
+            *(uint16_t *)(data_021410cc + 8) = (uint16_t)arg.target_id;
+            func_0208bcc8(data_021411dc, relpath, 0x104);
+        }
+    }
+    return 1;
+}

@@ -105,6 +105,8 @@ void ffc_hal_init(void)
     memcpy((void *)(uintptr_t)0x027ffe00u, ffc_rom, 0x160);
     memcpy((void *)(uintptr_t)0x02fffe00u, ffc_rom, 0x160);
     FFC_REG32(0x027ffc00u) = FFC_REG32(0x02fffc00u) = 0x00001fc2u;
+    /* OSBootInfo (HW_WM_BOOT_BUF): boot_type = OS_BOOTTYPE_ROM, else FS skips the ROM archive. */
+    FFC_REG16(0x027ffc40u) = FFC_REG16(0x02fffc40u) = 1;
     hal_ready = 1;
 }
 
