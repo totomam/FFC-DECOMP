@@ -2,7 +2,7 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 31 (2026-10-17): read docs/STATUS.md "Done (session 31)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 31 (2026-10-17): read docs/STATUS.md "Plan for session 32+" then "Done (session 31)" first.
 
 - Branch: **`claude/ffc-decomp-port-session-31-678dvf`** (session 31; based on 9f36ef). Develop on the branch
   your session is given, starting from this one.

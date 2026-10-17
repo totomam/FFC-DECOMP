@@ -9,6 +9,30 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Plan for session 32+ (audited 2026-10-17, human-approved direction)
+Goals: (A) Windows + browser port, (B) decomp %. Keep orchestrator context lean; $0; Sonnet subagents only.
+1. **Bootstrap once, cache it** (biggest time/token sink: ~2 h + much context per session; container resets also
+   killed s31's background ninja mid-mwld). Write tools/bootstrap.sh (one command: ffc-assets link, setup, fetch,
+   extract, configure, refs, apt, emsdk) + a SessionStart hook in .claude/settings.json (keep context_guard hooks).
+   Cache tarball of tools/bin + build/usa (213 MB) + build/port/host (126 MB), compressed, split <100 MB parts like
+   rom/ffc.7z.0*, in totomam/ffc-assets (add_repo with access "push"; .git is 205 MB now — check repo size limits;
+   ask the human if push is refused). bootstrap.sh restores the cache, then ninja is incremental.
+2. **Port: batch-fix passthrough sites** from work/port_padcheck.txt (`tools/port_padcheck.py`, 64 s).
+   - Direct writers first (`grep -vP "writer \w+: blx? "`; 235 in main): Sonnet subagents, ~50 sites each, edit
+     src so the call passes what the ROM passes; each edited func must pass `tools/try <func> <file>` (seconds, no
+     link). One full ninja + 22/22 at the end of the batch, not per site (mwld link is slow). Sites inside
+     functions the host never runs are low value; prioritise callers on the boot path (gdb bt of past crashes).
+   - Clobbered-by-earlier-call sites (~2,240): the padded value is garbage either way; port_argpad change: pad 0
+     (not the caller param) when padcheck says clobbered. Small tools/ change; rerun port_configure.
+   - Then host rebuild + run; debugging via subagents with narrow questions; orchestrator never dumps raw
+     disasm/gdb output into its own context.
+3. **Decomp %**: free tiers are spent (permuter full run done s24: 34/501; arcnid/xmatch/clone/SDK done). Remaining
+   1,893 fail_sonnet + 1,153 todo need paid matching -> human decision; don't spend sessions on it otherwise. Port src
+   fixes (step 2) improve src correctness, not %.
+4. wasm/win32 only after the host reaches the title screen (wasm: by-value struct args to lifted funcs, see s31).
+5. Reality check for the human: stock DS emulators (melonDS etc.) already run the game on Windows/browser; the
+   native port is many sessions from title + graphics + sound.
+
 ## Done (session 31) — format -1 root-caused: wrong passthrough padding (r0/r1 not the caller's param); $0 model spend
 - Branch claude/ffc-decomp-port-session-31-678dvf (from 9f36ef). Bootstrap OK (assets, refs, apt, emsdk). Matching ninja
   sat in mwldarm at 16653/16656 at the context guard: **22/22 not confirmed** (work/boot_s31.log).
@@ -20,7 +44,7 @@
   (Earlier lead "table 0x20b11b4 zero" is wrong: __sinit_020a79ac fills it on the host.)
 - Host then gets further: SIGSEGV in func_0204f0b0 <- func_02060b4c: same bug class (ROM r1 = s->idx, C passed
   nothing -> padded garbage). **Fixed in src** (func_0204f0b0(s->base, s->idx)); host NOT rebuilt/rerun after it.
-- **Both src edits need a matching check** (ninja, then 22/22) — they should match (same regs), unverified.
+- Both src edits verified with `tools/try`: **MATCH** (full ninja/22/22 still pending: container reset killed it).
 - **Bug class is systematic**: port_argpad pads arg i with the caller's param i, wrong whenever the caller wrote r_i
   before the call (8,580 padded calls). A Sonnet subagent was writing **tools/port_padcheck.py** (ROM-guided: objdump
   each caller, scan back from each bl for a writer of r_i, report to work/port_padcheck.txt); if the file is missing or
