@@ -299,6 +299,13 @@ def pad_text(text: str, rel: str, handled=None) -> str:
         if f in A["tailret"] and gdefs[f]["rel"] == rel:
             edits += _r0_edits(text, s, d, ps)
             STATS["tailret"] += 1
+        elif d["ret"] != "void" and _scalar(d["ret"]) and not re.search(r"\breturn\b[^;{}]*;\s*$", _nocomment(text)[d["body"][0]:d["body"][1]]):
+            # mwcc code may fall off the end of a value function and leave r0 (often arg0) as the result (DLExtract
+            # func_02087c24); for clang that is UB. Dead code when every path returns.
+            name, kd = param_info(ps[0]) if ps else (None, None)
+            edits.append((d["body"][1], d["body"][1],
+                          f" return ({d['ret']})({name if name and kd in ('ptr', 'int') else 0}); "))
+            STATS["fallret"] = STATS.get("fallret", 0) + 1
     r0tu = any(d["name"] in A["tailret"] and gdefs.get(d["name"], {}).get("rel") == rel for d in s["defs"])
     for d in s["decls"]:
         g = d["name"]
