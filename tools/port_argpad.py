@@ -119,7 +119,7 @@ def pad_text(text: str, rel: str, handled=None) -> str:
         n = nparams(m[2])
         if n is None or n >= dn:
             continue
-        if "-lang c++" in text[:200] and re.search(r"\b" + f + r"\b(?!\s*\()", DECL_RE.sub("", text)):
+        if "-lang c++" in text[:200] and re.search(r"\b" + f + r"\b(?!\s*\()", text[:m.start()] + text[m.end():]):
             continue  # C++: also used as a function pointer, a wider prototype breaks that conversion
         short[f] = (dn, dp)
         new = ", ".join(ps + extra_params(dp, len(ps))) if ps else ", ".join(extra_params(dp, 0))

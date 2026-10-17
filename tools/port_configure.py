@@ -27,6 +27,7 @@ DATA_DECL_RE = re.compile(r"extern [A-Za-z0-9_ ]+\*?\s*(func_\w+)(?:\[\w*\])?\s*
 # of the TU's own module, main, itcm or dtcm: the port keeps those sections in host blobs (port_gendata.py), so the
 # copy compiled for the port reads `(ffc_blob_<mod>_<sec> + off)` instead. Other values (hardware registers, the
 # shared 0x027ff/0x02fff area, code addresses) stay as they are: the HAL maps the DS address space for those.
+LVALUE_CAST_RE = re.compile(r"\(\(([A-Za-z_]\w*\s*\*)\)\s*([A-Za-z_]\w*)\s*\)\s*=(?!=)")
 HEX_RE = re.compile(r"\b0[xX]0*([0-9a-fA-F]{7,8})([uUlL]*)\b")
 BLOB_SECS = None
 
@@ -130,6 +131,8 @@ def main():
         src = rel
         fixed_text = DATA_DECL_RE.sub(lambda m: f"void {m[1]}();" if m[1] in fnames else m[0], head)
         fixed_text = port_argpad.pad_text(fixed_text, str(rel))
+        # mwcc lvalue cast `((T *)x) = v` -> `(*(T **)&x) = v` (clang rejects the cast as an lvalue).
+        fixed_text = LVALUE_CAST_RE.sub(r"(*(\1*)&\2) =", fixed_text)
         fixed_text = rewrite_abs(fixed_text, rel.parts[1])
         if fixed_text != head:
             src = Path(out) / "fix" / rel
