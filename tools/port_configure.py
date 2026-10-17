@@ -132,7 +132,8 @@ def main():
         fixed_text = DATA_DECL_RE.sub(lambda m: f"void {m[1]}();" if m[1] in fnames else m[0], head)
         fixed_text = port_argpad.pad_text(fixed_text, str(rel))
         # mwcc lvalue cast `((T *)x) = v` -> `(*(T **)&x) = v` (clang rejects the cast as an lvalue).
-        fixed_text = LVALUE_CAST_RE.sub(r"(*(\1*)&\2) =", fixed_text)
+        fixed_text = LVALUE_CAST_RE.sub(lambda m: m[0] if re.search(r"[*\w)\]]\s*$", fixed_text[max(0, m.start() - 8):m.start()])
+                                        else f"(*({m[1]}*)&{m[2]}) =", fixed_text)
         fixed_text = rewrite_abs(fixed_text, rel.parts[1])
         if fixed_text != head:
             src = Path(out) / "fix" / rel
