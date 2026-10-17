@@ -9,6 +9,26 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 26) — CARD_LockRom hang fixed (r0-value voids), host reaches game threads, $0 model spend
+- Branch claude/ffc-decomp-port-continue-op63wf (from dh1p2g). Bootstrap OK (refs, emsdk, apt). Main ninja: see
+  work/ninja_s26.log (was in mwld at handoff; confirm 22/22 with `tail work/ninja_s26.log`).
+- **Why IME stayed 0**: not an IME site. NitroStartUp (func_02056898) -> OSi_InitCommon -> CARD init -> CARD_LockRom
+  (func_0207cabc) waited forever: OS_TryLockByWord (func_02086974) is a `void` def that tail-returns
+  OSi_DoTryLockByWord; port_argpad's return passthrough gave callers r0 = first arg (0x41) -> "lock busy" -> VAlarm
+  retry, which needs IRQs -> deadlock before the game ever reaches its OS_EnableIrq.
+- **tools/port_r0.py** (new): classifies what a function leaves in r0 at its returns from the ROM (linear capstone
+  scan: arg0 / call / other). **port_argpad**: void defs whose class has 'call' (subset of call+arg0; 3,940 defs)
+  become `unsigned int f() { unsigned int __r0 = arg0; ... __r0 = g(..) / ({__auto_type __v = g(..); __r0 = __v;
+  __v;}) ...; return __r0; }`; port_lift's VOID_DEFS excludes them. Fixed CARD hang and allocator func_0205681c.
+- **Header-declared functions unblocked** for passthrough params: port_configure writes `pad_header()` copies of
+  include/ to build/port/<t>/include (searched first); ninja cc rule now has gcc depfiles.
+- Host after r0 fix: past NitroStartUp, game threads run; crashed in func_020095b8(tmp, 0) from func_0205323c
+  (header-declared -> was zero-padded; real r1 passthrough). Header fix rebuilt at handoff (work/port_host_s26c.log)
+  — **not yet run**. Next: `FFC_RUN=1 gdb -batch -ex run -ex bt build/port/host/ffc`, trap on toward title.
+- wasm: `-sASYNCIFY -sASYNCIFY_STACK_SIZE=65536` added to the wasm link flags (not built). win32: not built.
+- Progress chart: queue.csv unchanged (16,650 done) -> no refresh needed.
+- Cost: $0 model spend (no subagents); orchestrator context ~200k.
+
 ## Done (session 25) — host past func_0204f6b0, game loop spins (IME never enabled), $0 model spend (Sonnet subagents only)
 - Branch claude/ffc-decomp-port-continue-dh1p2g (from 8p6a9g). Bootstrap OK, **22/22 confirmed** (work/boot_s25.log).
 - **tools/port_argpad.py** (new, hooked into port_configure's fix/ copy): (1) short callee decls get the def's params,

@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 25 (2026-10-17): read docs/STATUS.md "Done (session 25)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 26 (2026-10-17): read docs/STATUS.md "Done (session 26)" first.
 
-- Branch: **`claude/ffc-decomp-port-continue-dh1p2g`** (session 25; based on 8p6a9g). Develop on the branch
+- Branch: **`claude/ffc-decomp-port-continue-op63wf`** (session 26; based on dh1p2g). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -15,6 +15,9 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
+- Session 26: CARD_LockRom deadlock fixed (void defs returning r0 of a call: tools/port_r0.py + port_argpad r0
+  tracking); header prototypes padded (build/port/<t>/include); wasm -sASYNCIFY added. Next: run host after the
+  header rebuild (crash was func_020095b8 via func_0205323c), trap toward title; wasm + win32 builds.
 - Session 25: port_argpad (arg + return-value passthrough, transitive), CALLV in lift, OS_Halt/IRQ-queue HAL;
   host runs without crashing, frames tick, but IME never enabled -> no IRQs. Next: find why IME stays 0; then wasm, win32.
 - Queue (s24): 16,650 done / 20,040. s24 applied recover_funcs and integrated 678 free-tier matches (arcnid, SDK,
