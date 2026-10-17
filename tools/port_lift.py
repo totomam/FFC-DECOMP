@@ -58,6 +58,7 @@ typedef u32 (*ffc_fn)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
 #define STK(sp, i) L32((sp) + 4 * (i))
 #define CALL(f) (r0 = (f)(r0, r1, r2, r3, STK(sp, 0), STK(sp, 1), STK(sp, 2), STK(sp, 3), STK(sp, 4), STK(sp, 5)), \
                  r1 = ffc_r1)
+#define CALLV(f) ((void)(f)(r0, r1, r2, r3, STK(sp, 0), STK(sp, 1), STK(sp, 2), STK(sp, 3), STK(sp, 4), STK(sp, 5)))
 #define RET() do { ffc_r1 = r1; return r0; } while (0)
 static inline u32 lsl_c(u32 a, u32 s, u32 *c) { s &= 0xff; if (!s) return a; if (s < 32) { *c = (a >> (32 - s)) & 1; return a << s; } *c = s == 32 ? a & 1 : 0; return 0; }
 static inline u32 lsr_c(u32 a, u32 s, u32 *c) { s &= 0xff; if (!s) return a; if (s < 32) { *c = (a >> (s - 1)) & 1; return a >> s; } *c = s == 32 ? a >> 31 : 0; return 0; }
@@ -178,6 +179,12 @@ class World:
         return f"{to:#x}u"
 
 
+# Functions src/ defines with a `void` return: on the ARM they leave r0 (their first argument) untouched, on the host
+# eax is garbage, so a lifted caller keeps its own r0 across the call (CALLV) instead of assigning the result.
+# (A src function returning u64/struct or a non-void value needs nothing: r1 is only produced by lifted functions.)
+VOID_DEFS = set()
+
+
 def cname(n):
     return RENAME.get(n, n)
 
@@ -225,10 +232,10 @@ class Lifter:
     def call_named(self, name):
         if name in ("_s32_div_f", "_u32_div_f"):
             pass
-        return f"CALL({cname(name)});"
+        return f"{'CALLV' if name in VOID_DEFS else 'CALL'}({cname(name)});"
 
     def tail(self, name):
-        return f"{{ CALL({cname(name)}); RET(); }}"
+        return f"{{ {'CALLV' if name in VOID_DEFS else 'CALL'}({cname(name)}); RET(); }}"
 
     def lift(self):
         b, n = self.b, len(self.b)
@@ -758,6 +765,9 @@ def main():
     a = ap.parse_args()
     objs = [l for l in a.objs.read_text().split() if l and "/lift/" not in l]
     defined = nm_defined(objs)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import port_argpad
+    VOID_DEFS.update(port_argpad.void_names())
     w = World()
     todo = []
     for name, s in w.byname.items():

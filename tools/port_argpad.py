@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BASIC = {"u8", "s8", "u16", "s16", "u32", "s32", "int", "char", "short", "long", "unsigned", "signed", "bool",
          "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "BOOL", "size_t", "intptr_t", "uintptr_t",
          "const", "volatile", "register", "float", "double", "void"}
-STATS = {"real": 0, "zero": 0, "decls": 0, "calls": 0, "defs": 0}
+STATS = {"real": 0, "zero": 0, "decls": 0, "calls": 0, "defs": 0, "voidval": 0, "voidex": {}}
 
 
 def _strip(p: str) -> str:
@@ -91,6 +91,12 @@ def _nocomment(t: str) -> str:
     return re.sub(r"/\*.*?\*/|//[^\n]*", lambda m: re.sub(r"[^\n]", " ", m[0]), t, flags=re.S)
 
 
+def _ret(head: str) -> str:
+    """Return type text of a declaration/definition head (storage words dropped)."""
+    h = re.sub(r"\b(extern|static|inline|__inline|__inline__)\b|\"C\"", " ", head)
+    return re.sub(r"\s*\*\s*", " *", " ".join(h.split())).strip()
+
+
 def scan(text: str):
     """Structure of one TU: defs, decls, calls (with enclosing def) and by-value uses of func_X names."""
     t = _nocomment(text)
@@ -99,7 +105,7 @@ def scan(text: str):
     for m in DEF_RE.finditer(t):
         pre = re.findall(r"[A-Za-z_]\w*", t[m.start():m.start(1)])
         ps = split_args(m[2])
-        s["defs"].append(dict(name=m[1], pos=m.start(1), span=(m.start(2), m.end(2)), params=[] if ps == ["void"] else ps,
+        s["defs"].append(dict(ret=_ret(t[m.start():m.start(1)]), name=m[1], pos=m.start(1), span=(m.start(2), m.end(2)), params=[] if ps == ["void"] else ps,
                               static="static" in pre, method=t[m.start(1) - 1] == ":", variadic=nparams(m[2]) is None))
         skip.add(m.start(1))
     for m in DECL2_RE.finditer(t):
@@ -108,7 +114,7 @@ def scan(text: str):
         if not pre or set(pre) & set(NOTDECL) or not re.fullmatch(r'[\w\s*"]*', head):
             continue  # a call statement or label, not a declaration
         ps = split_args(m[2])
-        s["decls"].append(dict(name=m[1], span=(m.start(2), m.end(2)), params=[] if ps == ["void"] else ps,
+        s["decls"].append(dict(ret=_ret(head), name=m[1], span=(m.start(2), m.end(2)), params=[] if ps == ["void"] else ps,
                                empty=not ps, variadic=nparams(m[2]) is None, method=t[m.start(1) - 1] == ":"))
         skip.add(m.start(1))
     starts = [d["pos"] for d in s["defs"]]
@@ -150,7 +156,7 @@ def analysis():
             cpp_value |= s["values"]
         for d in s["defs"]:
             if not d["method"] and not d["variadic"]:
-                gdefs[d["name"]] = dict(rel=rel, params=d["params"], variadic=d["variadic"], static=d["static"])
+                gdefs[d["name"]] = dict(void=d["ret"] == "void", rel=rel, params=d["params"], variadic=d["variadic"], static=d["static"])
     blocked = {f for f, d in gdefs.items() if d["variadic"] or f in cpp_value or f in hdr or (d["static"] and f in any_value)}
     E = {f: len(d["params"]) for f, d in gdefs.items()}
     L = dict(E)
@@ -247,6 +253,73 @@ def pad_text(text: str, rel: str, handled=None) -> str:
             handled.add((rel, g))
     for st, en, r in sorted(edits, key=lambda x: (x[0], x[1]), reverse=True):
         text = text[:st] + r + text[en:]
+    return void_values(text, A)
+
+
+def _scalar(ret: str) -> bool:
+    w = re.findall(r"[A-Za-z_]\w*", ret)
+    return "*" in ret or (bool(w) and all(x in BASIC for x in w) and not {"float", "double"} & set(w))
+
+
+def void_names():
+    """Functions defined in src/ with a `void` return (ARM leaves r0 = first argument, the host eax is garbage)."""
+    return {f for f, d in analysis()["gdefs"].items() if d["void"] and not d["static"]}
+
+
+def _bare_statement(t: str, pos: int, cl: int) -> bool:
+    k = cl + 1
+    while k < len(t) and t[k] in " \t\r\n":
+        k += 1
+    if k >= len(t) or t[k] != ";":
+        return False
+    j = pos - 1
+    while j >= 0 and t[j] in " \t\r\n":
+        j -= 1
+    if j < 0 or t[j] in ";{}":
+        return True
+    if t[j] == ":":
+        return "?" not in t[max(t.rfind(";", 0, j), t.rfind("{", 0, j), t.rfind("}", 0, j)) + 1:j]
+    if t[j] == ")":
+        depth = 0
+        while j >= 0:
+            depth += t[j] == ")"
+            depth -= t[j] == "("
+            if depth == 0:
+                break
+            j -= 1
+        w = re.search(r"(\w+)\s*$", t[:j])
+        return bool(w) and w[1] in ("if", "while", "for", "switch")
+    w = re.search(r"(\w+)\s*$", t[:j + 1])
+    return bool(w) and w[1] in ("else", "do")
+
+
+def void_values(text: str, A=None) -> str:
+    """Calls whose value is used but whose src/ definition returns void: keep r0 (the first argument), as the ARM does."""
+    A = A or analysis()
+    vs = {f for f, d in A["gdefs"].items() if d["void"]}
+    if not any(m[1] in vs for m in NAME_RE.finditer(text)):
+        return text
+    for _ in range(500):
+        sc = scan(text)
+        t = _nocomment(text)
+        ret = {d["name"]: d["ret"] for d in sc["decls"] if not d["method"] and not (d["params"] and param_info(d["params"][0])[1] == "other")}
+        cand = [c for c in sc["calls"] if c["name"] in vs and ret.get(c["name"], "void") != "void"
+                and _scalar(ret[c["name"]])
+                and (not A["gdefs"][c["name"]]["params"] or param_info(A["gdefs"][c["name"]]["params"][0])[1] != "other")
+                and not _bare_statement(t, c["pos"], c["close"])]
+        if not cand:
+            break
+        c = cand[-1]
+        g = c["name"]
+        op = text.index("(", c["pos"] + len(g))
+        args = split_args(text[op + 1:c["close"]])
+        a0 = args[0] if args else "0"
+        rest = ", ".join(["__rv"] + args[1:]) if args else ""
+        text = (text[:c["pos"]] + f"({{ __typeof__(1 ? ({a0}) : ({a0})) __rv = ({a0}); {g}({rest}); ({ret[g]})__rv; }})"
+                + text[c["close"] + 1:])
+        STATS["voidval"] += 1
+        STATS["voidex"].setdefault(g, 0)
+        STATS["voidex"][g] += 1
     return text
 
 
@@ -269,6 +342,9 @@ def report(out: Path):
           f"defs extended {sum(1 for f in A['E'] if A['E'][f] > A['L'][f])} (rewritten {STATS['defs']}); {STATS['decls']} decls rewritten; "
           f"{STATS['calls']} calls padded ({STATS['real']} args from caller params, {STATS['zero']} args zero); "
           f"{len(miss)} entries unhandled -> {out}")
+    ex = sorted(STATS["voidex"].items(), key=lambda x: -x[1])
+    print(f"{STATS['voidval']} void-def calls with used value rewritten, {len(ex)} distinct callees; e.g. "
+          + ", ".join(f"{g} x{n}" for g, n in ex[:6]))
 
 
 def main():

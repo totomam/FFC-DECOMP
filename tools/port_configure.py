@@ -161,7 +161,7 @@ def main():
     lines += ["", f"build {out}/objs.txt: list {' '.join(objs + rts)}", "",
               "rule lift", f"  command = NM={nm} python3 tools/port_lift.py --objs $in --out {lift} --chunks {LIFT_CHUNKS}",
               "  description = port_lift", "",
-              f"build {' '.join(lift_cs)}: lift {out}/objs.txt | tools/port_lift.py", "",
+              f"build {' '.join(lift_cs)}: lift {out}/objs.txt | tools/port_lift.py tools/port_argpad.py tools/port_argcheck.py", "",
               "rule cc_lift", f"  command = $cc {' '.join(tflags)} -O1 -g0 -fno-omit-frame-pointer -funwind-tables -w -fno-pic -ffreestanding -fno-builtin "
               "-fno-strict-aliasing -fwrapv -ffunction-sections -c $in -o $out", "  description = cc $in", ""]
     lines += [f"build {o}: cc_lift {c}" for c, o in zip(lift_cs, lift_os)]
