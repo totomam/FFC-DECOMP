@@ -66,6 +66,9 @@ static inline u32 ror_c(u32 a, u32 s, u32 *c) { s &= 0xff; if (!s) return a; s &
 """
 
 
+DTCM = 0x02fe0000
+
+
 def sections(d: Path):
     out = []
     for line in (d / "delinks.txt").read_text().splitlines():
@@ -96,7 +99,8 @@ class World:
 
     def __init__(self):
         self.mods = list(ffclib.module_dirs())
-        self.secs = {m: sections(d) for m, d in self.mods}
+        import port_gendata
+        self.secs = {m: port_gendata.port_sections(m, d) for m, d in self.mods}
         self.syms = defaultdict(list)  # mod -> sorted [(addr, name, kind)]
         self.byname = {}
         for m, d in self.mods:
@@ -200,7 +204,11 @@ class Lifter:
         r = self.w.rel[self.mod].get(addr)
         if r and r[0] == "load":
             return self.w.addr_expr(self.mod, r[1], r[2], self.need)
-        return f"{int.from_bytes(whole[off:off + 4], 'little'):#x}u"
+        v = int.from_bytes(whole[off:off + 4], 'little')
+        if DTCM <= v < DTCM + 0x4000:  # linker constants (arena/stack bounds): DTCM lives in a host blob
+            self.need["ffc_blob_dtcm_data"] = "data"
+            return f"(A(ffc_blob_dtcm_data) + {v - DTCM}u)"
+        return f"{v:#x}u"
 
     def reg(self, i):
         return ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "sp", "lr", "A(fcode)"][i]

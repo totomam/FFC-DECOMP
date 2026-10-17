@@ -48,6 +48,19 @@ def sections(d: Path):
     return out
 
 
+DTCM_SIZE = 0x4000
+
+
+def port_sections(m, d: Path):
+    """sections() as the port lays them out: the DTCM is one 16 KB blob (data, bss, then the OS stacks and
+    HW_INTR_CHECK_BUF the SDK addresses relative to the DTCM base), so offsets past .bss stay inside it."""
+    secs = sections(d)
+    if m == "dtcm":
+        lo = min(s[1] for s in secs)
+        return [(".data", lo, lo + DTCM_SIZE, "data")]
+    return secs
+
+
 def module_syms(d: Path, mod):
     out = []
     f = d / "symbols.txt"
@@ -91,7 +104,7 @@ def main():
     print(f"host objects: {len(objs)}, {len(defined)} defined symbols, {len(undef)} undefined", file=sys.stderr)
 
     mods = list(ffclib.module_dirs())
-    secs = {m: sections(d) for m, d in mods}
+    secs = {m: port_sections(m, d) for m, d in mods}
     syms = {m: module_syms(d, m) for m, d in mods}
     funcs = {m: {s.addr & ~1: s.name for s in syms[m] if s.kind == "function"} for m in syms}
     abs_syms = {}
@@ -156,7 +169,7 @@ def main():
             if kind == "bss":
                 L.append(f"{q(bn)} = global [{hi - lo} x i8] zeroinitializer, align 32")
             else:
-                raw = data[lo - rng[0]:hi - rng[0]]
+                raw = data[lo - rng[0]:hi - rng[0]].ljust(hi - lo, b"\0")
                 fields, vals, pos = [], [], 0
                 ptrs = sorted(o for o in rel if lo <= o < hi and (o - lo) % 4 == 0 and kind != "code")
                 for o in ptrs:

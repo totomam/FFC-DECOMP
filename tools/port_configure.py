@@ -34,7 +34,7 @@ def blob_sections():
     global BLOB_SECS
     if BLOB_SECS is None:
         import port_gendata
-        BLOB_SECS = {m: [(f"ffc_blob_{m}{n}".replace(".", "_"), lo, hi) for n, lo, hi, kind in port_gendata.sections(d)
+        BLOB_SECS = {m: [(f"ffc_blob_{m}{n}".replace(".", "_"), lo, hi) for n, lo, hi, kind in port_gendata.port_sections(m, d)
                          if kind != "code"] for m, d in ffclib.module_dirs()}
     return BLOB_SECS
 

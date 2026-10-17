@@ -14,7 +14,11 @@
 #define FFC_REG_IME 0x04000208u
 #define FFC_REG_IE 0x04000210u
 #define FFC_REG_IF 0x04000214u
-#define FFC_INTR_CHECK_BUF 0x02fe3ff8u /* HW_INTR_CHECK_BUF = DTCM end - 8 (DTCM at 0x02fe0000) */
+/* The DTCM is the 16 KB host blob port_gendata.py emits for module dtcm (not 0x02fe0000): game code addresses it
+ * relative to its symbols. */
+extern unsigned char ffc_blob_dtcm_data[];
+#define FFC_DTCM ((uintptr_t)ffc_blob_dtcm_data)
+#define FFC_INTR_CHECK_BUF (FFC_DTCM + 0x3ff8u) /* HW_INTR_CHECK_BUF = DTCM end - 8 */
 
 #define FFC_IRQ_VBLANK 0x1u
 

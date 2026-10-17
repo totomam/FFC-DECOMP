@@ -4,6 +4,29 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Done (session 23) — host boots into ffc_main + game threads, $0 model spend
+- Bootstrap OK (branch claude/ffc-port-continue-lkc03y, from 3y9arg). ROM ninja ran in background; at handoff it was at
+  15975/15978 (log work/ninja_s23.log) — **22/22 not yet confirmed**: check `tail work/ninja_s23.log` for "NINJA EXIT 0".
+- Boot fixes (host, `FFC_RUN=1 build/port/host/ffc`):
+  - hal.c: OSBootInfo.boot_type = 1 (ROM) at 0x027ffc40/0x02fffc40.
+  - **port_configure rewrite_abs**: absolute DS addresses in src/ that fall in a data/rodata/bss section of the TU's
+    module, main, itcm or dtcm become `(ffc_blob_<mod>_<sec> + off)` in the fix/ copy (210 TUs). Cause: matched TUs
+    write globals via `ABS(u32, 0x0214075C)` while data symbols live in host blobs (CARD_Enable flag was never seen).
+  - **DTCM = one 16 KB host blob** (port_gendata.port_sections; used by configure + lift); hal.h FFC_DTCM /
+    FFC_INTR_CHECK_BUF use it. port_lift maps raw literal-pool constants in 0x02fe0000-0x02fe3fff to the blob
+    (linker arena/stack bounds).
+  - Overrides for **register-passthrough decomps** (matched code that relies on r0-r3 surviving a call):
+    CARDi_ReadRomSyncCore 0207d8b0, FS_SetCurrentDirectory 0207e220 (sdk_override.c); MSL mem/str funcs on host libc
+    (new port/src/msl_override.c: memset wrapper called __fill_mem(object)).
+  - **tools/port_argcheck.py** (new): lists calls whose callee decl has fewer params than its src definition ->
+    work/port_argcheck.txt: **351 calls in 321 TUs**. Candidates for an automatic fix (pad missing args with the
+    caller's same-position params, as ARM passthrough does) or per-function overrides.
+- Host now passes NitroStartUp, FS_Init, static ctors, crt0 callbacks, enters **ffc_main**, creates the game thread;
+  **current crash**: game thread func_02049684 -> 01ff8be8 -> 02049764 -> 02049784 -> 0204e89c -> 0204e8b8 ->
+  func_0204f6b0 (+101, reads *esi, esi bad). Debug: `FFC_RUN=1 gdb -batch -ex run -ex bt build/port/host/ffc`.
+- Not done: steps 2 (recover_funcs/import_arcnid, waits on 22/22) and 3 (wasm, win32).
+- Cost: $0 model spend; orchestrator context only (~200k).
+
 ## Done (session 22) — host boots into FS_Init, $0 model spend
 - Bootstrap OK (branch claude/ffc-port-continue-3y9arg, from rxibxu). Extras installed (i386/multilib/mingw, emsdk).
   **22/22 confirmed** (ninja EXIT 0, after the handoff).
