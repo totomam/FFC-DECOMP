@@ -148,6 +148,116 @@ static void rtc_request(uint32_t data)
     arm7_reply(5, 0x8000u | cmd << 8, 0);
 }
 
+
+/* CARD backup (PXI tag 11, CARDi_Request): ARM9 sends a request word (CARD_REQ_*), INIT is followed by the address
+ * of its CARDiCommandArg; the ARM7 runs the request against the save chip, stores cmd->result and answers
+ * CARD_REQ_ACK with err set. The save chip is the file FFC_SAVE (default ffc.sav), cmd->spec.total_size bytes. */
+static uint32_t pxi_raw; /* the whole data word of the current send: host addresses do not fit in 26 bits */
+static uint8_t *card_save;
+static uint32_t card_save_size;
+static FILE *card_file;
+
+static void card_open(uint32_t size)
+{
+    const char *path = getenv("FFC_SAVE") ? getenv("FFC_SAVE") : "ffc.sav";
+    if (size == 0)
+        size = 0x80000;
+    if (card_save && size <= card_save_size)
+        return;
+    card_save = realloc(card_save, size);
+    memset(card_save + card_save_size, 0xff, size - card_save_size);
+    card_save_size = size;
+    if (!card_file && !(card_file = fopen(path, "r+b")))
+        card_file = fopen(path, "w+b");
+    if (card_file) {
+        fseek(card_file, 0, SEEK_SET);
+        if (fread(card_save, 1, size, card_file) == 0 && trace())
+            fprintf(stderr, "ffc: new save file %s\n", path);
+    }
+}
+
+static void card_flush(uint32_t off, uint32_t len)
+{
+    if (!card_file)
+        return;
+    fseek(card_file, off, SEEK_SET);
+    fwrite(card_save + off, 1, len, card_file);
+    fflush(card_file);
+}
+
+static void card_request(uint32_t data)
+{
+    static uint32_t *cmd;
+    static int want_cmd;
+    uint32_t src, dst, len;
+    if (want_cmd) { /* INIT's argument: answered once it arrived */
+        want_cmd = 0;
+        cmd = (uint32_t *)(uintptr_t)pxi_raw;
+        cmd[0] = 0;
+        arm7_reply(11, 1, 1);
+        return;
+    }
+    if (data == 0) {
+        want_cmd = 1;
+        return;
+    }
+    if (!cmd) {
+        fprintf(stderr, "ffc: card request %u before INIT\n", data);
+        return;
+    }
+    src = cmd[3], dst = cmd[4], len = cmd[5];
+    card_open(cmd[6]);
+    if (trace())
+        fprintf(stderr, "ffc: card req %u type %#x src %#x dst %#x len %#x size %#x\n", data, cmd[1], src, dst, len, cmd[6]);
+    cmd[0] = 0; /* CARD_RESULT_SUCCESS */
+    switch (data) {
+    case 2: /* IDENTIFY: the ARM9 already filled cmd->spec for cmd->type */
+    case 4: /* READ_ROM: the port reads the ROM file on the ARM9 side */
+    case 14: /* WRITE_STATUS */
+        break;
+    case 3: /* READ_ID */
+        cmd[2] = 0x00001fc2;
+        break;
+    case 6: /* READ_BACKUP */
+        if (src < card_save_size)
+            memcpy((void *)(uintptr_t)dst, card_save + src, len <= card_save_size - src ? len : card_save_size - src);
+        break;
+    case 7: /* WRITE_BACKUP */
+    case 8: /* PROGRAM_BACKUP */
+        if (dst < card_save_size) {
+            if (len > card_save_size - dst)
+                len = card_save_size - dst;
+            memcpy(card_save + dst, (void *)(uintptr_t)src, len);
+            card_flush(dst, len);
+        }
+        break;
+    case 9: /* VERIFY_BACKUP */
+        if (dst < card_save_size && memcmp(card_save + dst, (void *)(uintptr_t)src, len <= card_save_size - dst ? len : card_save_size - dst))
+            cmd[0] = 1;
+        break;
+    case 10: case 11: case 15: /* ERASE_PAGE / SECTOR / SUBSECTOR */
+        if (dst < card_save_size) {
+            if (len > card_save_size - dst)
+                len = card_save_size - dst;
+            memset(card_save + dst, 0xff, len);
+            card_flush(dst, len);
+        }
+        break;
+    case 12: /* ERASE_CHIP */
+        memset(card_save, 0xff, card_save_size);
+        card_flush(0, card_save_size);
+        break;
+    case 13: /* READ_STATUS: not busy */
+        if (dst)
+            *(uint8_t *)(uintptr_t)dst = 0;
+        break;
+    default:
+        fprintf(stderr, "ffc: card request %u not emulated\n", data);
+        break;
+    }
+    arm7_reply(11, 1, 1); /* CARD_REQ_ACK */
+}
+
 static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
 {
     if (trace())
@@ -161,6 +271,9 @@ static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
         break;
     case 6: /* touch panel (this SDK's tag numbering): pen up; OSSystemWork.touch_panel stays 0 */
         spi_request(tag, data);
+        break;
+    case 11:
+        card_request(data);
         break;
     default:
         fprintf(stderr, "ffc: pxi tag %u (data %#x) not emulated\n", tag, data);
@@ -185,6 +298,7 @@ void func_02089100(void)
 /* PXI_SendWordByFifo(tag, data, err) -> PXI_FIFO_SUCCESS */
 int func_02089218(uint32_t tag, uint32_t data, uint32_t err)
 {
+    pxi_raw = data;
     ffc_arm7_recv(tag & 31, data & 0x3ffffff, err & 1);
     /* The reply is a FIFO IRQ: with IRQs off (the SDK sends, then records the request) it waits for msr. */
     if (!(ffc_cpsr & 0x80))
