@@ -15,6 +15,7 @@
 
 typedef void (*pxi_callback)(uint32_t tag, uint32_t data, uint32_t err);
 extern pxi_callback data_021418c8[PXI_TAG_MAX]; /* FifoRecvCallbackTable */
+extern uint32_t ffc_cpsr;
 
 static int ffc_trace = -1;
 
@@ -43,6 +44,16 @@ static void arm7_reply(uint32_t tag, uint32_t data, uint32_t err)
     reply_q[reply_tail++ % 256] = (struct pxi_msg){tag, data, err};
 }
 
+/* msr cpsr_c in lifted code (OS_EnableInterrupts, OS_RestoreInterrupts, ...): PXI replies held back while IRQs
+ * were off are delivered once they are on again. */
+void ffc_pxi_deliver(void);
+
+void ffc_cpsr_written(void)
+{
+    if (!(ffc_cpsr & 0x80))
+        ffc_pxi_deliver();
+}
+
 void ffc_pxi_deliver(void)
 {
     if (delivering)
@@ -59,11 +70,26 @@ void ffc_pxi_deliver(void)
     delivering = 0;
 }
 
+/* SPI-style requests (TP, NVRAM, MIC, PM): a command starts with SPI_PXI_START_BIT (command in bits 8-14) and
+ * ends with SPI_PXI_END_BIT; the ARM7 answers END | RESULT_COMMAND_BIT | command << 8 | SPI_PXI_RESULT_SUCCESS. */
+static uint32_t spi_cmd[32];
+
+static void spi_request(uint32_t tag, uint32_t data)
+{
+    if (data & 0x02000000u)
+        spi_cmd[tag] = (data >> 8) & 0x7f;
+    if (data & 0x01000000u)
+        arm7_reply(tag, 0x01000000u | 0x8000u | spi_cmd[tag] << 8, 0);
+}
+
 static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
 {
     if (trace())
         fprintf(stderr, "ffc: pxi 9->7 tag %u data %#x err %u\n", tag, data, err);
     switch (tag) {
+    case 6: /* touch panel (this SDK's tag numbering): pen up; OSSystemWork.touch_panel stays 0 */
+        spi_request(tag, data);
+        break;
     default:
         fprintf(stderr, "ffc: pxi tag %u (data %#x) not emulated\n", tag, data);
         break;
@@ -84,7 +110,9 @@ void func_02089100(void)
 int func_02089218(uint32_t tag, uint32_t data, uint32_t err)
 {
     ffc_arm7_recv(tag & 31, data & 0x3ffffff, err & 1);
-    ffc_pxi_deliver();
+    /* The reply is a FIFO IRQ: with IRQs off (the SDK sends, then records the request) it waits for msr. */
+    if (!(ffc_cpsr & 0x80))
+        ffc_pxi_deliver();
     return 0;
 }
 
@@ -154,6 +182,7 @@ static void thread_entry(void *p)
     arm_fn fn = (arm_fn)(uintptr_t)((FFC_REG32(ctx + CTX_PC_PLUS4) - 4) & ~1u);
     arm_fn lr = (arm_fn)(uintptr_t)(FFC_REG32(ctx + CTX_LR) & ~1u);
     reap_zombie();
+    ffc_cpsr_written();
     if (trace())
         fprintf(stderr, "ffc: thread ctx %#x starts %p\n", ctx, (void *)fn);
     fn(FFC_REG32(ctx + CTX_R0), FFC_REG32(ctx + CTX_R0 + 4), FFC_REG32(ctx + CTX_R0 + 8), FFC_REG32(ctx + CTX_R0 + 12));
@@ -189,6 +218,7 @@ uint32_t func_02087344(uint32_t ctx)
     struct ctx_entry *e = ctx_entry(ctx);
     e->coro = ffc_coro_self();
     e->fresh = 0;
+    FFC_REG32(ctx) = ffc_cpsr; /* the CPSR is per thread (I bit: a sleeping thread had IRQs off) */
     pending_save = e->coro;
     return 0;
 }
@@ -212,8 +242,10 @@ void func_02087390(uint32_t ctx)
         reap_zombie();
         zombie = self; /* never resumed: freed by whoever runs next */
     }
+    ffc_cpsr = FFC_REG32(ctx) & ~0x20u;
     ffc_coro_switch(e->coro);
     reap_zombie(); /* resumed */
+    ffc_cpsr_written();
 }
 
 /* MIi_DmaSetParameters(ch, src, dst, cnt, mode): as the ROM, then the HAL runs the transfer. */
@@ -333,4 +365,15 @@ uint32_t func_0207e220(const char *path)
 void func_02088f94(void)
 {
     ffc_hal_vblank();
+}
+
+/* FS_StartOverlay(FSOverlayInfo *): the overlay's code is host-native and its ROM .sinit table holds DS addresses,
+ * so run the host constructors of overlay info->id instead (the digest check and cache maintenance are skipped).
+ * Not done yet: the host .data/.bss blobs of an overlay are not reset when it is loaded again. */
+extern void ffc_run_ctors(int index);
+void func_0207ed7c(uint32_t *info)
+{
+    if (trace())
+        fprintf(stderr, "ffc: start overlay %u\n", info[0]);
+    ffc_run_ctors(1 + (int)info[0]);
 }

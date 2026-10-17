@@ -4,7 +4,7 @@
 Many src/ functions are defined `void` although the ROM code returns a value in r0 (an earlier call's result, e.g.
 an allocator `if (!(p = try(n))) p = other(n);`). Callers that use the value then read garbage on the host.
 classify(name) -> set of kinds of r0 at the return points: 'arg0' (the first argument, untouched or restored),
-'call' (the result of the last bl/blx, or a tail-call branch), 'other' (anything else).
+'call' (the result of the last bl/blx, or a tail-call branch / `ldr rX, =f; bx rX`), 'other' (anything else).
 
 usage: port_r0.py [func ...]   (prints the class of each)
 """
@@ -56,6 +56,9 @@ def classify(name: str) -> frozenset:
             for r in (1, 2, 3, 12, 14):
                 kind[r] = "other"
             continue
+        if base == "bx" and kind[REG.get(ops.strip(), 0)] == "lit":
+            rets.add("call")  # far tail call: `ldr rX, =func; bx rX`
+            continue
         if base == "bx" or (base.startswith("pop") and "pc" in ops) or (base.startswith("ldm") and "pc" in ops) \
                 or (base in ("mov", "movs") and ops.startswith("pc,")):
             rets.add(kind[0])
@@ -84,8 +87,10 @@ def classify(name: str) -> frozenset:
         elif base in ("add", "adds", "sub", "subs") and len(args) == 3 and args[1] in REG and args[2] in ("#0", "#0x0"):
             src = REG[args[1]]
         new = kind[src] if src is not None else "other"
+        if base == "ldr" and len(args) >= 2 and args[1].startswith("[pc"):
+            new = "lit"
         kind[d] = (kind[d] if kind[d] == new else "other") if cond else new
-    return frozenset(rets)
+    return frozenset("other" if k == "lit" else k for k in rets)
 
 
 def main():

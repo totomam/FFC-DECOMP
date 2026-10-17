@@ -45,6 +45,7 @@ extern u32 ffc_r1;
 extern void ffc_trap(const char *);
 extern void ffc_lift_swi(u32 n, u32 *r);
 extern u32 ffc_cpsr;
+extern void ffc_cpsr_written(void);
 static inline u32 clz32(u32 x) { return x ? (u32)__builtin_clz(x) : 32; }
 typedef u32 (*ffc_fn)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
 #define P(a) ((uintptr_t)(u32)(a))
@@ -548,6 +549,8 @@ class Lifter:
             code = f"ffc_cpsr = (ffc_cpsr & ~{mask:#x}u) | ({src} & {mask:#x}u);"
             if mask & 0xff000000:
                 code += " n = ffc_cpsr >> 31; z = (ffc_cpsr >> 30) & 1; c = (ffc_cpsr >> 29) & 1; v = (ffc_cpsr >> 28) & 1;"
+            if mask & 0xff and not w & (1 << 22):
+                code += " ffc_cpsr_written();"
             return code
         if (w >> 24) & 15 == 15:  # swi
             return (f"{{ u32 rr[4] = {{r0, r1, r2, r3}}; ffc_lift_swi({(w >> 16) & 0xff}u, rr); "

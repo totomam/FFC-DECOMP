@@ -16,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import ffclib  # noqa: E402
+import port_argaddr  # noqa: E402
 import port_argpad  # noqa: E402
 
 # `extern uint8_t func_X[];` / `extern T func_X;` where func_X is a function: the TU only takes its address, but wasm
@@ -139,6 +140,7 @@ def main():
         src = rel
         fixed_text = DATA_DECL_RE.sub(lambda m: f"void {m[1]}();" if m[1] in fnames else m[0], head)
         fixed_text = port_argpad.pad_text(fixed_text, str(rel))
+        fixed_text = port_argaddr.rewrite(fixed_text)
         # mwcc lvalue cast `((T *)x) = v` -> `(*(T **)&x) = v` (clang rejects the cast as an lvalue).
         fixed_text = LVALUE_CAST_RE.sub(lambda m: m[0] if re.search(r"[*\w)\]]\s*$", fixed_text[max(0, m.start() - 8):m.start()])
                                         else f"(*({m[1]}*)&{m[2]}) =", fixed_text)
@@ -169,7 +171,7 @@ def main():
     lines += ["", f"build {out}/objs.txt: list {' '.join(objs + rts)}", "",
               "rule lift", f"  command = NM={nm} python3 tools/port_lift.py --objs $in --out {lift} --chunks {LIFT_CHUNKS}",
               "  description = port_lift", "",
-              f"build {' '.join(lift_cs)}: lift {out}/objs.txt | tools/port_lift.py tools/port_argpad.py tools/port_argcheck.py", "",
+              f"build {' '.join(lift_cs)}: lift {out}/objs.txt | tools/port_lift.py tools/port_argpad.py tools/port_argaddr.py tools/port_argcheck.py", "",
               "rule cc_lift", f"  command = $cc {' '.join(tflags)} -O1 -g0 -fno-omit-frame-pointer -funwind-tables -w -fno-pic -ffreestanding -fno-builtin "
               "-fno-strict-aliasing -fwrapv -ffunction-sections -c $in -o $out", "  description = cc $in", ""]
     lines += [f"build {o}: cc_lift {c}" for c, o in zip(lift_cs, lift_os)]
@@ -190,6 +192,7 @@ def main():
     (ROOT / "port" / f"build.{a.target}.ninja").write_text("\n".join(lines))
     (ROOT / "port" / f"skipped.{a.target}.txt").write_text("".join(s + "\n" for s in skipped))
     print(f"{len(objs)} TUs ({len(fixed)} rewritten: function-as-data decls, absolute data addresses), {len(skipped)} asm stubs/overridden TUs skipped -> port/build.{a.target}.ninja")
+    print(f"port_argaddr: {port_argaddr.STATS['defs']} defs with address-taken parameters")
 
 
 if __name__ == "__main__":
