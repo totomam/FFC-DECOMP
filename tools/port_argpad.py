@@ -280,6 +280,28 @@ def pad_header(text: str) -> str:
     return text
 
 
+ASSIGN_RE = re.compile(r"(?<![\w.>\]])([A-Za-z_]\w*)\s*=\s*(?:\([\w\s*]+\)\s*)?$")
+
+
+def _r0_after_call(t, s, c):
+    """r0 at a short call c when the textually preceding outermost call of the same def assigned its result to a
+    plain variable (`r = g(..); ... f();`): that variable, as r0 still holds g's result (NewSection func_0207ade0)."""
+    prev = None
+    for o in s["calls"]:
+        if o["encl"] is c["encl"] and o["close"] < c["pos"] and (prev is None or o["pos"] > prev["close"]):
+            prev = o
+    if prev is None:
+        return None
+    m = ASSIGN_RE.search(t[t.rfind("\n", 0, prev["pos"]) + 1:prev["pos"]])
+    if not m or m[1] in ("return", "else"):
+        return None
+    # nothing but control flow / comparisons of that variable between the two calls
+    mid = t[prev["close"] + 1:c["pos"]]
+    if re.search(r"(?<![=!<>])=(?!=)|\+\+|--", mid):
+        return None
+    return m[1]
+
+
 def pad_text(text: str, rel: str, handled=None) -> str:
     A = analysis()
     gdefs, E, L = A["gdefs"], A["E"], A["L"]
@@ -326,6 +348,7 @@ def pad_text(text: str, rel: str, handled=None) -> str:
         STATS["decls"] += 1
         if handled is not None:
             handled.add((rel, f))
+    tnc = _nocomment(text)
     for c in s["calls"]:
         g = c["name"]
         if g not in gdefs or gdefs[g]["variadic"] or c["k"] >= E[g]:
@@ -334,10 +357,14 @@ def pad_text(text: str, rel: str, handled=None) -> str:
             continue
         e = c["encl"]
         eps = ext.get(e["name"], e["params"]) if e else []
+        r0v = _r0_after_call(tnc, s, c)
         add = []
         for i in range(c["k"], E[g]):
             a = "0"
-            if i < 4 and i < len(eps):
+            if i == 0 and r0v:
+                a = f"({'void *' if A['kind'](g, i) == 'ptr' else 'int'}){r0v}"
+                STATS["r0var"] = STATS.get("r0var", 0) + 1
+            elif i < 4 and i < len(eps):
                 name, kd = param_info(eps[i])
                 if name and kd in ("ptr", "int"):
                     a = f"({'void *' if A['kind'](g, i) == 'ptr' else 'int'}){name}"
