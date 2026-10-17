@@ -15,11 +15,11 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
-- Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
-- Session 23b: free tiers measured, not integrated: import_sdk 146, xmatch 24, permuter pilot 6/50 (full run
-  ~65 est.); recover_funcs apply still failing ninja (was on attempt 3). Asm allowed for SDK/library funcs (human OK).
-  Next: (1) get recover_funcs to 22/22 or revert; (2) integrate work/sdk_import + xmatch/matches + permuter/matches,
-  ninja 22/22; (3) import_arcnid; (4) permuter full run (--stack-diffs); (5) sdk_match blx mask + re-import.
+- Queue: 16,440 done, 2,050 fail_sonnet, 1,163 todo, 377 blocked, 10 skip_integrate, 1 fail_haiku.
+- Session 23b: recover_funcs applied (631 ov002 funcs, 22/22), arcnid import 392 + clone 76 -> 16,440 done.
+  Found, not integrated: import_sdk 146, xmatch 24, permuter pilot 6/50 (saved in work/, force-added). Asm allowed
+  for SDK/library funcs (human OK). Next: (1) integrate work/sdk_import + xmatch/matches + permuter/matches, ninja
+  22/22 (~40 min); (2) permuter full run (--stack-diffs); (3) sdk_match blx mask + re-import; then port.
 - Session 23: boot type, abs-address rewrite, DTCM blob, passthrough overrides, port_argcheck (351 calls); host
   reaches ffc_main + game thread, crashes in func_0204f6b0. 22/22 confirmed.
   Next: fix passthrough calls (auto-pad or overrides); trap on toward title; then (c), (d).
