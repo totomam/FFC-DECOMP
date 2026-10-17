@@ -1,0 +1,42 @@
+/* cflags: -noO4,p -O4 */
+/* From arcnid/ffc-decomp src/battle/four_call_table_8c.c, externs renamed. */
+#ifndef BATTLE_H
+#define BATTLE_H
+
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef unsigned int u32;
+typedef signed int s32;
+
+typedef struct BattleState BattleState;
+typedef struct Vivosaur Vivosaur;
+typedef struct AttackInfo AttackInfo;
+
+u32 rand_range(u32* rng_state, u32 max);
+
+u32* BattleState_GetRng(BattleState* state);
+s32 BattleState_GetTeamSize(BattleState* state);
+Vivosaur* BattleState_GetVivosaur(BattleState* state, s32 index);
+
+s32 Vivosaur_GetAbilityInfo(Vivosaur* vivo);
+s32 Vivosaur_CheckSkill(s32 info, s32 skill_id);
+s32 Vivosaur_GetType(Vivosaur* vivo);
+
+#endif
+
+
+extern u32 func_ov002_021ae68c(u32 val);
+extern void func_ov002_021ba448(u32 field, u32 entry);
+extern void func_ov002_021ba584(u32 field);
+extern void func_ov002_021ba558(u32 field, u32 count);
+extern u32 data_ov002_021d642c[];
+
+void func_ov002_021b9fe4(void* self)
+{
+    u32 idx;
+
+    idx = func_ov002_021ae68c(*(u32*)((u8*)self + 0x8C));
+    func_ov002_021ba448(*(u32*)((u8*)self + 0x88), data_ov002_021d642c[idx * 2]);
+    func_ov002_021ba584(*(u32*)((u8*)self + 0x88));
+    func_ov002_021ba558(*(u32*)((u8*)self + 0x88), *(u32*)((u8*)self + 0x9C) + 1);
+}
