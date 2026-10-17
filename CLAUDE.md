@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 27 (2026-10-17): read docs/STATUS.md "Done (session 27)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 28 (2026-10-17): read docs/STATUS.md "Done (session 28)" first.
 
-- Branch: **`claude/ffc-decomp-port-continue-499szq`** (session 27; based on op63wf). Develop on the branch
+- Branch: **`claude/ffc-decomp-port-continue-2xsx26`** (session 28; based on 499szq). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -15,6 +15,8 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
+- Session 28: ffc_opaque done; NVRAM/RTC stand-ins, HW timers, PXI fixes; host reaches overlay 15, SIGSEGV in
+  func_ov015_021d6504. Next: fix that, trap on toward title; wasm + win32.
 - Session 27: host reaches ov003 game threads (IME on, TP stand-in, per-thread CPSR, port_argaddr, lifted-callee
   padding, FS_StartOverlay ctors). Stops at stand-in _ZN1B3getEi: clang devirtualizes `obj.member.method()` ->
   next: ffc_opaque rewrite for C++ TUs (STATUS s27), then trap on toward title; wasm + win32.

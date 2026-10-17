@@ -9,6 +9,29 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 28) — host past devirt, NVRAM/RTC/timers, reaches overlay 15; $0 model spend
+- Branch claude/ffc-decomp-port-continue-2xsx26 (from 499szq). Bootstrap OK, **22/22 confirmed** (work/boot_s28.log).
+- **ffc_opaque** (port_configure MEMBER_CALL_RE, C++ TUs only; helper in port/include/cw_compat.h): 13 sites; the
+  _ZN1B3getEi abort is gone.
+- Then the game idled (all threads blocked) — fixed in order (all in port/src):
+  1. **NVRAM stand-in** (PXI tag 4, sdk_override.c nvram_request): READ/FAST_READ/PW/PP on a 256 KB in-memory image
+     (FFC_FIRMWARE = optional dump), RDSR -> 0. Game (WFC-style config at 0x3fc00) writes then verifies.
+  2. **HW timers 0-3** (hal.c hal_timers, per frame 560190 cycles, reload tracking, cascade, TIMERx IRQs): OS_Alarm
+     (TIMER1) fires now; the NVRAM write path waits on an alarm.
+  3. ffc_hal_raise_irq calls ffc_cpsr_written() on IRQ return (replies to PXI sends from IRQ handlers).
+  4. **RTC stand-in** (tag 5, host localtime BCD into OSSystemWork.real_time_clock 0x02fffde8/0x027ffde8) +
+     RtcWaitBusy override (func_020897f0) that pumps PXI replies.
+  5. ffc_pxi_deliver guard is now per coroutine (a callback switched threads mid-delivery -> guard stuck forever).
+  6. PXI_InitFifo override runs once (later PXI_Init calls wiped RTC's tag-5 callback).
+  7. Debug: FFC_DUMP_FRAME=N dumps OS contexts + host return addresses of suspended coroutines (resolve with
+     `gdb -batch -ex "info symbol 0x..." build/port/host/ffc`).
+- **Host now**: overlays 3,0,1,5,7,12 then **15** start; SIGSEGV in func_ov015_021d6504+79 (from func_ov015_021d779c
+  <- func_ov015_021d649c <- func_ov015_021d77d8 <- func_ov007_0219c604). Next: inspect that function (src or lifted),
+  likely the TODO "reset overlay .data/.bss" or a passthrough arg. Frames tick (VBlank dispatch works; frame counter
+  races while idle, no real-time pacing yet).
+- Not done: wasm (-sASYNCIFY) and win32 builds. Progress chart: queue.csv unchanged -> no refresh.
+- Cost: $0 model spend (no subagents); orchestrator context ~200k.
+
 ## Done (session 27) — host runs into ov003 game code: IME on, TP answered, threads switch; $0 model spend
 - Branch claude/ffc-decomp-port-continue-499szq (from op63wf). Bootstrap OK, **22/22 confirmed** (work/boot_s27.log).
 - func_020095b8 crash (s26) gone after the header rebuild. Fixed since, in order:
