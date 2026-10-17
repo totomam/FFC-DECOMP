@@ -118,6 +118,8 @@ uint64_t ffc_hal_frame(void)
 extern uint32_t ffc_cpsr;
 extern uint16_t data_02141510; /* OSi_ThreadInfo.isNeedRescheduling */
 extern void func_02086c78(void); /* OSi_RescheduleThread */
+extern void func_02087058(void *queue); /* OS_WakeupThread */
+extern unsigned char data_02fe0544[]; /* OSi_IrqThreadQueue (dtcm) */
 
 void ffc_hal_raise_irq(uint32_t mask)
 {
@@ -138,8 +140,10 @@ void ffc_hal_raise_irq(uint32_t mask)
         FFC_REG16(FFC_REG_IME) = 1;
         FFC_REG32(FFC_REG_IF) = 0;
     }
+    /* OS_IrqHandler_ThreadSwitch: threads in OS_WaitIrq become ready (rescheduling deferred: IRQ mode) */
+    if (*(uint32_t *)data_02fe0544)
+        func_02087058(data_02fe0544);
     ffc_cpsr = cpsr;
-    /* OS_IrqHandler_ThreadSwitch */
     if (data_02141510) {
         data_02141510 = 0;
         func_02086c78();
@@ -154,6 +158,8 @@ void ffc_hal_vblank(void)
     /* P3: present the two screens and poll input here. */
     if (getenv("FFC_TRACE_FRAMES") && frames % 60 == 0)
         fprintf(stderr, "ffc: frame %llu\n", (unsigned long long)frames);
+    if (FFC_REG16(FFC_REG_DISPSTAT) & 0x20) /* VCount match IRQ enable (the match line is treated as reached) */
+        ffc_hal_raise_irq(FFC_IRQ_VCOUNT);
     if (FFC_REG16(FFC_REG_DISPSTAT) & 0x8) /* VBlank IRQ enable */
         ffc_hal_raise_irq(FFC_IRQ_VBLANK);
     else

@@ -21,6 +21,7 @@ extern unsigned char ffc_blob_dtcm_data[];
 #define FFC_INTR_CHECK_BUF (FFC_DTCM + 0x3ff8u) /* HW_INTR_CHECK_BUF = DTCM end - 8 */
 
 #define FFC_IRQ_VBLANK 0x1u
+#define FFC_IRQ_VCOUNT 0x4u
 
 /* The ROM file (FFC_ROM, default rom/baserom_usa.nds). */
 extern const uint8_t *ffc_rom;

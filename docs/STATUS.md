@@ -9,6 +9,26 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 25) — host past func_0204f6b0, game loop spins (IME never enabled), $0 model spend (Sonnet subagents only)
+- Branch claude/ffc-decomp-port-continue-dh1p2g (from 8p6a9g). Bootstrap OK, **22/22 confirmed** (work/boot_s25.log).
+- **tools/port_argpad.py** (new, hooked into port_configure's fix/ copy): (1) short callee decls get the def's params,
+  short calls padded with the caller's own params at those positions (ARM passthrough); (2) transitive: fixpoint over
+  all src/ (6 rounds, 988 defs extended with `__padN` params, 1890 calls padded, 46 zero-pads); (3) **return-value
+  passthrough**: a void-def callee whose result is used -> `({ T __rv = A0; g(__rv,...); (R)__rv; })` (2821 calls, 407
+  callees; e.g. ctor func_02060448 returned `this` via untouched r0). C++ callees used as fn pointers are skipped.
+- **port_lift**: `CALLV(f)` for src callees defined void (keeps r0/r1).
+- port_configure: mwcc lvalue-cast rewrite `((T*)x) = v` -> `(*(T**)&x) = v` (not after `*`).
+- port/src: OS_Halt (func_02088f94) override = ffc_hal_vblank(); hal.c raise_irq wakes OSi_IrqThreadQueue
+  (data_02fe0544, via OS_WakeupThread) like OS_IrqHandler_ThreadSwitch; VCount IRQ raised each frame if enabled.
+- **Host state**: no crash; game thread sleeps, idle thread halts, frames tick, but **IME (0x04000208) is never
+  written** (gdb watch from ffc_crt0: no write), so no IRQ is ever dispatched (DISPSTAT 0xc020, IE=4 VCount).
+  Next: find the game's OS_EnableIrq site (63 literal-pool refs to 0x04000208 in arm9; src/main candidates via
+  `grep -rln 0x04000208 src/main`, e.g. func_02088f30, func_020866bc, func_0204f338) — check whether it runs on host
+  (maybe a lifted/stand-in or rewrite_abs mapped it wrongly) and why IME stays 0.
+- Progress chart refreshed (124 commits, 16,650 done): https://claude.ai/artifact/2S63n827gd12BcrUgMoNU2
+- Not done: wasm (-sASYNCIFY) and win32 rebuilds.
+- Cost: $0 model spend (1 Sonnet subagent, 3 rounds); orchestrator context ~200k.
+
 ## Done (session 24) — free tiers integrated: +567 matched, recover_funcs applied, $0 model spend (Sonnet subagents only)
 - Branch claude/ffc-decomp-port-continue-8p6a9g (from lkc03y). Bootstrap OK, **baseline 22/22** (cold ninja ~2 h incl. setup).
   pret clones must be named /home/user/ref/{pokediamond,pokeheartgold,pret_pokeplatinum} (xmatch.py paths).

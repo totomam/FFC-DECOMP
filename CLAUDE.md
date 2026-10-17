@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 24 (2026-10-17): read docs/STATUS.md "Done (session 24)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 25 (2026-10-17): read docs/STATUS.md "Done (session 25)" first.
 
-- Branch: **`claude/ffc-decomp-port-continue-8p6a9g`** (session 24; based on lkc03y). Develop on the branch
+- Branch: **`claude/ffc-decomp-port-continue-dh1p2g`** (session 25; based on 8p6a9g). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -15,6 +15,8 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
+- Session 25: port_argpad (arg + return-value passthrough, transitive), CALLV in lift, OS_Halt/IRQ-queue HAL;
+  host runs without crashing, frames tick, but IME never enabled -> no IRQs. Next: find why IME stays 0; then wasm, win32.
 - Queue (s24): 16,650 done / 20,040. s24 applied recover_funcs and integrated 678 free-tier matches (arcnid, SDK,
   xmatch, clone, permuter), 22/22. Next: the port (passthrough calls via port_argcheck.py, crash in func_0204f6b0).
 - Session 23b: free tiers measured, not integrated: import_sdk 146, xmatch 24, permuter pilot 6/50 (full run
