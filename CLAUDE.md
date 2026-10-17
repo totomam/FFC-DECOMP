@@ -2,7 +2,7 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 24 (2026-10-17): read docs/STATUS.md "Done (session 24)" first (in-flight clone + permuter runs).
+**Everyone else: you are the orchestrator.** Handoff from session 24 (2026-10-17): read docs/STATUS.md "Done (session 24)" first.
 
 - Branch: **`claude/ffc-decomp-port-continue-8p6a9g`** (session 24; based on lkc03y). Develop on the branch
   your session is given, starting from this one.
@@ -15,8 +15,8 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
-- Queue (s24): 16,539 done / 20,040, 1,927 fail_sonnet, 1,230 todo, 333 blocked. s24 integrated 567 free-tier matches,
-  applied recover_funcs (22/22). Next: finish clone.py + permuter integration, then the port (passthrough calls).
+- Queue (s24): 16,650 done / 20,040. s24 applied recover_funcs and integrated 678 free-tier matches (arcnid, SDK,
+  xmatch, clone, permuter), 22/22. Next: the port (passthrough calls via port_argcheck.py, crash in func_0204f6b0).
 - Session 23b: free tiers measured, not integrated: import_sdk 146, xmatch 24, permuter pilot 6/50 (full run
   ~65 est.); recover_funcs apply still failing ninja (was on attempt 3). Asm allowed for SDK/library funcs (human OK).
   Next: (1) get recover_funcs to 22/22 or revert; (2) integrate work/sdk_import + xmatch/matches + permuter/matches,

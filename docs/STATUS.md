@@ -24,11 +24,11 @@
   -> only 1 new (func_0208641c, already from xmatch). 2 old matches no longer reproduce (0207b684, 02085758; already done).
 - Queue after integration: **16,539 done** / 20,040 (82.5% funcs, 45.3% code bytes), 1,927 fail_sonnet, 1,230 todo,
   333 blocked. Progress chart: https://claude.ai/artifact/2S63n827gd12BcrUgMoNU2 (data: git history of queue.csv).
-- **In flight at handoff** (check first):
-  1. `tools/clone.py run` (work/logs/clone1.log): "cloned 78 functions", then integrate+ninja. If it finished with 22/22
-     and updated queue.csv: commit config/ src/ queue.csv. If ninja is not 22/22: inspect, revert the clone TUs.
-  2. Permuter full run (Sonnet subagent; work/permuter/runs2/, matches -> work/permuter/matches2/, progress
-     work/permuter/REPORT2.md; nohup'd, ~9 h at 3 min cap, 3 parallel). Integrate matches2 with tools/integrate --list.
+- **clone.py run**: 78 cloned, **77 integrated** (22/22). **Permuter full run**: 501 runnable fail_sonnet >=90% (<=0x200,
+  5 C++ skipped), --stack-diffs, 180 s cap, 3 parallel, 7.7 h -> **34 exact (6.8%)**, all verified, **34/34 integrated**
+  (22/22). Sources work/permuter/matches2/, REPORT2.md; scripts *2.py in work/permuter/.
+- Queue at end: **16,650 done / 20,040** (83.1%), 1,893 fail_sonnet, 1,153 todo. Session total: +678 matched.
+- Pitfall: a watcher `while pgrep -f "tools/clone.py run"` matched its own command line and never exited.
 - Not done: port step (passthrough calls via port_argcheck.py; host crash in func_0204f6b0) — untouched this session.
 - Cost: $0 model spend (2 Sonnet subagents); orchestrator context ~200k.
 
