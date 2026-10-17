@@ -26,9 +26,14 @@ Goals: (A) Windows + browser port, (B) decomp %. Keep orchestrator context lean;
      (not the caller param) when padcheck says clobbered. Small tools/ change; rerun port_configure.
    - Then host rebuild + run; debugging via subagents with narrow questions; orchestrator never dumps raw
      disasm/gdb output into its own context.
-3. **Decomp %**: free tiers are spent (permuter full run done s24: 34/501; arcnid/xmatch/clone/SDK done). Remaining
-   1,893 fail_sonnet + 1,153 todo need paid matching -> human decision; don't spend sessions on it otherwise. Port src
-   fixes (step 2) improve src correctness, not %.
+3. **Decomp %: paid matching is ON (human, 2026-10-17: Sonnet, "as fast as possible without wasting tokens").**
+   Free tiers are spent (permuter s24 34/501; arcnid/xmatch/clone/SDK done). Use the existing pipeline:
+   `python3 tools/mkwave.py haiku N --names --dedup` -> Workflow scriptPath tools/workflows/match_wave.js (Haiku
+   first, Sonnet on misses; `{names, tier:'sonnet'}` = Sonnet only) -> `tools/save_wave.py <N> <outputs>` ->
+   `tools/wave_done.py` (one integrate + 22/22 per batch, not per wave) -> `tools/clone.py` to fan matches out.
+   Order: pilot 30 (measure match rate + tokens/match; s31 started one and stopped it unrun), then todo haiku 264,
+   todo sonnet 357 (Sonnet only), fail_sonnet >= 90% best_pct. Skip opus-tier todo (532, big) and fail < 50%.
+   Next wave number: 63. Record $/match in STATUS; tell the human the pilot numbers before scaling past ~200.
 4. wasm/win32 only after the host reaches the title screen (wasm: by-value struct args to lifted funcs, see s31).
 5. Reality check for the human: stock DS emulators (melonDS etc.) already run the game on Windows/browser; the
    native port is many sessions from title + graphics + sound.

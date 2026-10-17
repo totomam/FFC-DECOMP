@@ -6,7 +6,7 @@
 
 - Branch: **`claude/ffc-decomp-port-session-31-678dvf`** (session 31; based on 9f36ef). Develop on the branch
   your session is given, starting from this one.
-- **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
+- **Goal changed (human): Windows + browser port, personal use.** Paid matching is ON again (Sonnet, human 2026-10-17; see STATUS plan step 3). Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
   "Done (session 17)". No Opus without the human's OK.
 - Bootstrap: add_repo totomam/ffc-assets, clone to /home/user/ffc-assets, `ln -sfn /home/user/ffc-assets .assets`,
