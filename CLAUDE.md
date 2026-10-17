@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 26 (2026-10-17): read docs/STATUS.md "Done (session 26)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 27 (2026-10-17): read docs/STATUS.md "Done (session 27)" first.
 
-- Branch: **`claude/ffc-decomp-port-continue-op63wf`** (session 26; based on dh1p2g). Develop on the branch
+- Branch: **`claude/ffc-decomp-port-continue-499szq`** (session 27; based on op63wf). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -15,6 +15,9 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
+- Session 27: host reaches ov003 game threads (IME on, TP stand-in, per-thread CPSR, port_argaddr, lifted-callee
+  padding, FS_StartOverlay ctors). Stops at stand-in _ZN1B3getEi: clang devirtualizes `obj.member.method()` ->
+  next: ffc_opaque rewrite for C++ TUs (STATUS s27), then trap on toward title; wasm + win32.
 - Session 26: CARD_LockRom deadlock fixed (void defs returning r0 of a call: tools/port_r0.py + port_argpad r0
   tracking); header prototypes padded (build/port/<t>/include); wasm -sASYNCIFY added. Next: run host after the
   header rebuild (crash was func_020095b8 via func_0205323c), trap toward title; wasm + win32 builds.

@@ -159,11 +159,21 @@ def analysis():
         for d in s["defs"]:
             if not d["method"] and not d["variadic"]:
                 gdefs[d["name"]] = dict(void=d["ret"] == "void", rel=rel, params=d["params"], variadic=d["variadic"], static=d["static"])
+    # Functions no src/ TU defines (lifted from the ROM by port_lift, which reads r0-r3): a pseudo-def with as many
+    # params as the ROM code reads registers on entry, so short C calls to them get the caller's passthrough args.
+    import port_r0
+    over = set()
+    for c in sorted((ROOT / "port" / "src").glob("*.c")):
+        over |= set(re.findall(r"^\w[\w\s*]*\b(func_\w+)\s*\(", c.read_text(), re.M))
+    called = {c["name"] for _, s in scans for c in s["calls"]} - set(gdefs) - over
+    for f in sorted(called):
+        n = port_r0.live_args(f)
+        if n:
+            gdefs[f] = dict(void=False, rel=None, params=[f"unsigned int __r{i}" for i in range(n)], variadic=False, static=False)
     # Header-declared functions are extendable too: port_configure compiles against pad_header() copies of include/.
     blocked = {f for f, d in gdefs.items() if d["variadic"] or f in cpp_value or (d["static"] and f in any_value)}
     # r0-value defs: a `void` def whose ROM code leaves an earlier call's result in r0 (port_r0.py; e.g. OS_TryLockByWord,
     # an allocator `if (!(p = try(n))) p = other(n);`). The port gives it an `unsigned int` return of the last call made.
-    import port_r0
     tailret = set()
     for rel, sc in scans:
         for d in sc["defs"]:

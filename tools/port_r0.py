@@ -93,9 +93,55 @@ def classify(name: str) -> frozenset:
     return frozenset("other" if k == "lit" else k for k in rets)
 
 
+@lru_cache(None)
+def live_args(name: str) -> int:
+    """How many of r0-r3 the function reads before writing them (straight-line prefix up to the first call or
+    return; a tail call passes the unwritten ones on). For lifted functions, whose C callers may pass fewer."""
+    sym = ffclib.symbols().get(name)
+    if sym is None or sym.kind != "function" or not sym.size or sym.module == "abs":
+        return 0
+    try:
+        code = ffclib.target_bytes(sym)
+    except Exception:
+        return 0
+    written, live = set(), set()
+    lo, hi = sym.addr, sym.addr + sym.size
+    for _, _, text in ffclib.disasm(code, sym.addr, sym.mode or "arm"):
+        mn, _, ops = text.partition(" ")
+        if mn.startswith(".") or not mn:
+            continue
+        base = re.sub(r"(eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)$", "", mn) if mn not in ("bls", "bhs") else mn
+        lst = _regs(ops[ops.find("{") + 1:ops.find("}")]) if "{" in ops else set()
+        toks = [REG[x] for x in re.findall(r"\b(r\d+|sb|sl|fp|ip|sp|lr|pc)\b", ops)]
+        if base in ("bl", "blx") and not ops.startswith("r"):
+            break
+        m = re.search(r"#(0x[0-9a-f]+)$", ops)
+        if base == "bx" or (base == "b" and m and not lo <= int(m[1], 16) < hi):
+            if not ops.startswith("lr"):
+                live |= {0, 1, 2, 3} - written
+            break
+        if (base.startswith(("pop", "ldm")) and 15 in lst) or (base in ("mov", "movs") and ops.startswith("pc,")):
+            break
+        if base == "b" or base == "blx":
+            continue
+        if base.startswith(("str", "stm", "push", "cmp", "cmn", "tst", "teq")):
+            reads, writes = set(toks), set()
+        elif base.startswith(("ldm", "pop")):
+            reads, writes = set(toks) - lst, lst
+        elif toks:
+            reads, writes = set(toks[1:]), {toks[0]}
+            if base.startswith(("mla", "umlal", "smlal", "umull", "smull")):
+                reads = set(toks)
+        else:
+            continue
+        live |= {r for r in reads if r < 4 and r not in written}
+        written |= writes
+    return max(live) + 1 if live else 0
+
+
 def main():
     for n in sys.argv[1:]:
-        print(n, sorted(classify(n)))
+        print(n, sorted(classify(n)), "live args", live_args(n))
 
 
 if __name__ == "__main__":

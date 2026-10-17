@@ -9,6 +9,33 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 27) — host runs into ov003 game code: IME on, TP answered, threads switch; $0 model spend
+- Branch claude/ffc-decomp-port-continue-499szq (from op63wf). Bootstrap OK, **22/22 confirmed** (work/boot_s27.log).
+- func_020095b8 crash (s26) gone after the header rebuild. Fixed since, in order:
+  1. **port_r0**: far tail calls `ldr rX, =f; bx rX` now count as 'call' (FS_OpenFile returned arg0 -> "opened"
+     -> ReadFile on NULL userdata). ~1,000 functions reclassified.
+  2. **tools/port_argaddr.py** (new, in port_configure after pad_text): defs taking `&param` (212) get params
+     copied to a 4-byte-slot local struct `__a` (mwcc `push {r0-r3}` layout); `*(Pair *)&a` read garbage on clang.
+  3. **FS_StartOverlay override** (func_0207ed7c, sdk_override.c): runs ffc_ctors[1+id] (ROM .sinit = DS addresses).
+     TODO: reset an overlay's host .data/.bss blobs when it is loaded again.
+  4. **TP stand-in** (PXI tag 6 = touch panel in this SDK): SPI-style START/END replies, pen up.
+  5. **PXI replies deferred while CPSR.I set**; lifted `msr cpsr` calls ffc_cpsr_written() -> delivers.
+  6. **Per-thread CPSR**: OS_SaveContext stores ffc_cpsr in ctx->cpsr, OS_LoadContext restores it (a sleeping
+     thread left IRQs off for everyone). **IME is now 1** at runtime.
+  7. **port_argpad pseudo-defs for lifted callees**: port_r0.live_args (r0-r3 read on entry) -> 1,190 lifted
+     functions get params, short C calls padded with passthrough args (__cxa_vec_dtor got garbage dtor in r3).
+- **Host now**: overlay 3 started, 4 game threads, TP auto-sampling on; aborts at trap stand-in `_ZN1B3getEi`
+  from func_020542e4: clang **devirtualizes** `p->b.get(0)` (member subobject) into a direct call of undefined
+  B::get; mwcc used the vtable. Next fix (13 sites in 375 C++ TUs): in port_configure, for C++ TUs rewrite
+  `base.method(` -> `ffc_opaque(&(base))->method(` with `template<class T> static inline T *ffc_opaque(T *p)
+  { T *volatile q = p; return q; }` in port/include/cw_compat.h (C++ only). Regex tried:
+  `(?<![\w.>:\]])([A-Za-z_]\w*(?:\s*(?:->|\.)\s*[A-Za-z_]\w*|\[[^\[\]\n]*\])*)\s*\.\s*([A-Za-z_]\w*)\s*\(`.
+  Then keep trapping toward title (frames don't tick yet: FFC_TRACE_FRAMES showed none before the abort).
+- Not done: wasm (-sASYNCIFY) and win32 builds. Note for wasm: padded/short calls to lifted functions (10 u32
+  params) may hit wasm signature mismatches.
+- Progress chart: queue.csv unchanged (16,650 done) -> no refresh.
+- Cost: $0 model spend (no subagents); orchestrator context ~200k.
+
 ## Done (session 26) — CARD_LockRom hang fixed (r0-value voids), host reaches game threads, $0 model spend
 - Branch claude/ffc-decomp-port-continue-op63wf (from dh1p2g). Bootstrap OK (refs, emsdk, apt). **22/22 confirmed**
   (work/ninja_s26.log).
