@@ -4,6 +4,11 @@
 0 done → 2/4 starting. Sonnet tier exhausted (session 13); Opus phase planned, not started. Full ARM9 rebuild matches: `ninja` → `dsd check modules` all 22 modules OK.
 **14,696 queue rows done (~76%)** (see `cut -d, -f5 queue.csv | sort | uniq -c`). Build: 22/22 modules OK.
 
+## Policy change (human, 2026-10-17)
+- **Asm allowed for SDK/library functions that cannot be C** (mwcc `asm` bodies: mrs/msr/swp/clz/mcr, MI copy/fill,
+  OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
+  Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
+
 ## Done (session 23) — host boots into ffc_main + game threads, $0 model spend
 - Bootstrap OK (branch claude/ffc-port-continue-lkc03y, from 3y9arg). **22/22 confirmed** (ninja EXIT 0, work/ninja_s23.log).
 - Boot fixes (host, `FFC_RUN=1 build/port/host/ffc`):

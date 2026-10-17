@@ -48,7 +48,8 @@
 
 Rules: the orchestrator only merges child branches and edits tools/, docs/STATUS.md and docs/LONGTAIL_PLAN.md
 (session 15 ran integrate/clone itself with no children running — allowed as an explicit exception). No src/,
-config/ or delinks.txt edits and no mwld while an integrate/ninja runs. Asm only for BIOS swi stubs. Never
+config/ or delinks.txt edits and no mwld while an integrate/ninja runs. Asm only for BIOS swi stubs and SDK/library functions that cannot be C (mwcc `asm` bodies:
+mrs/msr/swp/clz/mcr; human OK 2026-10-17) — never game logic; the port build skips asm TUs and lifts/overrides them. Never
 `pkill -f`/`pgrep -f` a pattern from your own command line (it kills your shell; kill by PID). Commit and push
 often. At the context-guard warning: update STATUS.md, push, rewrite this handoff, end with a paste-ready
 handoff prompt.
