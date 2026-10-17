@@ -9,6 +9,30 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 29) — host past ov015 scrambler, heap, sound heap, CARD backup; $0 model spend
+- Branch claude/ffc-decomp-port-session-29-pm7vv9 (from 2xsx26). Bootstrap OK, **22/22 confirmed** (work/boot_s29.log).
+- Fixed, in order:
+  1. **ov015 SIGSEGV** = anti-tamper code scrambler (func_ov015_021d6504; copy in ov016 func_ov016_02145928): XORs
+     tables of already-run plaintext code ranges in place; driver func_ov015_021d649c then patches itself to `bx lr`.
+     sdk_override.c: all three are host no-ops.
+  2. **Heap hang** (OS_FreeToHeap spinning in DLInsert, free list cyclic): DLExtract func_02087c24 falls off the end
+     (mwcc leaves r0 = arg0 = list head). port_argpad: value defs whose body does not end in `return ...;` get a
+     fallback `return (T)(arg0);` (dead when all paths return).
+  3. **Sound heap handle 0** (NNS_SndHeap NewSection func_0207ade0): port_argpad padded `InitHeapSection()` with the
+     caller's `p`, but r0 there holds the previous call's result. New rule (_r0_after_call): arg0 of a short call
+     after `x = g(..);` (no assignment in between) is `x`.
+  4. **CARD backup stand-in** (PXI tag 11, card_request): INIT + cmd pointer (full word via pxi_raw: host addresses
+     need >26 bits), IDENTIFY/READ/WRITE/PROGRAM/VERIFY/ERASE/STATUS on a save image in FFC_SAVE (default ffc.sav).
+- **Host now**: overlays 3,0,1,5,7,12,15 start, save verify runs; **SIGSEGV in lifted func_0205a260** (BG screen
+  blit, main thread via task f3 func_0205a0c0). Cause found: it reads **8 stack args** (sp+224/228 after a
+  200-byte frame) but the lifted ABI carries only s0..s5 (port_lift NARGS=10; stk[506..511]). **Next**: raise
+  NARGS to 16 (12 stack args): port_lift.py lines 6, 35, 60 (CALL macro STK(sp,0..)), 270-277 (prototype,
+  stk[512] base 506 -> 500), plus any 10-arg prototypes in port/src (sdk_override.c scrambler overrides) and
+  port_argpad/argcheck padding to 10. Then rerun, keep trapping toward title.
+- Also seen: PXI tag 7 (data = cmd buffer pointer; likely sound) not emulated yet.
+- Not done: wasm (-sASYNCIFY) and win32 builds. Progress chart: queue.csv unchanged -> no refresh.
+- Cost: $0 model spend (no subagents); orchestrator context ~200k.
+
 ## Done (session 28) — host past devirt, NVRAM/RTC/timers, reaches overlay 15; $0 model spend
 - Branch claude/ffc-decomp-port-continue-2xsx26 (from 499szq). Bootstrap OK, **22/22 confirmed** (work/boot_s28.log).
 - **ffc_opaque** (port_configure MEMBER_CALL_RE, C++ TUs only; helper in port/include/cw_compat.h): 13 sites; the

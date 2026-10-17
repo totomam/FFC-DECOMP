@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 28 (2026-10-17): read docs/STATUS.md "Done (session 28)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 29 (2026-10-17): read docs/STATUS.md "Done (session 29)" first.
 
-- Branch: **`claude/ffc-decomp-port-continue-2xsx26`** (session 28; based on 499szq). Develop on the branch
+- Branch: **`claude/ffc-decomp-port-session-29-pm7vv9`** (session 29; based on 2xsx26). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -15,6 +15,8 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
+- Session 29: ov015 scrambler no-op, argpad fallback return + r0-after-call, CARD backup stand-in; host crashes in
+  lifted func_0205a260 (needs 8 stack args; lifted ABI has 6). Next: port_lift NARGS 10 -> 16, rerun; wasm + win32.
 - Session 28: ffc_opaque done; NVRAM/RTC stand-ins, HW timers, PXI fixes; host reaches overlay 15, SIGSEGV in
   func_ov015_021d6504. Next: fix that, trap on toward title; wasm + win32.
 - Session 27: host reaches ov003 game threads (IME on, TP stand-in, per-thread CPSR, port_argaddr, lifted-callee
