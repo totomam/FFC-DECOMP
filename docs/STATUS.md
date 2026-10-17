@@ -9,6 +9,30 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 23b) — free decomp tiers measured, nothing integrated yet, $0 model spend (Sonnet subagents only)
+- Remaining at start: 3,438 non-done (2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate, 1 fail_haiku).
+- **tools/import_sdk.py** (libntr source -> our names via relocs, verify with tools/try; `--kinds`, `--jobs`):
+  287 sdk_map unique/fuzzy100/layout rows -> **146 MATCH** (102 fail_sonnet, 8 todo, 36 blocked; 71 are mwcc `asm`
+  bodies) in work/sdk_import/<func>.c, results.txt; near-misses in nomatch/ (~20 at 97-99.6%). 78 SKIP = MSL/C++
+  runtime with no libntr source (MSL headers extracted to /home/user/cwmsl/msl; MSL sources not tried).
+  Files are standalone (own typedefs, `/* cflags */` line): integration needs one TU per func + delinks entries.
+- **tools/xmatch.py** (compile pret/pokeplatinum, pokeheartgold, pokediamond lib C with our mwcc, masked byte-match):
+  **24 MATCH** (16 fail_sonnet, 8 blocked; 21 asm, 3 C: CRYPTO_RC4Init 0208f09c, RC4FastInit 0208f0f0, OS_WaitIrq
+  0208641c) in work/xmatch/matches/. Low yield (pokediamond = SDK 3 / mwcc 2.0). Clones in /home/user/ref/.
+  **sdk_match.py gap**: ARM `bl` vs ROM `blx` to Thumb callees not masked -> apply xmatch's xmask, rerun
+  sdk_layout.py, then import_sdk.py for more candidates.
+- **Permuter pilot** (upstream decomp-permuter arm32 mode, /home/user/permuter, wrap.py compile backend,
+  binutils-arm-none-eabi): 50 fail_sonnet at >=98.8% -> **6 exact** (12%, 20-130 s each) in work/permuter/matches/,
+  REPORT.md. Use `--stack-diffs` (else false score 0); skip `-lang c++` TUs. Full run: 544 fail_sonnet >=90% (533
+  <=0x200) ~7 h on 4 cores at 3 min cap -> ~65 matches expected; 742 at >=80%.
+- **recover_funcs**: apply + ninja failed twice (work/ninja_recover.log); a subagent was on attempt 3 (631 funcs
+  applied, recover_funcs.py edited) at handoff. If config/ + queue.csv are still dirty and ninja is not 22/22:
+  `git checkout config/ queue.csv`, diagnose from the log, fix tools/recover_funcs.py, retry. Then import_arcnid
+  (arcnid has 498 ov002 funcs not in our queue -> est. ~350 matches).
+- Research (ranked): permuter > cross-repo lib matching > decomp.me/DS Decomp Discord > Batch API + caching for paid
+  waves (~50% off) > m2c drafts. No other Fossil Fighters code decomp exists.
+- **Free-tier total ready or estimated: ~146 + 24 + 6 + ~65 (permuter full) + ~350 (arcnid) ≈ 590.**
+
 ## Done (session 23) — host boots into ffc_main + game threads, $0 model spend
 - Bootstrap OK (branch claude/ffc-port-continue-lkc03y, from 3y9arg). **22/22 confirmed** (ninja EXIT 0, work/ninja_s23.log).
 - Boot fixes (host, `FFC_RUN=1 build/port/host/ffc`):

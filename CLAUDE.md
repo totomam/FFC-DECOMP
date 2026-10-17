@@ -2,7 +2,7 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 23 (2026-10-17): read docs/STATUS.md "Done (session 23)" first, then 22/21.
+**Everyone else: you are the orchestrator.** Handoff from session 23 (2026-10-17): read docs/STATUS.md "Done (session 23b)" and "(session 23)" first.
 
 - Branch: **`claude/ffc-port-continue-lkc03y`** (session 23; based on 3y9arg). Develop on the branch
   your session is given, starting from this one.
@@ -16,6 +16,10 @@
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
 - Queue unchanged: 15,972 done, 2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate.
+- Session 23b: free tiers measured, not integrated: import_sdk 146, xmatch 24, permuter pilot 6/50 (full run
+  ~65 est.); recover_funcs apply still failing ninja (was on attempt 3). Asm allowed for SDK/library funcs (human OK).
+  Next: (1) get recover_funcs to 22/22 or revert; (2) integrate work/sdk_import + xmatch/matches + permuter/matches,
+  ninja 22/22; (3) import_arcnid; (4) permuter full run (--stack-diffs); (5) sdk_match blx mask + re-import.
 - Session 23: boot type, abs-address rewrite, DTCM blob, passthrough overrides, port_argcheck (351 calls); host
   reaches ffc_main + game thread, crashes in func_0204f6b0. 22/22 confirmed.
   Next: fix passthrough calls (auto-pad or overrides); trap on toward title; then (c), (d).
