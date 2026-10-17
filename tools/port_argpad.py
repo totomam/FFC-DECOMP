@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BASIC = {"u8", "s8", "u16", "s16", "u32", "s32", "int", "char", "short", "long", "unsigned", "signed", "bool",
          "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "BOOL", "size_t", "intptr_t", "uintptr_t",
          "const", "volatile", "register", "float", "double", "void"}
-STATS = {"real": 0, "zero": 0, "decls": 0, "calls": 0, "defs": 0, "voidval": 0, "voidex": {}}
+STATS = {"real": 0, "zero": 0, "decls": 0, "calls": 0, "defs": 0, "voidval": 0, "voidex": {}, "tailret": 0}
 
 
 def _strip(p: str) -> str:
@@ -106,6 +106,7 @@ def scan(text: str):
         pre = re.findall(r"[A-Za-z_]\w*", t[m.start():m.start(1)])
         ps = split_args(m[2])
         s["defs"].append(dict(ret=_ret(t[m.start():m.start(1)]), name=m[1], pos=m.start(1), span=(m.start(2), m.end(2)), params=[] if ps == ["void"] else ps,
+                              head=(m.start(), m.start(1)), body=(m.end(), _close(t, m.end() - 1)),
                               static="static" in pre, method=t[m.start(1) - 1] == ":", variadic=nparams(m[2]) is None))
         skip.add(m.start(1))
     for m in DECL2_RE.finditer(t):
@@ -115,6 +116,7 @@ def scan(text: str):
             continue  # a call statement or label, not a declaration
         ps = split_args(m[2])
         s["decls"].append(dict(ret=_ret(head), name=m[1], span=(m.start(2), m.end(2)), params=[] if ps == ["void"] else ps,
+                               head=(m.start(), m.start(1)),
                                empty=not ps, variadic=nparams(m[2]) is None, method=t[m.start(1) - 1] == ":"))
         skip.add(m.start(1))
     starts = [d["pos"] for d in s["defs"]]
@@ -157,11 +159,25 @@ def analysis():
         for d in s["defs"]:
             if not d["method"] and not d["variadic"]:
                 gdefs[d["name"]] = dict(void=d["ret"] == "void", rel=rel, params=d["params"], variadic=d["variadic"], static=d["static"])
-    blocked = {f for f, d in gdefs.items() if d["variadic"] or f in cpp_value or f in hdr or (d["static"] and f in any_value)}
+    # Header-declared functions are extendable too: port_configure compiles against pad_header() copies of include/.
+    blocked = {f for f, d in gdefs.items() if d["variadic"] or f in cpp_value or (d["static"] and f in any_value)}
+    # r0-value defs: a `void` def whose ROM code leaves an earlier call's result in r0 (port_r0.py; e.g. OS_TryLockByWord,
+    # an allocator `if (!(p = try(n))) p = other(n);`). The port gives it an `unsigned int` return of the last call made.
+    import port_r0
+    tailret = set()
+    for rel, sc in scans:
+        for d in sc["defs"]:
+            f = d["name"]
+            if f in gdefs and gdefs[f]["rel"] == rel and gdefs[f]["void"] and f not in blocked and not d["method"]:
+                k = port_r0.classify(f)
+                if "call" in k and k <= {"call", "arg0"}:
+                    tailret.add(f)
+    for f in tailret:
+        gdefs[f]["void"] = False
     E = {f: len(d["params"]) for f, d in gdefs.items()}
     L = dict(E)
     ptrpos = {f: set() for f in gdefs}
-    A = dict(gdefs=gdefs, E=E, L=L, ptrpos=ptrpos, blocked=blocked, hdr=hdr, cpp_value=cpp_value, rounds=0)
+    A = dict(gdefs=gdefs, E=E, L=L, ptrpos=ptrpos, blocked=blocked, hdr=hdr, cpp_value=cpp_value, rounds=0, tailret=tailret)
 
     def kind(g, i):
         ps = gdefs[g]["params"]
@@ -199,6 +215,61 @@ def _pad_params(A, f, lo, hi):
     return [("void * " if A["kind"](f, i) == "ptr" else "int ") + "__pad%d" % i for i in range(lo, hi)]
 
 
+def _void_head(text, head):
+    m = list(re.finditer(r"\bvoid\b", text[head[0]:head[1]]))[-1]
+    return (head[0] + m.start(), head[0] + m.end(), "unsigned int")
+
+
+def _r0_edits(text, s, d, ps):
+    """`void f(...) {...}` -> `unsigned int f(...) { unsigned int __r0 = arg0; ... __r0 = g(...) ...; return __r0; }`:
+    each outermost call to a value-returning function (per this TU's declarations) updates __r0, as r0 on ARM."""
+    t = _nocomment(text)
+    b0, b1 = d["body"]
+    rets = {x["name"]: x["ret"] for x in s["decls"]}
+    A = analysis()
+    name, kd = param_info(ps[0]) if ps else (None, None)
+    ed = [_void_head(text, d["head"]),
+          (b0, b0, f" unsigned int __r0 = (unsigned int)({name if name and kd in ('ptr', 'int') else 0});"),
+          (b1, b1, " return __r0; ")]
+    for m in re.finditer(r"\breturn\s*;", t[b0:b1]):
+        ed.append((b0 + m.start(), b0 + m.end(), "return __r0;"))
+    calls = [c for c in s["calls"] if c["encl"] is d]
+    last = -1
+    for c in sorted(calls, key=lambda c: c["pos"]):
+        if c["pos"] < last:
+            continue  # nested in an earlier call's arguments
+        last = c["close"]
+        g = c["name"]
+        r = rets.get(g)
+        gv = (g in A["gdefs"] and not A["gdefs"][g]["void"]) or g in A["tailret"]
+        if r is None or not ((r != "void" and _scalar(r)) or (r == "void" and gv)):
+            continue
+        if _bare_statement(t, c["pos"], c["close"]):
+            ed.append((c["pos"], c["pos"], "__r0 = (unsigned int)"))
+        elif r != "void":
+            ed.append((c["pos"], c["pos"], "({ __auto_type __v = "))
+            ed.append((c["close"] + 1, c["close"] + 1, "; __r0 = (unsigned int)__v; __v; })"))
+    return ed
+
+
+def pad_header(text: str) -> str:
+    """A header of include/ with each extended function's prototype padded to its effective parameter count."""
+    A = analysis()
+    edits = []
+    for d in scan(text)["decls"]:
+        f = d["name"]
+        if d["method"] or d["variadic"] or f not in A["gdefs"] or d["empty"] or len(d["params"]) >= A["E"][f]:
+            continue
+        extra = ["void * " if A["kind"](f, i) == "ptr" else "int " for i in range(len(d["params"]), A["E"][f])]
+        edits.append((d["span"][0], d["span"][1], ", ".join(d["params"] + extra)))
+    for d in scan(text)["decls"]:
+        if d["ret"] == "void" and d["name"] in A["tailret"]:
+            edits.append(_void_head(text, d["head"]))
+    for st, en, r in sorted(edits, reverse=True):
+        text = text[:st] + r + text[en:]
+    return text
+
+
 def pad_text(text: str, rel: str, handled=None) -> str:
     A = analysis()
     gdefs, E, L = A["gdefs"], A["E"], A["L"]
@@ -215,6 +286,14 @@ def pad_text(text: str, rel: str, handled=None) -> str:
         if E[f] > len(d["params"]):
             edits.append((d["span"][0], d["span"][1], ", ".join(ps)))
             STATS["defs"] += 1
+        if f in A["tailret"] and gdefs[f]["rel"] == rel:
+            edits += _r0_edits(text, s, d, ps)
+            STATS["tailret"] += 1
+    r0tu = any(d["name"] in A["tailret"] and gdefs.get(d["name"], {}).get("rel") == rel for d in s["defs"])
+    for d in s["decls"]:
+        g = d["name"]
+        if d["ret"] == "void" and (g in A["tailret"] or (r0tu and g in gdefs and not gdefs[g]["void"])):
+            edits.append(_void_head(text, d["head"]))
     own = {d["name"] for d in s["defs"]}
     tu_decl = set()
     for d in s["decls"]:
@@ -234,7 +313,7 @@ def pad_text(text: str, rel: str, handled=None) -> str:
         g = c["name"]
         if g not in gdefs or gdefs[g]["variadic"] or c["k"] >= E[g]:
             continue
-        if (s["cpp"] and g in s["values"]) or (g in A["hdr"] and g not in tu_decl):
+        if s["cpp"] and g in s["values"]:
             continue
         e = c["encl"]
         eps = ext.get(e["name"], e["params"]) if e else []

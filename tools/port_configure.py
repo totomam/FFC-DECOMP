@@ -83,7 +83,7 @@ TARGETS = {  # cc, flags, link flags, executable suffix
     # wasm: -flto makes the whole game one LLVM module, so WebAssemblyFixFunctionBitcasts adapts calls whose
     # prototype differs between TUs (plain wasm-ld rejects them: "function signature mismatch").
     "wasm": ("$emsdk/upstream/bin/clang", ["--target=wasm32-unknown-emscripten", "-flto"],
-             ["-flto", "-O1", "-sGLOBAL_BASE=256MB", "-sINITIAL_MEMORY=512MB", "-sALLOW_MEMORY_GROWTH=1", "-sSTACK_SIZE=1048576", "-sERROR_ON_UNDEFINED_SYMBOLS=1"], ".js"),
+             ["-flto", "-O1", "-sGLOBAL_BASE=256MB", "-sINITIAL_MEMORY=512MB", "-sALLOW_MEMORY_GROWTH=1", "-sSTACK_SIZE=1048576", "-sERROR_ON_UNDEFINED_SYMBOLS=1", "-sASYNCIFY", "-sASYNCIFY_STACK_SIZE=65536"], ".js"),
 }
 LIFT_CHUNKS = 32
 EMSDK = os.environ.get("EMSDK", "/home/user/emsdk")
@@ -110,9 +110,17 @@ def main():
     cc, tflags, lflags, exe = TARGETS[a.target]
     out = f"build/port/{a.target}"
     lines = [f"builddir = {out}", f"emsdk = {EMSDK}", f"cc = {cc}", f"cflags = {' '.join(tflags + CFLAGS)}", "",
-             "rule cc", "  command = $cc $cflags $lang -c $in -o $out", "  description = cc $in", "",
+             "rule cc", f"  command = $cc -I{out}/include $cflags $lang -MD -MF $out.d -c $in -o $out", "  deps = gcc",
+             "  depfile = $out.d", "  description = cc $in", "",
              "rule list", "  command = cp $out.rsp $out", "  rspfile = $out.rsp", "  rspfile_content = $in_newline", ""]
     objs, skipped, fixed = [], [], []
+    # include/ as the port sees it: prototypes padded like the TUs (port_argpad.pad_header), searched before include/.
+    for h in sorted((ROOT / "include").rglob("*.h")):
+        dst = ROOT / out / "include" / h.relative_to(ROOT / "include")
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        txt = port_argpad.pad_header(h.read_text(errors="replace"))
+        if not dst.exists() or dst.read_text() != txt:
+            dst.write_text(txt)
     fnames = function_names()
     # Functions port/src overrides (sdk_override.c): a src/ TU defining one is left out (its other functions get
     # lifted like any undefined function).
