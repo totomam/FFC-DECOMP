@@ -328,3 +328,9 @@ uint32_t func_0207e220(const char *path)
     }
     return 1;
 }
+
+/* OS_Halt (asm: mcr p15 wait-for-interrupt). The idle thread halts until an interrupt: advance one frame. */
+void func_02088f94(void)
+{
+    ffc_hal_vblank();
+}
