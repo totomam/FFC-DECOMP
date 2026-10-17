@@ -23,8 +23,8 @@
 - **Header-declared functions unblocked** for passthrough params: port_configure writes `pad_header()` copies of
   include/ to build/port/<t>/include (searched first); ninja cc rule now has gcc depfiles.
 - Host after r0 fix: past NitroStartUp, game threads run; crashed in func_020095b8(tmp, 0) from func_0205323c
-  (header-declared -> was zero-padded; real r1 passthrough). Header fix rebuilt at handoff (work/port_host_s26c.log)
-  — **not yet run**. Next: `FFC_RUN=1 gdb -batch -ex run -ex bt build/port/host/ffc`, trap on toward title.
+  (header-declared -> was zero-padded; real r1 passthrough). Header fix rebuilt OK at handoff (0 errors,
+  work/port_host_s26c.log) — **not yet run**. Next: `FFC_RUN=1 gdb -batch -ex run -ex bt build/port/host/ffc`, trap on toward title.
 - wasm: `-sASYNCIFY -sASYNCIFY_STACK_SIZE=65536` added to the wasm link flags (not built). win32: not built.
 - Progress chart: queue.csv unchanged (16,650 done) -> no refresh needed.
 - Cost: $0 model spend (no subagents); orchestrator context ~200k.
