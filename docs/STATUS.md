@@ -10,8 +10,8 @@
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
 ## Done (session 26) — CARD_LockRom hang fixed (r0-value voids), host reaches game threads, $0 model spend
-- Branch claude/ffc-decomp-port-continue-op63wf (from dh1p2g). Bootstrap OK (refs, emsdk, apt). Main ninja: see
-  work/ninja_s26.log (was in mwld at handoff; confirm 22/22 with `tail work/ninja_s26.log`).
+- Branch claude/ffc-decomp-port-continue-op63wf (from dh1p2g). Bootstrap OK (refs, emsdk, apt). **22/22 confirmed**
+  (work/ninja_s26.log).
 - **Why IME stayed 0**: not an IME site. NitroStartUp (func_02056898) -> OSi_InitCommon -> CARD init -> CARD_LockRom
   (func_0207cabc) waited forever: OS_TryLockByWord (func_02086974) is a `void` def that tail-returns
   OSi_DoTryLockByWord; port_argpad's return passthrough gave callers r0 = first arg (0x41) -> "lock busy" -> VAlarm
