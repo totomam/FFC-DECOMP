@@ -16,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import ffclib  # noqa: E402
+import port_argpad  # noqa: E402
 
 # `extern uint8_t func_X[];` / `extern T func_X;` where func_X is a function: the TU only takes its address, but wasm
 # keeps functions and data apart (wasm-ld "symbol type mismatch"). The port compiles a copy with a function decl.
@@ -128,6 +129,7 @@ def main():
         objs.append(o)
         src = rel
         fixed_text = DATA_DECL_RE.sub(lambda m: f"void {m[1]}();" if m[1] in fnames else m[0], head)
+        fixed_text = port_argpad.pad_text(fixed_text, str(rel))
         fixed_text = rewrite_abs(fixed_text, rel.parts[1])
         if fixed_text != head:
             src = Path(out) / "fix" / rel
