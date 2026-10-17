@@ -9,7 +9,22 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
-## Done (session 23b) — free decomp tiers measured, nothing integrated yet, $0 model spend (Sonnet subagents only)
+## Done (session 23b) — recover_funcs applied + arcnid import integrated, 22/22, $0 model spend
+- recover_funcs: 629 candidates (dry run) -> 631 new ov002 functions after splits (11 rejected, "no thumb return");
+  0x021bbe84 confirmed as a function start. Three fixes were needed before the delink/link passed:
+  (1) a BL whose target lies inside the same candidate is a far conditional branch (`bne +0; bl X`), not a call, so
+  it neither splits the candidate nor gets a reloc (cause of dsd InvalidStart at 0x021bef42); (2) arcnid manifest
+  entries outside ov002's `kind:code` ranges are skipped (9 entries at 0x021d3368.. sit in dsd's .rodata; adding them
+  made mwld report "symbol sizes exceed section size"; ov002's code probably continues past 0x021d3368 = dsd section
+  misclassification, follow-up config work); (3) BLs into the interior of an existing symbol (e.g. 0x021bebea ->
+  0x021d3368 inside __sinit_ov012_021d32c0) are left unrelocated. Ninja 22/22 (work/ninja_recover.log).
+- import_arcnid on all 507 non-done ov002 funcs: 392 MATCH, 5 NO MATCH (93-96%), 110 SKIP (33 C++ mangled, rest
+  "no reloc"). All 392 integrated via `tools/integrate --list` (it does NOT update queue.csv; marked done by hand
+  with ffclib.queue_update). clone.py run: cloned 77, integrated 76 (one ov004 clone reverted: byte diff).
+- Queue before -> after: done 15,972 -> 16,440; todo 1,000 -> 1,163 (631 recovered rows added, 468 done);
+  fail_sonnet 2,050; blocked 377; skip_integrate 10. Final ninja 22/22.
+
+## Done (session 23b, other agent) — free decomp tiers measured, nothing integrated yet, $0 model spend (Sonnet subagents only)
 - Remaining at start: 3,438 non-done (2,050 fail_sonnet, 1,000 todo, 377 blocked, 10 skip_integrate, 1 fail_haiku).
 - **tools/import_sdk.py** (libntr source -> our names via relocs, verify with tools/try; `--kinds`, `--jobs`):
   287 sdk_map unique/fuzzy100/layout rows -> **146 MATCH** (102 fail_sonnet, 8 todo, 36 blocked; 71 are mwcc `asm`
