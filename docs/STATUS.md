@@ -25,6 +25,10 @@
   before the call (8,580 padded calls). A Sonnet subagent was writing **tools/port_padcheck.py** (ROM-guided: objdump
   each caller, scan back from each bl for a writer of r_i, report to work/port_padcheck.txt); if the file is missing or
   unfinished, rewrite it. Next: run it, fix the flagged boot-path sites in src (keep matching), rebuild host, trap on.
+  **Done (Sonnet)**: tools/port_padcheck.py (~64 s; --selftest, --only CALLER, --fix). 3174 padded calls: 731 OK,
+  2438 suspicious, 5 not in ROM -> work/port_padcheck.txt (2869 bl-site lines). 2241 are "clobbered by earlier bl/blx"
+  (often harmless: callee may ignore it); direct writers: `grep -vP "writer \w+: blx? " work/port_padcheck.txt`
+  (235 in main). Linear backward scan: approximate. Fix direct-writer sites on the boot path first.
 - wasm caveat found: wasm32 passes structs by value **by pointer**, so C->lifted calls with by-value structs (e.g.
   func_0206660c -> func_02066f3c(self, Rect)) will break there (fine on i386/win32 where they go on the stack).
 - gdb recipes: `watch *(int*)ADDR if *(int*)ADDR == 0x656c6946` (find who writes a string); ROM disasm:
