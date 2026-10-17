@@ -16,6 +16,7 @@ import csv
 import os
 import re
 import subprocess
+import threading
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -41,10 +42,12 @@ def source_for(objpath: str):
     parts = objpath.split("/")
     if len(parts) != 3 or parts[0] not in ("ntr", "nnsys"):
         return None
-    if not _jobs:
-        for j in sc.jobs_for(REF, ROOT / "work" / "sdk_import" / "gen"):
-            _jobs[(j[0], j[1], j[2].stem)] = j
     return _jobs.get((parts[0], parts[1], Path(parts[2]).stem))
+
+
+def _load_jobs():
+    for j in sc.jobs_for(REF, ROOT / "work" / "sdk_import" / "gen"):
+        _jobs[(j[0], j[1], j[2].stem)] = j
 
 
 _pp_cache = {}
@@ -204,7 +207,7 @@ class Unit:
             return "func"
         if re.match(r"\s*typedef\b", c):
             return "typedef"
-        if "(" in strip_braces(c).split("=")[0] and not re.search(r"\(\s*\*", c.split("=")[0]):
+        if "(" in re.sub(r"__attribute__\s*\(\(.*?\)\)", "", strip_braces(c)).split("=")[0] and not re.search(r"\(\s*\*", c.split("=")[0]):
             return "proto"
         if re.match(r"\s*(static\s+|extern\s+)*(const\s+)?(struct|union|enum)\s+\w*\s*(\{.*\})?\s*;$", c, re.S):
             return "tag"
@@ -238,7 +241,7 @@ class Unit:
                     if j != i:
                         want(j)
         # asm functions cannot be rebuilt
-        if re.search(r"\basm\b", self.chunks[tix[0]]):
+        if re.search(r"\basm\b", self.chunks[tix[0]]) and not ALLOW_ASM:
             return None, "asm function"
         out = []
         for i in sorted(keep):
@@ -260,7 +263,7 @@ class Unit:
             elif k == "proto":
                 c = re.sub(r"^\s*static\s+", "", c)
             elif k == "var":
-                c = re.sub(r"\s*=\s*\{.*\}\s*;$", ";", c, flags=re.S)
+                c = re.sub(r"\s*=\s*\{.*\}\s*(__attribute__\s*\(\(.*?\)\))?\s*;$", ";", c, flags=re.S)
                 c = re.sub(r"\s*=[^;{]*;$", ";", c)
                 c = re.sub(r"^\s*static\s+", "", c)
                 if not re.match(r"\s*extern\b", c):
@@ -325,41 +328,70 @@ def process(row, outdir: Path):
         return "SKIP", "no libntr/libntrsystem source for " + " ".join(objs)
     work = outdir / "work" / func
     work.mkdir(parents=True, exist_ok=True)
-    best = ("SKIP", "?")
+    attempts = []  # (rank, status, why)
     variants = [True, False] if mode == "thumb" else [False, True]
     for job in srcs:
         for thumb in variants:
             pp = preprocess(job, thumb, outdir)
             if pp is None:
-                best = ("SKIP", f"preprocess failed ({job[2].name})")
+                attempts.append((0, "SKIP", f"preprocess failed ({job[2].name})"))
                 continue
-            if "unit" not in job_cache.setdefault((str(job[2]), thumb), {}):
-                job_cache[(str(job[2]), thumb)]["unit"] = Unit(pp)
-            unit = job_cache[(str(job[2]), thumb)]["unit"]
-            for bodies in (False, True):
+            with _lock:
+                ent = job_cache.setdefault((str(job[2]), thumb), {})
+                if "unit" not in ent:
+                    ent["unit"] = Unit(pp)
+            unit = ent["unit"]
+            for bodies, twlmem in ((False, False), (True, False), (False, True), (True, True)):
+                tag = f"[{'thumb' if thumb else 'arm'}{' +bodies' if bodies else ''}]"
                 text, err = unit.build(sdk, bodies)
                 if err:
-                    best = ("SKIP", err)
+                    attempts.append((0, "SKIP", err))
                     break
+                if twlmem:
+                    # libntr's nitro/ mmap_shared.h puts the shared-memory block at 0x027ff000; FFC (DSi hybrid) uses
+                    # the TWL map 0x02fff000 for the same HW_ symbols.
+                    t2 = re.sub(r"0x007fff([89a-f][0-9a-f])", r"0x00ffff\1", text)
+                    if t2 == text:
+                        continue
+                    text = t2
+                    tag += "[twlmem]"
                 flags = [] if mode == "thumb" else ["-nothumb"]
                 head = f"/* cflags: {' '.join(flags)} */\n" if flags else ""
                 head += f"/* From libntr {job[2].relative_to(REF)} ({'thumb' if thumb else 'arm'} build): {sdk} */\n"
                 new, err = remap(head + text, sdk, func, sym, work)
                 if err:
-                    best = ("SKIP", err)
+                    if err.startswith("no reloc at"):
+                        attempts.append((1, "NO MATCH", "codegen differs, " + err + " " + tag))
+                    else:
+                        attempts.append((0, "SKIP", err + " " + tag))
                     continue
-                dst = outdir / f"{func}.c"
+                dst = outdir / "nomatch" / f"{func}.c"
+                dst.parent.mkdir(exist_ok=True)
                 dst.write_text(new)
                 ok, first, _ = verify(func, dst)
                 if ok:
-                    return "MATCH", f"{first} [{'thumb' if thumb else 'arm'}{' +bodies' if bodies else ''}]"
-                best = ("NO MATCH", first + f" [{'thumb' if thumb else 'arm'}{' +bodies' if bodies else ''}]")
-                if (best[1].startswith("COMPILE ERROR") or best[1].startswith("ERROR")):
-                    best = ("SKIP", "recompile failed: " + first)
-    return best
+                    (outdir / f"{func}.c").write_text(new)
+                    dst.unlink()
+                    asm = " asm" if re.search(r"\basm\b", new) else ""
+                    return "MATCH", f"{tag}{asm}"
+                if first.startswith("NO MATCH"):
+                    pct = float(first.split()[2].rstrip("%"))
+                    attempts.append((2 + pct / 100, "NO MATCH", first + " " + tag))
+                else:
+                    attempts.append((0, "SKIP", "recompile failed: " + first + " " + tag))
+    if not attempts:
+        return "SKIP", "?"
+    r = max(attempts, key=lambda t: t[0])
+    if r[0] == 0:
+        r = attempts[0] if attempts[0][0] == 0 and not any("local data" in t[2] for t in attempts) else \
+            next(t for t in attempts if "local data" in t[2])
+    (outdir / f"{func}.c").unlink(missing_ok=True)
+    return r[1], r[2]
 
 
 job_cache = {}
+_lock = threading.Lock()
+ALLOW_ASM = True
 
 
 def main():
@@ -390,7 +422,7 @@ def main():
         rows.append(dict(func=func, status=q[func]["status"], kind=kind, sdk=m[1], objs=m[2].split(),
                          mode=p[3]))
     a.out.mkdir(parents=True, exist_ok=True)
-    res = {}
+    _load_jobs()
 
     def run(r):
         try:

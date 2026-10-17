@@ -185,6 +185,8 @@ def main():
                 targets[tm][to & ~1] = bool(to & 1) or kind in ("thumb_call", "arm_call_thumb")
     for mod, t, e, src in new:
         for frm, to, blx in bl_calls(mod, t, e):
+            if t < to < e:  # BL used as a far conditional branch inside the function, not a call
+                continue
             tm = mod_of_addr(to, mod)
             if tm:
                 targets[tm].setdefault(to, not blx)
@@ -263,7 +265,7 @@ def main():
         sym_add[mod].append(f"{nm} kind:function(thumb,size={e - t:#x}) addr:{t:#010x}")
         rel = ffclib.relocs(mod)
         for frm, to, blx in bl_calls(mod, t, e):
-            if frm in rel:
+            if frm in rel or t < to < e:
                 continue
             tm = mod_of_addr(to, mod)
             if tm is None:
