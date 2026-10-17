@@ -258,6 +258,27 @@ static void card_request(uint32_t data)
     arm7_reply(11, 1, 1); /* CARD_REQ_ACK */
 }
 
+/* Sound driver stand-in (PXI tag 7, silent): the ARM9 sends a command list (DS layout: next, id, arg[4]; 0x18
+ * bytes) or SND_MSG_REQUEST_COMMAND_PROC (0). The ARM7 runs the list and bumps SNDSharedWork.finishCommandTag,
+ * which SND_IsFinishedCommandTag/SND_WaitForCommandProc poll. Only SHARED_WORK (0x1d) matters here; no alarms. */
+static void sound_request(uint32_t data)
+{
+    static uint32_t shared;
+    uint32_t p = pxi_raw;
+    (void)data;
+    if (p < 0x02000000u)
+        return; /* REQUEST_COMMAND_PROC: lists are run as they arrive */
+    for (; p; p = FFC_REG32(p)) {
+        uint32_t id = FFC_REG32(p + 4);
+        if (id == 0x1d)
+            shared = FFC_REG32(p + 8);
+        if (trace())
+            fprintf(stderr, "ffc: snd cmd %#x %#x %#x\n", id, FFC_REG32(p + 8), FFC_REG32(p + 12));
+    }
+    if (shared)
+        FFC_REG32(shared) += 1;
+}
+
 static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
 {
     if (trace())
@@ -271,6 +292,9 @@ static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
         break;
     case 6: /* touch panel (this SDK's tag numbering): pen up; OSSystemWork.touch_panel stays 0 */
         spi_request(tag, data);
+        break;
+    case 7:
+        sound_request(data);
         break;
     case 11:
         card_request(data);
