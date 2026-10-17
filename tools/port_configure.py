@@ -100,6 +100,11 @@ CFLAGS = ["-O1", "-g0", "-fno-omit-frame-pointer", "-funwind-tables", "-fno-pic"
 DEF_RE = re.compile(r"^[A-Za-z_][^;\n{}()=]*?\b(func_\w+)\s*\([^;{}]*\)\s*\{", re.M)
 
 
+# C++: `obj.member.method(` on a class object of known type -> clang devirtualizes into a direct call of a method
+# no TU defines (mwcc went through the vtable). Hide the object behind ffc_opaque() (cw_compat.h).
+MEMBER_CALL_RE = re.compile(r"(?<![\w.>:\]])([A-Za-z_]\w*(?:\s*(?:->|\.)\s*[A-Za-z_]\w*|\[[^\[\]\n]*\])*)\s*\.\s*([A-Za-z_]\w*)\s*\(")
+
+
 def is_asm_stub(text: str) -> bool:
     return re.search(r"^\s*asm\s+\w[^;(]*\(", text, re.M) is not None or re.search(r"\basm\s*\{", text) is not None
 
@@ -145,6 +150,8 @@ def main():
         fixed_text = LVALUE_CAST_RE.sub(lambda m: m[0] if re.search(r"[*\w)\]]\s*$", fixed_text[max(0, m.start() - 8):m.start()])
                                         else f"(*({m[1]}*)&{m[2]}) =", fixed_text)
         fixed_text = rewrite_abs(fixed_text, rel.parts[1])
+        if lang.startswith("-x c++"):
+            fixed_text = MEMBER_CALL_RE.sub(lambda m: f"ffc_opaque(&({m[1]}))->{m[2]}(", fixed_text)
         if fixed_text != head:
             src = Path(out) / "fix" / rel
             (ROOT / src).parent.mkdir(parents=True, exist_ok=True)
