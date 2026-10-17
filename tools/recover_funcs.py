@@ -150,7 +150,8 @@ def main():
     if man.exists():
         for r in csv.DictReader(man.open()):
             t = int(r["address"], 16)
-            if not inside("ov002", t):
+            in_code = any(x <= t and t + int(r["size"]) <= y for x, y in code_ranges("ov002"))
+            if not inside("ov002", t) and in_code:  # arcnid has 9 "functions" in our ov002 .rodata
                 cands["ov002"].setdefault(t, "arcnid")
                 asize[t] = int(r["size"])
 
@@ -238,6 +239,19 @@ def main():
         bounds = [t] + inner + [e]
         for i in range(len(bounds) - 1):
             split.append((mod, bounds[i], bounds[i + 1], src if i == 0 else f"split from {t:#x}"))
+    # A BL from a candidate to an address in its own module's range but outside its code (e.g. .rodata) would
+    # resolve to an overlapping overlay (dsd: "No symbol found ... in overlay 12"): not trustworthy code, drop it.
+    lo_hi = ffclib.module_ranges()
+    keep = []
+    for c in split:
+        mod, t, e, src = c
+        bad = [to for _, to, _ in bl_calls(mod, t, e) if not t <= to < e
+               and lo_hi[mod][0] <= to < lo_hi[mod][1] and not any(x <= to < y for x, y in code_ranges(mod))]
+        if bad:
+            rejected.append((mod, t, "call into own non-code section"))
+        else:
+            keep.append(c)
+    split = keep
     if len(split) != len(new):
         print(f"split/dropped at inner call targets: {len(new)} -> {len(split)} candidates")
     new = split
