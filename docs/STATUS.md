@@ -11,7 +11,7 @@
 
 ## Done (session 30) — NARGS 16 (past func_0205a260), sound stand-in; $0 model spend
 - Branch claude/ffc-decomp-port-session-30-9f36ef (from pm7vv9). Bootstrap OK (refs, emsdk, apt). Matching ninja was
-  at 16653/16656 at the context guard: **22/22 not confirmed** this session (work/boot_s30.log).
+  finished after the guard: **22/22 confirmed** (work/boot_s30.log).
 - **port_lift NARGS 10 -> 16** (12 stack args; CALL/CALLV STK(sp,0..11), ffc_fn, prototype s0..s11, stk base 500;
   scrambler overrides in sdk_override.c). Bisected: NARGS 10 still dies in func_0205a260, 16 gets past it.
   port_argpad/argcheck need no change (they pad r0-r3 only). Host cold build ~1 h (-j3, matching ninja in parallel);
