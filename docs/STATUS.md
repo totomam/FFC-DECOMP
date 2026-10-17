@@ -9,6 +9,30 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 30) — NARGS 16 (past func_0205a260), sound stand-in; $0 model spend
+- Branch claude/ffc-decomp-port-session-30-9f36ef (from pm7vv9). Bootstrap OK (refs, emsdk, apt). Matching ninja was
+  at 16653/16656 at the context guard: **22/22 not confirmed** this session (work/boot_s30.log).
+- **port_lift NARGS 10 -> 16** (12 stack args; CALL/CALLV STK(sp,0..11), ffc_fn, prototype s0..s11, stk base 500;
+  scrambler overrides in sdk_override.c). Bisected: NARGS 10 still dies in func_0205a260, 16 gets past it.
+  port_argpad/argcheck need no change (they pad r0-r3 only). Host cold build ~1 h (-j3, matching ninja in parallel);
+  lift-only rebuild ~2 min.
+- **Sound stand-in** (PXI tag 7, sdk_override.c sound_request): walks the DS command list (next,id,arg[4]; 0x18 B),
+  records SHARED_WORK (id 0x1d), bumps SNDSharedWork.finishCommandTag; silent, no alarms. FFC_NOSND=1 disables it.
+- **Host now**: SIGSEGV in lifted MIi_CpuClearFast func_02084a0c <- func_020569ec (task f3) <- func_01ff8ac4 task list.
+  Chain traced (all deterministic addresses, rm ffc.sav before each run):
+  task 0x2279298 built by func_0205fac0 with dest 0xe2950000/size 0x23ac0000 <- VRAM region alloc func_02057df8 called
+  by func_0205fbc8(a=0x20000e0, idx 0, **c=0x311d6000**, 1) <- lifted func_020670f0(self=0x2001b00 [B, ctor
+  func_0206660c]): c = sum over B's entry array (B+0x2c, count B+0x30) of tbl[entry+0x10] sizes; **entry+0x10 = -1**
+  (0x2279328) -> table[-1] garbage. Only writer of 0x2279328: func_0206822c (lifted) <- func_02067f84 <-
+  func_02066cd8 <- func_02066f3c(self, Rect by value) <- func_0206660c. **Next**: find why the entry format stays -1
+  (func_0206822c / 02067f84 args: likely a passthrough or by-value struct arg from C func_0206660c -> lifted
+  02066f3c, or a missing format set later). Red herrings ruled out: "File could not be lo..." text at B+4 is a freed
+  std::string buffer (B fields uninitialised), the heap is consistent (gdb python new/delete log), u32 div OK.
+- gdb recipes used: watch `*(int*)ADDR` after `break ffc_main; run` (DS addresses are mapped as-is); args at $ebp+8
+  (breakpoints land after the prologue); python FinishBreakpoint heap log (/tmp scripts, not committed).
+- Not done: wasm, win32 (step 2), chart (queue.csv unchanged -> no refresh needed).
+- Cost: $0 model spend (no subagents); orchestrator context ~200k.
+
 ## Done (session 29) — host past ov015 scrambler, heap, sound heap, CARD backup; $0 model spend
 - Branch claude/ffc-decomp-port-session-29-pm7vv9 (from 2xsx26). Bootstrap OK, **22/22 confirmed** (work/boot_s29.log).
 - Fixed, in order:

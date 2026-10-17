@@ -294,7 +294,8 @@ static void ffc_arm7_recv(uint32_t tag, uint32_t data, uint32_t err)
         spi_request(tag, data);
         break;
     case 7:
-        sound_request(data);
+        if (!getenv("FFC_NOSND"))
+            sound_request(data);
         break;
     case 11:
         card_request(data);
