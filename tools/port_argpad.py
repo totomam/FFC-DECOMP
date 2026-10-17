@@ -84,6 +84,25 @@ DECL2_RE = re.compile(DECL_RE.pattern.replace("^", "(?:^|(?<=;))", 1), re.M)  # 
 NOTDECL = ("return", "else", "if", "while", "case", "default", "do", "for", "goto", "switch")
 NAME_RE = re.compile(r"\b((?:func|__sinit)_\w+)")
 _A = None
+USE_PADCHECK = True  # port_padcheck.py sets this False: it must see the unfiltered passthrough sites
+CLOBBER_RE = re.compile(r"writer \w+: blx? ")
+_CLOB = None
+
+
+def clobbered():
+    """{(caller, callee, arg index)} that work/port_padcheck.txt reports as clobbered by an earlier bl/blx (ROM garbage): pad 0."""
+    global _CLOB
+    if _CLOB is None:
+        _CLOB = set()
+        f = ROOT / "work" / "port_padcheck.txt"
+        if USE_PADCHECK and f.exists():
+            for l in f.read_text().splitlines():
+                p = l.split("\t")
+                if len(p) >= 5 and re.fullmatch(r"arg\d", p[2]) and CLOBBER_RE.search(l):
+                    _CLOB.add((p[0], p[1], int(p[2][3:])))
+    return _CLOB
+
+
 
 
 def _nocomment(t: str) -> str:
@@ -364,7 +383,7 @@ def pad_text(text: str, rel: str, handled=None) -> str:
             if i == 0 and r0v:
                 a = f"({'void *' if A['kind'](g, i) == 'ptr' else 'int'}){r0v}"
                 STATS["r0var"] = STATS.get("r0var", 0) + 1
-            elif i < 4 and i < len(eps):
+            elif i < 4 and i < len(eps) and not (e and (e["name"], g, i) in clobbered()):
                 name, kd = param_info(eps[i])
                 if name and kd in ("ptr", "int"):
                     a = f"({'void *' if A['kind'](g, i) == 'ptr' else 'int'}){name}"

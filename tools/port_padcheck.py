@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import port_argpad as ap  # noqa: E402
 
 ROOT = ap.ROOT
+ap.USE_PADCHECK = False  # classify the unfiltered passthrough padding, not the output of a previous run
 EXT = ROOT / "extract" / "usa"
 CFG = ROOT / "config" / "usa" / "arm9"
 SYM_RE = re.compile(r"^(\w+) kind:function\((arm|thumb),size=(0x[0-9a-f]+)\) addr:(0x[0-9a-f]+)")
