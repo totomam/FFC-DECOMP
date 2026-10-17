@@ -483,3 +483,27 @@ void func_020897f0(void)
             ffc_hal_vblank();
     }
 }
+
+/* Anti-tamper code scrambler (ov015 and ov016 each carry a copy; ARM, lifted otherwise): XORs a table of ranges of
+ * already-run plaintext code in place, zeroes the table, flushes the caches. Host code is native and the overlay's
+ * DS code addresses are not writable code, so there is nothing to scramble. */
+uint32_t func_ov015_021d6504(uint32_t r0, uint32_t r1, uint32_t r2, uint32_t r3, uint32_t s0, uint32_t s1,
+                             uint32_t s2, uint32_t s3, uint32_t s4, uint32_t s5)
+{
+    if (trace())
+        fprintf(stderr, "ffc: skip code scrambler (table %#x)\n", r0);
+    return 0;
+}
+
+uint32_t func_ov016_02145928(uint32_t r0, uint32_t r1, uint32_t r2, uint32_t r3, uint32_t s0, uint32_t s1,
+                             uint32_t s2, uint32_t s3, uint32_t s4, uint32_t s5)
+{
+    if (trace())
+        fprintf(stderr, "ffc: skip code scrambler (table %#x)\n", r0);
+    return 0;
+}
+
+/* ov015 one-shot anti-tamper driver: runs five scrambler tables, then overwrites its own first words with `bx lr`. */
+void func_ov015_021d649c(void)
+{
+}
