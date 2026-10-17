@@ -8,7 +8,7 @@ typedef struct {
 extern uint32_t data_020b93b8;
 extern uint32_t data_020b8e44;
 extern uint32_t data_0213df18;
-extern uint32_t func_0201ab3c(void);
+extern uint32_t func_0201ab3c(void *object);
 extern uint32_t func_0203b720(void);
 extern void func_02056bc0(void *object, uint32_t node);
 extern uint32_t func_0206cbf4(void);
@@ -32,7 +32,7 @@ void func_02008bb0(uint32_t *self) {
     Pt pos;
 
     if (data_020b93b8 != 0) {
-    if (func_0201ab3c()) {
+    if (func_0201ab3c((void *)data_020b93b8)) {
         self[3] = (self[3] & ~0xffu) | 2u;
         return;
     }

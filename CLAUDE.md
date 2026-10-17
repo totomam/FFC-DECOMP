@@ -2,9 +2,9 @@
 
 **Child sessions** (your prompt says "child session: waves ..."): ignore this file and follow your prompt.
 
-**Everyone else: you are the orchestrator.** Handoff from session 30 (2026-10-17): read docs/STATUS.md "Done (session 30)" first.
+**Everyone else: you are the orchestrator.** Handoff from session 31 (2026-10-17): read docs/STATUS.md "Done (session 31)" first.
 
-- Branch: **`claude/ffc-decomp-port-session-30-9f36ef`** (session 30; based on pm7vv9). Develop on the branch
+- Branch: **`claude/ffc-decomp-port-session-31-678dvf`** (session 31; based on 9f36ef). Develop on the branch
   your session is given, starting from this one.
 - **Goal changed (human): Windows + browser port, personal use.** Paid LLM matching is stopped. Read, in order:
   docs/LONGTAIL_PLAN.md (top sections), reports/DS PC port approaches.md (roadmap P0-P6), docs/STATUS.md
@@ -15,6 +15,8 @@
   timeout (setup.sh needs the human's OK in this chat). Confirm 22/22.
   Reference repos (public): cybervisi0n/libntr, cybervisi0n/libntrsystem, cybervisi0n/pokeplatinum (the libntr
   port), arcnid/ffc-decomp (`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1`).
+- Session 31: format -1 = error dialog shown because port_argpad padded the wrong r0 (func_02008bb0 ->
+  func_0201ab3c); fixed in src + func_02060b4c; systematic -> tools/port_padcheck.py. Next: verify match, run padcheck, fix sites.
 - Session 30: NARGS 16 (past func_0205a260), silent sound stand-in (tag 7); host crashes in func_02084a0c: B entry
   format -1 (0x2279328, written by lifted func_0206822c <- 02066f3c <- 0206660c). Next: fix that; wasm + win32.
 - Session 29: ov015 scrambler no-op, argpad fallback return + r0-after-call, CARD backup stand-in; host crashes in

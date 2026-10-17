@@ -9,6 +9,29 @@
   OS interrupt helpers, CARD/SND), never game logic. The port build skips asm TUs and lifts/overrides them.
   Pending integration: work/sdk_import (146 matches, 71 asm) and work/xmatch/matches (24, 21 asm).
 
+## Done (session 31) — format -1 root-caused: wrong passthrough padding (r0/r1 not the caller's param); $0 model spend
+- Branch claude/ffc-decomp-port-session-31-678dvf (from 9f36ef). Bootstrap OK (assets, refs, apt, emsdk). Matching ninja
+  sat in mwldarm at 16653/16656 at the context guard: **22/22 not confirmed** (work/boot_s31.log).
+- **format -1 root cause**: B (0x2001b00) is the text box of the game's own error dialog "File could not be loaded.
+  Turn off the system and reinsert the Game Card." (message id 5, task func_02008cc4/func_02008bb0, created
+  unconditionally by ov007 boot state func_ov007_0219cdb8). Text measured 0x0 -> Rect 0 -> no OBJ size fits -> -1.
+  The dialog should finish silently: ROM func_02008bb0 calls func_0201ab3c **with r0 = data_020b93b8** (loaded for the
+  `!= 0` test); C called `func_0201ab3c()` and port_argpad padded `self`. **Fixed in src** (passes data_020b93b8).
+  (Earlier lead "table 0x20b11b4 zero" is wrong: __sinit_020a79ac fills it on the host.)
+- Host then gets further: SIGSEGV in func_0204f0b0 <- func_02060b4c: same bug class (ROM r1 = s->idx, C passed
+  nothing -> padded garbage). **Fixed in src** (func_0204f0b0(s->base, s->idx)); host NOT rebuilt/rerun after it.
+- **Both src edits need a matching check** (ninja, then 22/22) — they should match (same regs), unverified.
+- **Bug class is systematic**: port_argpad pads arg i with the caller's param i, wrong whenever the caller wrote r_i
+  before the call (8,580 padded calls). A Sonnet subagent was writing **tools/port_padcheck.py** (ROM-guided: objdump
+  each caller, scan back from each bl for a writer of r_i, report to work/port_padcheck.txt); if the file is missing or
+  unfinished, rewrite it. Next: run it, fix the flagged boot-path sites in src (keep matching), rebuild host, trap on.
+- wasm caveat found: wasm32 passes structs by value **by pointer**, so C->lifted calls with by-value structs (e.g.
+  func_0206660c -> func_02066f3c(self, Rect)) will break there (fine on i386/win32 where they go on the stack).
+- gdb recipes: `watch *(int*)ADDR if *(int*)ADDR == 0x656c6946` (find who writes a string); ROM disasm:
+  objdump -b binary -marm -Mforce-thumb --adjust-vma=0x02004000 (main) / overlay base from overlays.yaml (ov007 0x02199640).
+- Not done: wasm, win32, chart (queue.csv unchanged).
+- Cost: $0 paid model spend; 1 Sonnet subagent (padcheck); orchestrator context ~200k.
+
 ## Done (session 30) — NARGS 16 (past func_0205a260), sound stand-in; $0 model spend
 - Branch claude/ffc-decomp-port-session-30-9f36ef (from pm7vv9). Bootstrap OK (refs, emsdk, apt). Matching ninja was
   at 16653/16656 at the context guard: **22/22 not confirmed** this session (work/boot_s30.log).
